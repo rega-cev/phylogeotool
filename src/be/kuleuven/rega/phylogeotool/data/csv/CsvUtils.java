@@ -9,9 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import au.com.bytecode.opencsv.CSVParser;
 import be.kuleuven.rega.phylogeotool.data.Sequence;
@@ -24,12 +22,12 @@ public class CsvUtils {
 	private final static String NUCLEOTIDES = "nucleotides";
 	private final static String COUNTRY_OF_ORIGIN = "Country of origin";
 	
-	public static List<Sequence> readCsv(File viralIsolatesCsv, File attributesCsv) throws IOException {
+	public static List<Sequence> readCsv(File csv) throws IOException {
 		List<Sequence> sequences = new ArrayList<Sequence>();
 		
 		CSVParser parser = new CSVParser();
 		
-		BufferedReader br = new BufferedReader(new FileReader(viralIsolatesCsv));
+		BufferedReader br = new BufferedReader(new FileReader(csv));
 	    try {
 	        String line = br.readLine();
 	        String[] header = parser.parseLine(line);
@@ -66,38 +64,6 @@ public class CsvUtils {
 	    }
 	    
 	    return sequences;
-	}
-	
-	private Map<Integer, Map<String, String>> readAttributes(File attributesCsv) throws IOException {
-		Map<Integer, Map<String, String>> attributes = new HashMap<Integer, Map<String, String>>();
-
-        CSVParser parser = new CSVParser();
-		
-		BufferedReader br = new BufferedReader(new FileReader(attributesCsv));
-	    try {
-	        String line = br.readLine();
-	        String[] header = parser.parseLine(line);
-	        
-	        int patientIdIndex = indexOf(header, PATIENT_ID);
-	        
-	        while (line != null) {
-	        	line = br.readLine();
-	        	String[] row = parser.parseLine(line);
-	        	
-	        	Map<String, String> attributeValues = new HashMap<String, String>();
-	            for (int i = 0; i < header.length; ++i) {
-	            	if (i != patientIdIndex) {
-	            		attributeValues.put(header[i], row[i]);
-	            	}
-	            }
-	            
-	            attributes.put(Integer.parseInt(row[patientIdIndex]), attributeValues);
-	        }
-	    } finally {
-	        br.close();
-	    }
-	    
-	    return attributes;
 	}
 	
 	private static int indexOf(String[] row, String r) {
