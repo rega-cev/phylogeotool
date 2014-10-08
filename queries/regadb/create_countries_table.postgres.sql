@@ -1,0 +1,1 @@
+create table countries as select patient_ii,  anv.value from regadbschema.patient_attribute_value pav join regadbschema.attribute_nominal_value anv using(nominal_value_ii) where pav.attribute_ii in (select attribute_ii from regadbschema.attribute a where a.name='Country of origin' );
