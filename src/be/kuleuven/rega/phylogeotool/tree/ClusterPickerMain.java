@@ -1,13 +1,5 @@
 package be.kuleuven.rega.phylogeotool.tree;
 
-import java.io.StringReader;
-
-import jebl.evolution.io.NewickImporter;
-import jebl.evolution.trees.SimpleTree;
-import jebl.evolution.trees.Tree;
-import clusterPicking.BasicSequence;
-import clusterPicking.ClusterPicker;
-import edu.uci.ics.jung.algorithms.util.KMeansClusterer;
 
 
 public class ClusterPickerMain {

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+        version="2.4">
+        
+<!--  <context-param>-->
+<!--    <param-name>conf-dir</param-name>-->
+<!--    <param-value>/home/simbre1</param-value>-->
+<!--    <description>-->
+<!--    	Configuration directory, where the global-conf.xml settings file resides.-->
+<!--    	Defaults the environmental variable REGADB_CONF_DIR or if this is not set:-->
+<!--    	- Windows: C:\Program Files\rega_institute\regadb-->
+<!--    	- *nix: /etc/rega_institute/regadb-->
+<!--    </description>-->
+<!--  </context-param>-->
+  <servlet>
+    <servlet-name>PhyloGeoTool</servlet-name>
+    <servlet-class>be.kuleuven.rega.jung.test.Main</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>PhyloGeoTool</servlet-name>
+    <url-pattern>/PhyloGeoTool/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>PhyloGeoTool</servlet-name>
+    <url-pattern>/phylogeotool/*</url-pattern>
+  </servlet-mapping>
+    
+<!--  <listener>-->
+<!--    <listener-class>net.sf.regadb.system.Launcher</listener-class>-->
+<!--  </listener>-->
+  
+</web-app>
+
