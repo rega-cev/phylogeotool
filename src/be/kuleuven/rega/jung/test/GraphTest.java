@@ -26,7 +26,7 @@ import eu.webtoolkit.jwt.utils.WebGraphics2D;
 public class GraphTest extends WApplication {
 
 	private Graph<Integer,String> original;
-	private WebGraphics2D graphics = new WebGraphics2D(new WPainter());
+	private WebGraphics2DMine graphics = new WebGraphics2DMine(new WPainter());
 	
 	public GraphTest(WEnvironment env) {
 		super(env);

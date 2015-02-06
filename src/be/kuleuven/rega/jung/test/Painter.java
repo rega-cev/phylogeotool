@@ -1,8 +1,6 @@
 package be.kuleuven.rega.jung.test;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 
@@ -36,7 +34,7 @@ public class Painter extends WPaintedWidget {
 	protected void paintEvent(WPaintDevice paintDevice) {
 		WPainter painter = new WPainter(paintDevice);
 		painter.setBrush(new WBrush(WColor.blue).clone());
-		WebGraphics2D graphics = new WebGraphics2D(painter);
+		WebGraphics2DMine graphics = new WebGraphics2DMine(painter);
 		//graphics.setColor(Color.blue);
 		//graphics.drawRect(0, 0, 100, 50);
 		
