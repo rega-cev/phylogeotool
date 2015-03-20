@@ -1,3 +1,6 @@
+psql -d regadb_phylogeotool -a -f /Users/ewout/git/phylogeotool/queries/regadb/create_naive_viral_isolates.postgres.sql
+psql -d regadb_phylogeotool -a -f /Users/ewout/git/phylogeotool/queries/regadb/create_countries_table.postgres.sql
+
 create view unique_naive_viral_isolates as
 select t1.patient_ii,t1.patient_id,t1.sample_id,t1.viral_isolate_ii,t1.dataset_ii,t1.description,t1.nucleotides,t1.sample_date
   from naive_viral_isolates t1
@@ -16,6 +19,11 @@ sudo mv /var/lib/postgresql/test.csv /home/ewout_kul/Documents/phylogeotool/
 
 -> Add id column
 -> Change headers from dataset_ii to dataset, value to Country of origin
+sed 's/;/,/g' /Users/ewout/Documents/phylogeo/unique_naive_viral_isolates_edited.csv > /Users/ewout/Documents/phylogeo/unique_naive_viral_isolates_edited2.csv
+
+Clean up the data (mostly dates which are incorrect, ...)
+Remove those sequences which are shorter than (600, maybe even 1000) nucleotides by running RemoveShortSequences.java
+Run CsvToFasta.java from our project
 
 /home/ewout_kul/projects/sequencetool/build/src/lib/SequenceTool ~/Documents/phylogeotool/reference.fasta /home/ewout_kul/Documents/phylogeotool/csvFromDB2710.fasta --exportKind GlobalAlignment --exportAlphabet Nucleotides > ~/Documents/phylogeotool/sequencetoolAlign2710.fasta 2> ~/Documents/phylogeotool/err.txt
 
@@ -24,6 +32,10 @@ awk '/^>/{print s? s"\n"$0:$0;s="";next}{s=s sprintf("%s",$0)}END{if(s)print s}'
 -> add headers to sequencetoolAlign2710.csv
 
 java -jar csvmerge.jar inner ~/Documents/phylogeotool/csvFromDB.csv ~/Documents/phylogeotool/sequencetoolAlign.csv 0 0 > ~/Documents/phylogeotool/merged.csv
+
+--> Remove the columns which are double
+cat merged.csv | cut -d',' --complement -s -f 8,11 > merged_ok.csv
+cat merged.csv | cut -d',' --complement -s -f 5,8 > merged_ok.csv
 
 run Sequencemerger on the merged.csv and use the resulting nucleotide sequences to build the fasta file.
 one sequence per patient
@@ -59,3 +71,5 @@ Print sequence from 1 to 3165
 echo {1..3165} | sed 's/ /,/g' > header.txt
 Append the distance data information to the file containing the sequence
 cat Distance_Data_JC.txt >> header.txt
+
+java -cp readseq.jar run -f 11 /Users/ewout/git/phylogeotool/lib/outputSubGRemovedHighMutRegion.new.fa -o /Users/ewout/git/phylogeotool/lib/outputSubGRemovedHighMutRegion.phylip

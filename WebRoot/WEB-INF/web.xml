@@ -16,7 +16,7 @@
 <!--  </context-param>-->
   <servlet>
     <servlet-name>PhyloGeoTool</servlet-name>
-    <servlet-class>be.kuleuven.rega.jung.test.Main</servlet-class>
+    <servlet-class>be.kuleuven.rega.webapp.Main</servlet-class>
   </servlet>
 
   <servlet-mapping>

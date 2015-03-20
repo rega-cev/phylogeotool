@@ -95,7 +95,7 @@ public class SequenceMerger {
 					merged[i] = sequence.getNucleotides().charAt(i);
 				} else if (!(sequence.getNucleotides().charAt(i) == '-')
 						&& SequenceUtils.isGeneralization(merged[i], sequence.getNucleotides().charAt(i)) == -1) {
-					throw new RuntimeException("Incorrect compare on position: " + i);
+					throw new RuntimeException("Incorrect compare with char: " + sequence.getNucleotides().charAt(i) + " and " + merged[i] + " on position: " + i);
 				}
 			}
 		}

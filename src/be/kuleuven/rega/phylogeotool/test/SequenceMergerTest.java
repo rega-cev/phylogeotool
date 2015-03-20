@@ -32,6 +32,16 @@ public class SequenceMergerTest {
 		assertEquals("WTGCGTCVA", result.getNucleotides());
 	}
 	
+	@Test
+	public void testMergeGeneralNucleotides2() {
+		List<Sequence> sequences = new ArrayList<Sequence>();
+		sequences.add(new Sequence("1","1","1",new Date(),"1","W------G-",""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---",""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---CVA",""));
+		Sequence result = SequenceMerger.mergeSequence(sequences);
+		assertEquals("WTGCGTCVA", result.getNucleotides());
+	}
+	
 	@Test(expected = RuntimeException.class)
 	public void testMergeIncorrectNucleotides() {
 		List<Sequence> sequences = new ArrayList<Sequence>();
@@ -42,7 +52,7 @@ public class SequenceMergerTest {
 		assertEquals("WTGCGTCVA", result.getNucleotides());
 	}
 	
-	@Test
+	@Test(expected = ArrayIndexOutOfBoundsException.class)
 	public void testMergeDifferentSequenceLength() {
 		List<Sequence> sequences = new ArrayList<Sequence>();
 		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---",""));

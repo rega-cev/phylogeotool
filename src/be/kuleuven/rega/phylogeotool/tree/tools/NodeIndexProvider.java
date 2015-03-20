@@ -8,14 +8,21 @@ import be.kuleuven.rega.phylogeotool.data.csv.CsvUtils;
 
 public class NodeIndexProvider {
 	
-	private HashMap<String,Integer> labelToIndexMap;
+	private HashMap<String,Integer> labelToIndexMap = null;
 	
 	public NodeIndexProvider(File csv) throws IOException {
-		labelToIndexMap = CsvUtils.getNodeLabelToIndexMapping(csv);
+		if(csv != null) {
+			labelToIndexMap = CsvUtils.getNodeLabelToIndexMapping(csv);
+		}
 	}
 	
 	public int getIndex(String label) {
-		return labelToIndexMap.get(label);
+		//System.out.println(label);
+		if(labelToIndexMap != null) {
+			return labelToIndexMap.get(label);
+		} else {
+			return Integer.parseInt(label);
+		}
 	}
 	
 }

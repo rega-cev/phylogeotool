@@ -148,4 +148,12 @@ public class KMedoids {
 		return associatedICluster;
 		
 	}
+	
+	/* Methods and code to find the best K for the datapoints */
+	
+//	public void Wk(ICluster medoids, List<ICluster> clusters) {
+//		K = len(mu)
+//	    return sum([np.linalg.norm(mu[i]-c)**2/(2*len(c)) \
+//	               for i in range(K) for c in clusters[i]])
+//	}
 }

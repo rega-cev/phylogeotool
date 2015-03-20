@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import au.com.bytecode.opencsv.CSVParser;
 import be.kuleuven.rega.phylogeotool.data.Sequence;
+
+import com.opencsv.CSVParser;
 
 public class CsvUtils {
 	private final static String ID = "id";
@@ -48,12 +48,14 @@ public class CsvUtils {
 						d = df.parse(sampleDate);
 
 					Sequence s = new Sequence(row[indexOf(header, ID)], row[indexOf(header, PATIENT_ID)], row[indexOf(header, VIRAL_ISOLATE_ID)], d,
-							row[indexOf(header, DATASET)], row[indexOf(header, NUCLEOTIDES)], null);
+							row[indexOf(header, DATASET)], row[indexOf(header, NUCLEOTIDES)], row[indexOf(header, COUNTRY_OF_ORIGIN)]);
 					sequences.add(s);
 
 					line = br.readLine();
 				} catch (ParseException e) {
 					e.printStackTrace();
+					System.out.println(row[indexOf(header, PATIENT_ID)]);
+					System.exit(0);
 				}
 			}
 		} finally {
@@ -99,18 +101,18 @@ public class CsvUtils {
 		String line = br.readLine();
 		double[][] distanceMatrix = null;
 
-		if(line != null) {
+		if (line != null) {
 			String[] header = parser.parseLine(line);
 			distanceMatrix = new double[header.length][header.length];
-			
+
 			int i = 0;
 			line = br.readLine();
 			while (line != null) {
 				String[] row = parser.parseLine(line);
-				
+
 				for (int j = 0; j <= i; j++) {
-//					System.out.println("i: " + i + " j: " + j);
-//					System.out.println(line);
+					// System.out.println("i: " + i + " j: " + j);
+					// System.out.println(line);
 					if (j == i) {
 						distanceMatrix[i][j] = 0.0;
 					} else {
@@ -128,11 +130,11 @@ public class CsvUtils {
 		br.close();
 		return distanceMatrix;
 	}
-	
-	public static HashMap<String,Integer> getNodeLabelToIndexMapping(File csv) throws IOException {
+
+	public static HashMap<String, Integer> getNodeLabelToIndexMapping(File csv) throws IOException {
 		CSVParser parser = new CSVParser();
-		HashMap<String,Integer> labelToIndexMap = new HashMap<String, Integer>();
-		
+		HashMap<String, Integer> labelToIndexMap = new HashMap<String, Integer>();
+
 		BufferedReader br = new BufferedReader(new FileReader(csv));
 		String line = br.readLine();
 		String[] header = parser.parseLine(line);
@@ -144,5 +146,82 @@ public class CsvUtils {
 			line = br.readLine();
 		}
 		return labelToIndexMap;
+	}
+
+	/**
+	 * Format: 1 2 0.066763 1 3 0.056302 1 4 0.062535 1 5 0.157657
+	 * 
+	 * @param csv
+	 * @throws IOException
+	 */
+
+	public static void RAxMLDistanceMatrixToStandard(File csv, File outFile) throws IOException {
+		// CSVParser spaceParser = new CSVParser(' ');
+		CSVParser parser = new CSVParser('\t');
+
+		BufferedReader br = new BufferedReader(new FileReader(csv));
+		String line = br.readLine();
+		double[][] distanceMatrix = new double[6000][6000];
+
+		while (line != null) {
+			String[] lineParsed = parser.parseLine(line);
+			int sequence1 = Integer.parseInt(lineParsed[0].split(" ")[0]);
+			int sequence2 = Integer.parseInt(lineParsed[0].split(" ")[1]);
+			double distance = Double.parseDouble(lineParsed[1].trim());
+			if (sequence1 > sequence2) {
+				distanceMatrix[sequence1][sequence2] = distance;
+			} else {
+				distanceMatrix[sequence2][sequence1] = distance;
+			}
+			line = br.readLine();
+		}
+
+		try {
+			FileWriter writer = new FileWriter(outFile);
+			StringBuilder stringBuilder = new StringBuilder();
+			for (int i = 1; i <= 6000; i++) {
+				stringBuilder.append(i + ",");
+			}
+			stringBuilder.append('\n');
+			for (int i = 0; i < distanceMatrix.length - 1; i++) {
+				for (int j = 0; j < distanceMatrix.length - 1; j++) {
+					stringBuilder.append(Double.toString(distanceMatrix[i + 1][j + 1]));
+					stringBuilder.append(',');
+				}
+				stringBuilder.append('\n');
+			}
+			writer.write(stringBuilder.toString());
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static HashMap<String, Integer> csvToHashMapStringInteger(File csvFile, char delimitor, List<String> ids, String key) throws IOException {
+		CSVParser parser = new CSVParser(delimitor);
+		HashMap<String, Integer> hashMap= new HashMap<String, Integer>();
+		BufferedReader br = new BufferedReader(new FileReader(csvFile));
+		try {
+			String line = br.readLine();
+			String[] header = parser.parseLine(line);
+
+			line = br.readLine();
+			while (line != null) {
+				String[] row = parser.parseLine(line);
+				String id = row[indexOf(header, "id")];
+				if(ids.contains(id)) {
+					String value = row[indexOf(header, key)];
+					if(hashMap.containsKey(value)) {
+						hashMap.put(value, hashMap.get(value) + 1);
+					} else {
+						hashMap.put(value, 1);
+					}
+				}
+				line = br.readLine();
+			}
+		} finally {
+			br.close();
+		}
+		return hashMap;
 	}
 }
