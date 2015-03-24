@@ -18,7 +18,7 @@ public class SequenceMerger {
 		File outputFile = new File(args[1]);
 		List<Sequence> sequences = null;
 		try {
-			sequences = CsvUtils.readCsv(csvFile);
+			sequences = CsvUtils.readCsv(csvFile, ';', "yyyy-MM-dd");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -61,7 +61,7 @@ public class SequenceMerger {
 	}
 
 	public static List<Sequence> mergeSequences(List<Sequence> sequences) {
-		List<Sequence> mergedSequences = new ArrayList<>();
+		List<Sequence> mergedSequences = new ArrayList<Sequence>();
 
 		Sequence previous = null;
 		List<Sequence> group = new ArrayList<Sequence>();

@@ -85,6 +85,14 @@ public class GoogleChartWidget extends WCompositeWidget {
 	public void setOptions(String region) {
 		this.region = region;
 		StringBuilder strm = new StringBuilder();
+		strm.append(buildChart(region));
+		strm.append(this.getJsRef()).append(".chart.draw(");
+		strm.append("data, options);");
+		this.doGmJavaScript(strm.toString());
+	}
+	
+	private String buildChart(String region) {
+		StringBuilder strm = new StringBuilder();
 		String regionToView = "";
 		if(regionToDigit.containsKey(region)) { regionToView = regionToDigit.get(region); } else { regionToView = "world"; }
 		strm.append("var options = {explorer: {maxZoomOut:2,keepInBounds: true}};");
@@ -98,9 +106,7 @@ public class GoogleChartWidget extends WCompositeWidget {
 			strm.deleteCharAt(strm.length() - 1);
 		}
 		strm.append("]);");
-		strm.append(this.getJsRef()).append(".chart.draw(");
-		strm.append("data, options);");
-		this.doGmJavaScript(strm.toString());
+		return strm.toString();
 	}
 	
 	/**
@@ -129,19 +135,7 @@ public class GoogleChartWidget extends WCompositeWidget {
 					.append(";if (!self) { setTimeout(").append(initFunction)
 					.append(", 0);return;}");
 				strm.append("var chart = new google.visualization.GeoChart(self);");
-				strm.append("var data = google.visualization.arrayToDataTable([");
-				strm.append("['Country', 'Cohort size'],");
-				if(countries != null) {
-					for(String country:countries.keySet()) {
-						strm.append("['" + country + "', " + countries.get(country) + "],");
-					}
-					strm.deleteCharAt(strm.length() - 1);
-				}
-				strm.append("]);");
-				strm.append("var options = {explorer: {maxZoomOut:2,keepInBounds: true}};");
-				String regionToView = "";
-				if(regionToDigit.containsKey(region)) { regionToView = regionToDigit.get(region); } else { regionToView = "world"; }
-				strm.append("options['region'] = '" +  regionToView  + "';");
+				strm.append(buildChart(region));
 				strm.append("chart.draw(data, options);");
 			strm.append("self.chart = chart;");
 			this.streamJSListener(this.selected_, "select", strm);

@@ -130,7 +130,7 @@ public class KMedoidsTest {
 	
 	@Test
 	public void testDetermineNewMedoidsOneCluster() throws IOException {
-		Map<ICluster,List<ICluster>> associationMap = new HashMap<>();
+		Map<ICluster,List<ICluster>> associationMap = new HashMap<ICluster,List<ICluster>>();
 		List<ICluster> value1 = new ArrayList<ICluster>();
 		value1.add(tree2);
 		value1.add(tree3);
@@ -147,7 +147,7 @@ public class KMedoidsTest {
 	
 	@Test
 	public void testDetermineNewMedoidsTwoClusters() throws IOException {
-		Map<ICluster,List<ICluster>> associationMap = new HashMap<>();
+		Map<ICluster,List<ICluster>> associationMap = new HashMap<ICluster,List<ICluster>>();
 		List<ICluster> value1 = new ArrayList<ICluster>();
 		value1.add(tree2);
 		value1.add(tree3);
@@ -168,7 +168,7 @@ public class KMedoidsTest {
 	
 	@Test
 	public void testDetermineNewMedoidsThreeClusters() throws IOException {
-		Map<ICluster,List<ICluster>> associationMap = new HashMap<>();
+		Map<ICluster,List<ICluster>> associationMap = new HashMap<ICluster,List<ICluster>>();
 		List<ICluster> value1 = new ArrayList<ICluster>();
 		value1.add(tree2);
 		value1.add(tree3);
@@ -190,7 +190,7 @@ public class KMedoidsTest {
 	
 	@Test
 	public void testDetermineNewMedoidsBigCluster() throws IOException {
-		Map<ICluster,List<ICluster>> associationMap = new HashMap<>();
+		Map<ICluster,List<ICluster>> associationMap = new HashMap<ICluster,List<ICluster>>();
 		List<ICluster> value1 = new ArrayList<ICluster>();
 		value1.add(tree2);
 		List<ICluster> value2 = new ArrayList<ICluster>();
@@ -212,7 +212,7 @@ public class KMedoidsTest {
 	
 	@Test
 	public void testDetermineNewMedoidsOneClusterEmpty() throws IOException {
-		Map<ICluster,List<ICluster>> associationMap = new HashMap<>();
+		Map<ICluster,List<ICluster>> associationMap = new HashMap<ICluster,List<ICluster>>();
 		List<ICluster> value1 = new ArrayList<ICluster>();
 		value1.add(tree8);
 		List<ICluster> value2 = new ArrayList<ICluster>();
@@ -234,7 +234,7 @@ public class KMedoidsTest {
 	
 	@Test
 	public void testDetermineNewMedoidsAlmostEnd() throws IOException {
-		Map<ICluster,List<ICluster>> associationMap = new HashMap<>();
+		Map<ICluster,List<ICluster>> associationMap = new HashMap<ICluster,List<ICluster>>();
 		List<ICluster> value1 = new ArrayList<ICluster>();
 		value1.add(tree1);
 		value1.add(tree3);

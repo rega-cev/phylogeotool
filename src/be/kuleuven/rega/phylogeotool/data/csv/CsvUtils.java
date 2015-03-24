@@ -26,10 +26,10 @@ public class CsvUtils {
 	private final static String NUCLEOTIDES = "nucleotides";
 	private final static String COUNTRY_OF_ORIGIN = "Country of origin";
 
-	public static List<Sequence> readCsv(File csv) throws IOException {
+	public static List<Sequence> readCsv(File csv, char delimitor, String dateFormat) throws IOException {
 		List<Sequence> sequences = new ArrayList<Sequence>();
 
-		CSVParser parser = new CSVParser();
+		CSVParser parser = new CSVParser(delimitor);
 
 		BufferedReader br = new BufferedReader(new FileReader(csv));
 		try {

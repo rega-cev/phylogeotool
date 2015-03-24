@@ -66,7 +66,7 @@ public class KMedoids {
 	}
 	
 	private List<ICluster> init(List<ICluster> datapoints, boolean randomMedoids) {
-		Set<ICluster> medoids = new HashSet<>(numberOfIClusters);
+		Set<ICluster> medoids = new HashSet<ICluster>(numberOfIClusters);
 		int step = (int) Math.ceil(datapoints.size()/(double)numberOfIClusters);
 		//int step = (int) Math.round(datapoints.size()/(long)numberOfIClusters);
 		
@@ -83,7 +83,7 @@ public class KMedoids {
 			}
 		}
 
-		List<ICluster> listToReturn = new ArrayList<>(numberOfIClusters);
+		List<ICluster> listToReturn = new ArrayList<ICluster>(numberOfIClusters);
 		listToReturn.addAll(medoids);
 		return listToReturn;
 	}
@@ -105,7 +105,7 @@ public class KMedoids {
 	}
 
 	public List<ICluster> determineNewMedoids(Map<ICluster, List<ICluster>> associationMap) {
-		List<ICluster> newMedoids = new ArrayList<>(numberOfIClusters);
+		List<ICluster> newMedoids = new ArrayList<ICluster>(numberOfIClusters);
 		// Analysed ICluster index
 		int i = 0;
 		for(ICluster ICluster:associationMap.keySet()) {

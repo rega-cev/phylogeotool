@@ -51,9 +51,20 @@ public class Sequence {
 		return countryOfOrigin;
 	}
 
+//	public String asCsv() {
+//		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+//		return this.getId() + "," + this.getPatientId() + "," + this.getViralIsolateId() + "," + this.getDataset() + "," + this.getNucleotides() + ","
+//				+ format1.format(this.getSampleDate()) + "," + this.getCountryOfOrigin();
+//	}
+	
 	public String asCsv() {
 		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-		return this.getId() + "," + this.getPatientId() + "," + this.getViralIsolateId() + "," + this.getDataset() + "," + this.getNucleotides() + ","
-				+ format1.format(this.getSampleDate()) + "," + this.getCountryOfOrigin();
+		if(this.getSampleDate() != null) {
+			return this.getId() + "," + this.getPatientId() + "," + this.getViralIsolateId() + "," + this.getNucleotides() + ","
+					+ format1.format(this.getSampleDate());
+		} else {
+			return this.getId() + "," + this.getPatientId() + "," + this.getViralIsolateId() + "," + this.getNucleotides() + ","
+					+ "";
+		}
 	}
 }

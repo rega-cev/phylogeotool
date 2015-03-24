@@ -1,3 +1,81 @@
 - create a script to merge different (aligned) sequences that belong to the same viral isolate
 - check that there is only 1 VI per patient
 - Quality check. No duplicate viral isolates
+
+<project name="phylogeotool" default="all" basedir=".">
+  <description>
+    Build file for the phylogeotool
+  </description>
+  
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="lib" location="lib"/>
+  <property name="build" location="build"/>
+  <property name="proj.name" value="PhyloGeoTool"/>
+  <property name="proj.version" value="0.1"/>
+	
+  <target name="init" >
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile" description="compile the source" depends="init" >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac target="1.6" debug="on" srcdir="${src}" destdir="${build}">
+      <classpath>
+        <pathelement location="${lib}/junit-4.11.jar"/>
+      	<pathelement location="${lib}/commons-io-2.4.jar"/>
+      	<pathelement location="${lib}/commons-fileupload-1.3.1.jar"/>
+      	<pathelement location="${lib}/commons-lang3-3.3.2.jar"/>
+      	<pathelement location="${lib}/csvmerge.jar"/>
+      	<pathelement location="${lib}/figtree.jar"/>
+      	<pathelement location="${lib}/jam.jar"/>
+      	<pathelement location="${lib}/javaml-0.1.5.jar"/>
+      	<pathelement location="${lib}/jebl-0.4.jar"/>
+      	<pathelement location="${lib}/jwt-3.2.3.jar"/>
+      	<pathelement location="${lib}/opencsv-3.2.jar"/>
+      	<pathelement location="${lib}/servlet-api-2.5-6.0.2.jar"/>
+      	<pathelement location="${lib}/slf4j-api-1.7.10.jar"/>
+      	<pathelement location="${lib}/jung2-2_0_1/collections-generic-4.01.jar"/>
+      	<pathelement location="${lib}/jung2-2_0_1/jung-api-2.0.1.jar"/>
+      	<pathelement location="${lib}/jung2-2_0_1/jung-graph-impl-2.0.1.jar"/>
+      	<pathelement location="${lib}/jung2-2_0_1/jung-io-2.0.1.jar"/>
+      	<pathelement location="${lib}/jung2-2_0_1/jung-jai-2.0.1.jar"/>
+      </classpath> 
+    </javac>
+  </target>
+
+  <target name="build" description="Make jar file" depends="compile" >
+    <copy file="${lib}/junit-4.11.jar"/>
+    <copy file="${lib}/commons-io-2.4.jar"/>
+    <copy file="${lib}/commons-fileupload-1.3.1.jar"/>
+    <copy file="${lib}/commons-lang3-3.3.2.jar"/>
+    <copy file="${lib}/csvmerge.jar"/>
+    <copy file="${lib}/figtree.jar"/>
+    <copy file="${lib}/jam.jar"/>
+    <copy file="${lib}/javaml-0.1.5.jar"/>
+    <copy file="${lib}/jebl-0.4.jar"/>
+    <copy file="${lib}/jwt-3.2.3.jar"/>
+    <copy file="${lib}/opencsv-3.2.jar"/>
+    <copy file="${lib}/servlet-api-2.5-6.0.2.jar"/>
+    <copy file="${lib}/slf4j-api-1.7.10.jar"/>
+    <copy file="${lib}/jung2-2_0_1/collections-generic-4.01.jar"/>
+    <copy file="${lib}/jung2-2_0_1/jung-api-2.0.1.jar"/>
+    <copy file="${lib}/jung2-2_0_1/jung-graph-impl-2.0.1.jar"/>
+    <copy file="${lib}/jung2-2_0_1/jung-io-2.0.1.jar"/>
+    <copy file="${lib}/jung2-2_0_1/jung-jai-2.0.1.jar"/>
+  	
+    <jar jarfile="${build}/PhyloGeoTool.jar" basedir="${build}">
+      <manifest>
+  	    <attribute name="Main-Class" value="be.kuleuven.rega.webapp.Main"/>
+      </manifest>
+    </jar>
+  </target>
+  
+  <!-- Clean up -->
+  <target name="clean">
+    <delete dir="${build}"/>
+  </target>
+
+  <target name="all" description="Do the build" depends="build" />
+</project>

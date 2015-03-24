@@ -20,7 +20,7 @@ public class CsvToFasta {
 		File inputFile = new File(fileInputLocation);
 		File outputFile = new File(fileOutputLocation);
 		try {
-			sequences = CsvUtils.readCsv(inputFile);
+			sequences = CsvUtils.readCsv(inputFile, ',', "yyyy-MM-dd");
 		} catch (IOException e) {
 			System.err.println("File with location: " + fileInputLocation + " cannot be found.");
 			e.printStackTrace();

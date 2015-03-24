@@ -133,7 +133,6 @@ public class GraphWebApplication extends WApplication {
 		wComboBoxRegions.changed().addListener(this, new Signal.Listener() {
 			public void trigger() {
 				GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
-				System.out.println(wComboBoxRegions.getCurrentText().getValue());
 			}
 		});
 		wGroupBoxNorth.addWidget(wComboBoxMetadata);

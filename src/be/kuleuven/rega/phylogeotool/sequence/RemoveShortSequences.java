@@ -17,7 +17,7 @@ public class RemoveShortSequences {
 		
 		List<Sequence> sequences = null;
 		try {
-			sequences = CsvUtils.readCsv(csvFile);
+			sequences = CsvUtils.readCsv(csvFile, ';', "dd/MM/yy");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
