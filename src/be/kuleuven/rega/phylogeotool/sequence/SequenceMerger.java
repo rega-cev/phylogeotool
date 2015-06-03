@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import be.kuleuven.rega.phylogeotool.comparator.SequenceComparator;
+import be.kuleuven.rega.comparator.SequenceComparator;
 import be.kuleuven.rega.phylogeotool.data.Sequence;
 import be.kuleuven.rega.phylogeotool.data.SequenceUtils;
 import be.kuleuven.rega.phylogeotool.data.csv.CsvUtils;
@@ -18,7 +18,7 @@ public class SequenceMerger {
 		File outputFile = new File(args[1]);
 		List<Sequence> sequences = null;
 		try {
-			sequences = CsvUtils.readCsv(csvFile, ';', "yyyy-MM-dd");
+			sequences = CsvUtils.readCsv(csvFile, ',', "dd/MM/yy");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -28,7 +28,7 @@ public class SequenceMerger {
 		List<Sequence> result = mergeSequences(sequences);
 
 		try {
-			CsvUtils.writeSequencesToCSV(outputFile, result);
+			CsvUtils.writeSequencesToCSV(outputFile, result, ',');
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -95,12 +95,13 @@ public class SequenceMerger {
 					merged[i] = sequence.getNucleotides().charAt(i);
 				} else if (!(sequence.getNucleotides().charAt(i) == '-')
 						&& SequenceUtils.isGeneralization(merged[i], sequence.getNucleotides().charAt(i)) == -1) {
+					System.out.println("PatientId:" + sequence.getPatientId());
 					throw new RuntimeException("Incorrect compare with char: " + sequence.getNucleotides().charAt(i) + " and " + merged[i] + " on position: " + i);
 				}
 			}
 		}
 		
 		return new Sequence(group.get(0).getId(), group.get(0).getPatientId(), group.get(0).getViralIsolateId(), group.get(0).getSampleDate(), group.get(0)
-				.getDataset(), new String(merged), group.get(0).getCountryOfOrigin());
+				.getDataset(), new String(merged), group.get(0).getCountryOfOriginEn());
 	}
 }

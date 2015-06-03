@@ -1,6 +1,5 @@
 package be.kuleuven.rega.phylogeotool.tools;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,29 +7,43 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-import jebl.evolution.graphs.Node;
-import jebl.evolution.trees.Tree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.tree.Tree;
 import be.kuleuven.rega.treeFormatTransformer.NexusExporterFigTree;
 
 public class NexusExporter {
 
-	public static void export(Tree tree, HashMap<Node, Color> mappedColorNode) {
+	private final static Logger LOGGER = LoggerFactory.getLogger(NexusExporter.class);
+	
+	public static String export(Tree fullTree, Tree clusteredTree, jebl.evolution.trees.Tree jeblTree, Writer writer) {
 		// To print nxs file
 		Map<String, String> taxonNameToColor = new HashMap<String,String>();
-		System.out.println("Sequences exported to file.");
-		for(Node node:mappedColorNode.keySet()) {
-			taxonNameToColor.put(tree.getTaxon(node).getName(), "#" + String.format("%06x", mappedColorNode.get(node).getRGB() & 0x00FFFFFF));
+		LOGGER.info("Sequences exported to file.");
+		for(Node node:clusteredTree.getRootNode().getLeaves()) {
+			Node tempNode = fullTree.getNodeById(node.getId());
+			for(String leaf:tempNode.getLeavesAsString()) {
+//				System.out.println(node.getColor());
+				taxonNameToColor.put(leaf, "#" + String.format("%06x", node.getColor().getRGB() & 0x00FFFFFF));
+//				System.out.println(leaf + "#" + String.format("%06x", node.getColor().getRGB() & 0x00FFFFFF));
+			}
 		}
 	
 		NexusExporterFigTree nexusExporterFigTree = null;
-		Writer writer = null;
 		try {
-			writer = new FileWriter(new File("/Users/ewout/git/phylogeotool/lib/EwoutTrees/test.nxs"));
 			nexusExporterFigTree = new NexusExporterFigTree(writer, taxonNameToColor);
-			nexusExporterFigTree.exportTree(tree);
+			if(jeblTree != null) {
+				nexusExporterFigTree.exportTree(jeblTree);
+			} else {
+				nexusExporterFigTree.exportTree(ReadNewickTree.jeblTree);
+			}
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		return writer.toString();
 	}
 }

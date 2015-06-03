@@ -17,7 +17,7 @@ public class CsvUtilsMetadataTest {
 	
 	@Before
 	public void init() throws IOException {
-		csvUtilsMetadata = new CsvUtilsMetadata(new File("/Users/ewout/git/phylogeotool/lib/testMeta.csv"));
+		csvUtilsMetadata = new CsvUtilsMetadata(new File("/Users/ewout/git/phylogeotool/lib/testMeta.csv"), ',');
 	}
 	
 	@Test

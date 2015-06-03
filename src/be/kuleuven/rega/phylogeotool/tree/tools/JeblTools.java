@@ -3,6 +3,7 @@ package be.kuleuven.rega.phylogeotool.tree.tools;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree.SimpleRootedNode;
 import jebl.evolution.graphs.Node;
 import jebl.evolution.trees.RootedTree;
 
@@ -33,5 +34,23 @@ public class JeblTools {
 	    		leafNames.add(tree.getTaxon(node).getName());
 	    	}
 	    }
+	}
+	
+	static Node nodeToReturn = null;
+	
+	public static Node getNodeById(RootedTree tree, int id) {
+		nodeToReturn = null;
+		visitChildren(tree, tree.getRootNode(), id);
+		return nodeToReturn;
+	}
+	
+	private static void visitChildren(RootedTree tree, Node node, int id) {
+		if(((SimpleRootedNode)node).getId() == id) {
+			nodeToReturn = node;
+		} else if(nodeToReturn == null){
+			for(Node tempNode:tree.getChildren(node)) {
+				visitChildren(tree, tempNode, id);
+			}
+		}
 	}
 }

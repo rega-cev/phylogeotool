@@ -101,7 +101,7 @@ public class GoogleChartWidget extends WCompositeWidget {
 		strm.append("['Country', 'Cohort size'],");
 		if(countries != null) {
 			for(String country:countries.keySet()) {
-				strm.append("['" + country + "', " + countries.get(country) + "],");
+				strm.append("[\"" + country + "\", " + countries.get(country) + "],");
 			}
 			strm.deleteCharAt(strm.length() - 1);
 		}

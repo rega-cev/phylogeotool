@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Reader;
 
 import jebl.evolution.io.ImportException;
-import jebl.evolution.io.NewickImporter;
 import jebl.evolution.trees.Tree;
 
 public class TreeTools {

@@ -25,7 +25,7 @@ public class RemoveShortSequences {
 		List<Sequence> result = checkSequenceLength(sequences, sequenceLength);
 
 		try {
-			CsvUtils.writeSequencesToCSV(outputFile, result);
+			CsvUtils.writeSequencesToCSV(outputFile, result, ';');
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

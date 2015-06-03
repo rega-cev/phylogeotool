@@ -1,119 +1,111 @@
 package be.kuleuven.rega.phylogeotool.distance;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 
-import jebl.evolution.graphs.Node;
-import jebl.evolution.trees.RootedTree;
 import be.kuleuven.rega.comparator.ClusterSizeComparator;
-import be.kuleuven.rega.phylogeotool.tree.tools.NodeIndexProvider;
-import edu.uci.ics.jung.graph.DelegateTree;
+import be.kuleuven.rega.phylogeotool.tree.Edge;
+import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.tree.Tree;
 
-public class MidRootCluster<V,E> {
+public class MidRootCluster {
 	
 	private int numberOfIClusters;
-	private RootedTree tree;
-	private int biggestCluster = 0;
 	
-	public MidRootCluster(int numberOfIClusters, RootedTree tree) {
+	public MidRootCluster(int numberOfIClusters) {
 		this.numberOfIClusters = numberOfIClusters;
-		this.tree = tree;
 	}
 
-	public DelegateTree<V,E> calculate(Node rootNode) {
+	public Tree calculate(Tree tree, Node startNode) {
 		LinkedList<Node> tempQueue = new LinkedList<Node>();
-		DelegateTree<V,E> jungTree = new DelegateTree<V,E>();
-		jungTree.addVertex((V)rootNode);
+		ClusterSizeComparator clusterSizeComparator = new ClusterSizeComparator();
 		
-		tempQueue.addAll(getChildrenBiggestFirst(tree, rootNode));
+		Set<Node> clusteredNodes = new HashSet<Node>();
+		Set<Edge> clusteredEdges = new HashSet<Edge>();
+		
+		clusteredNodes.add(startNode);
+		
+		tempQueue.addAll(startNode.getChildren());
+		Collections.sort(tempQueue, clusterSizeComparator);
 		Node node = null;
-		int i = 1;
 		int nrNodesNoChildren = 0;
 		while(true) {
+			// Inner nodes
 			if(tempQueue.size() > 0 && (tempQueue.size() + nrNodesNoChildren) < getNumberOfIClusters()) {
 				node = tempQueue.pop();
-				jungTree.addChild((E) ("Edge" + Integer.toString(i)), ((V)tree.getParent(node)), ((V)node));
-				int nrChildren = getChildrenBiggestFirst(tree, node).size();
+				clusteredNodes.add(node);
+				clusteredEdges.add(tree.getEdge(node.getParent(), node));
+				int nrChildren = node.getChildren().size();
 				if(nrChildren == 0) {
 					nrNodesNoChildren += 1;
 				} else {
-					tempQueue.addAll(getChildrenBiggestFirst(tree, node));
+					tempQueue.addAll(node.getChildren());
+					Collections.sort(tempQueue, clusterSizeComparator);
 				}
+			// Leafs
 			} else {
-				if(tempQueue.size() != 0) {
-					//TODO: Need method to define number of children from
-					//biggestCluster = ((SimpleRootedNode)tempQueue.peek()).
-				} else {
-					biggestCluster = 0;
-				}
+//				totalAmountOfSequences = tree.getRootNode().getLeaves().size();
+				// Remove the small clusters 
+				//tempQueue = recluster(tempQueue, jungTree);
 				for(Node tempNode:tempQueue) {
-					jungTree.addChild((E) ("Edge" + Integer.toString(i)), ((V)tree.getParent(tempNode)), ((V)tempNode));
-					i++;
+					tempNode.setSize(tempNode.getLeaves().size());
+//					tempNode.removeChildren();
+					clusteredNodes.add(tempNode);
+					clusteredEdges.add(tree.getEdge(tempNode.getParent(), tempNode));
 				}
+				
+				// TODO: Look at this part of the code. Why is it still needed
+//				for(V vertix:jungTree.getVertices()) {
+//					if((jungTree.getChildren(vertix).size() == 0) && JeblTools.getLeaves(this.tree, ((Node)vertix)).size() < (totalAmountOfSequences*0.001)) {
+//						this.nrBadClusters++;
+//					}
+//				}
+				
 				break;
 			}
-			i++;
 		}
-		return jungTree;
+		
+		Tree clonedTree = new Tree(clusteredNodes, clusteredEdges, startNode).clone();
+		for(Node tempNode:clonedTree.getNodes()) {
+			tempNode.setX(0.0);
+			tempNode.setY(0.0);
+			tempNode.setTheta(0.0);
+		}
+		return clonedTree;
 	}
 	
+	/**
+	 * This method cluster smaller clusters (contains < 0.1% of total amount of sequences) into their closest neighbor
+	 * @return the newly clustered tree
+	 */
+//	private LinkedList<Node> recluster(LinkedList<Node> queue, DelegateTree<V,E> tree) {
+//		int totalLeaves = JeblTools.getLeaves(this.tree, this.tree.getRootNode()).size();
+//		LinkedList<Node> tempQueue = (LinkedList<Node>)queue.clone();
+//		
+//		for(Node node:queue) {
+//			if(JeblTools.getLeaves(this.tree, node).size() < (totalLeaves*0.001)) {
+//				Node parent = this.tree.getParent(node);
+//				List<Node> children = this.tree.getChildren(parent);
+//				for(Node childNode:children) {
+//					if(childNode != node) {
+//						if(queue.contains(childNode)) {
+//							tempQueue.remove(tempQueue.indexOf(childNode));
+//							tempQueue.remove(tempQueue.indexOf(node));
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return tempQueue;
+//	}
+	
 	public int getNumberOfIClusters() {
-		return numberOfIClusters;
+		return this.numberOfIClusters;
 	}
 
 	public void setNumberOfIClusters(int numberOfIClusters) {
 		this.numberOfIClusters = numberOfIClusters;
-	}
-	
-	public List<Node> getChildrenBiggestFirst(RootedTree tree, Node node) {
-		List<Node> sortedList = tree.getChildren(node);
-		Collections.sort(sortedList, new ClusterSizeComparator(tree));
-		return sortedList;
-	}
-	
-	public be.kuleuven.rega.phylogeotool.tree.Node jeblToPhyloGeoNode(jebl.evolution.graphs.Node node, NodeIndexProvider nodeIndexProvider) {
-		// TODO: Implement method to go from JEBL to PhyloGeoTree
-		be.kuleuven.rega.phylogeotool.tree.Node tempNode = new be.kuleuven.rega.phylogeotool.tree.Node();
-		if(tree.getTaxon(node) != null) {
-			tempNode.setLabel(tree.getTaxon(node).getName());
-		}
-		
-		if(tree.getChildren(node).size() != 0) {
-			for(Node child:tree.getChildren(node)) {
-				be.kuleuven.rega.phylogeotool.tree.Node phylogeoNode = new be.kuleuven.rega.phylogeotool.tree.Node(nodeIndexProvider);
-				tempNode.addChild(phylogeoNode);
-				fillTree(child, phylogeoNode, nodeIndexProvider);
-			}
-		} else {
-			if(tree.getTaxon(node) != null) {
-				tempNode.setLabel(tree.getTaxon(node).getName());
-			}
-		}
-		
-		return tempNode;
-	}
-	
-	private void fillTree(jebl.evolution.graphs.Node node, be.kuleuven.rega.phylogeotool.tree.Node rootNode, NodeIndexProvider nodeIndexProvider) {
-		if(tree.getChildren(node).size() != 0) {
-			for(Node child:tree.getChildren(node)) {
-				be.kuleuven.rega.phylogeotool.tree.Node phylogeoNode = new be.kuleuven.rega.phylogeotool.tree.Node(nodeIndexProvider);
-				rootNode.addChild(phylogeoNode);
-				phylogeoNode.setParent(rootNode);
-				fillTree(child, phylogeoNode, nodeIndexProvider);
-			}
-		} else {
-			if(tree.getTaxon(node) != null) {
-				rootNode.setLabel(tree.getTaxon(node).getName());
-			}
-		}
-	}
-
-	public RootedTree getJeblTree() {
-		return this.tree;
-	}
-	
-	public int getBiggestCluster() {
-		return biggestCluster;
 	}
 }

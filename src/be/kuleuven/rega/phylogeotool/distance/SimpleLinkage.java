@@ -15,20 +15,21 @@ public class SimpleLinkage {
 		}
 	}
 
+	// TODO: CHECK IF STILL NEEDED
 	public double measure(ICluster cluster1, ICluster cluster2) {
 		double currentClosest = Double.MAX_VALUE;
 
-		Set<Node> leavesCluster1 = cluster1.getLeaves();
-		Set<Node> leavesCluster2 = cluster2.getLeaves();
-
-		for (Node node1 : leavesCluster1) {
-			for (Node node2 : leavesCluster2) {
-				double distance = cluster1.getDistanceProvider().getDistance(node1, node2);
-				if (distance < currentClosest) {
-					currentClosest = distance;
-				}
-			}
-		}
+//		Set<Node> leavesCluster1 = cluster1.getLeaves();
+//		Set<Node> leavesCluster2 = cluster2.getLeaves();
+//
+//		for (Node node1 : leavesCluster1) {
+//			for (Node node2 : leavesCluster2) {
+//				double distance = cluster1.getDistanceProvider().getDistance(node1, node2);
+//				if (distance < currentClosest) {
+//					currentClosest = distance;
+//				}
+//			}
+//		}
 
 		return currentClosest;
 	}

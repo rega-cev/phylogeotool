@@ -13,16 +13,19 @@ import be.kuleuven.rega.phylogeotool.data.fasta.FastaUtils;
 public class CsvToFasta {
 	
 	public static void main(String args[]) throws IOException {
-		String fileInputLocation = args[0];
-		String fileOutputLocation = args[1];
+		if (args.length != 2) {
+			System.err.println("csv2fasta input.csv output.fasta");
+			System.exit(0);
+		}
+		
+		File inputFile = new File(args[0]);
+		File outputFile = new File(args[1]);
 		
 		List<Sequence> sequences = null;
-		File inputFile = new File(fileInputLocation);
-		File outputFile = new File(fileOutputLocation);
 		try {
-			sequences = CsvUtils.readCsv(inputFile, ',', "yyyy-MM-dd");
+			sequences = CsvUtils.readCsv(inputFile, ';', "yyyy-MM-dd");
 		} catch (IOException e) {
-			System.err.println("File with location: " + fileInputLocation + " cannot be found.");
+			System.err.println("File with location: " + inputFile.getAbsolutePath() + " cannot be found.");
 			e.printStackTrace();
 		}
 		
@@ -37,7 +40,7 @@ public class CsvToFasta {
 			}
 			fw.close();
 		} catch (FileNotFoundException e) {
-			System.err.println("File with location: " + fileInputLocation + " cannot be found.");
+			System.err.println("File with location: " + outputFile.getAbsolutePath() + " cannot be found.");
 			e.printStackTrace();
 		} finally {
 			if (fw != null)

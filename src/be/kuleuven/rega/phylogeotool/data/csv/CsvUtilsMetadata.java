@@ -12,10 +12,11 @@ public class CsvUtilsMetadata {
 
 	private File csvFile = null;
 	private CSVReader csvReader = null;
-	private char delimitor = ',';
+	private char delimitor;
 	
-	public CsvUtilsMetadata(File csvFile) throws FileNotFoundException {
+	public CsvUtilsMetadata(File csvFile, char delimitor) throws FileNotFoundException {
 		this.csvFile = csvFile;
+		this.delimitor = delimitor;
 		csvReader = new CSVReader(new FileReader(csvFile), delimitor);
 	}
 	
@@ -30,6 +31,12 @@ public class CsvUtilsMetadata {
 		csvReader = new CSVReader(new FileReader(csvFile), delimitor, ' ', id);
 		return csvReader.readNext();
 	}
+	
+//	public String[] getDataFromSequenceId(int id) throws IOException {
+//		csvReader.close();
+//		csvReader = new CSVReader(new FileReader(csvFile), delimitor, ' ');
+//		return csvReader.readNext();
+//	}
 
 	public String[] getDataFromIdWithBuffer(int id, int buffer) throws IOException {
 		csvReader.close();

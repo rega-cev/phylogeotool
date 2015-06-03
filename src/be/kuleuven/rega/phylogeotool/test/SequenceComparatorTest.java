@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import be.kuleuven.rega.phylogeotool.comparator.SequenceComparator;
+import be.kuleuven.rega.comparator.SequenceComparator;
 import be.kuleuven.rega.phylogeotool.data.Sequence;
 
 public class SequenceComparatorTest extends TestCase {

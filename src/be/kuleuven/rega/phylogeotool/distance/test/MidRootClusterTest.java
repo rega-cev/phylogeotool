@@ -7,18 +7,15 @@ import java.io.IOException;
 
 import jebl.evolution.io.ImportException;
 import jebl.evolution.io.NewickImporter;
-import jebl.evolution.trees.RootedTree;
 
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 import be.kuleuven.rega.phylogeotool.distance.MidRootCluster;
-import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
 
 public class MidRootClusterTest {
 	
-	private jebl.evolution.trees.RootedTree treeJebl = null;
+	private SimpleRootedTree treeJebl = null;
 	private MidRootCluster midRootCluster = null;
 	
 	@Before
@@ -30,20 +27,13 @@ public class MidRootClusterTest {
 			BufferedReader br = new BufferedReader(new FileReader(new File(treeLocation)));
 			NewickImporter newickImporter = new NewickImporter(br, false);
 			while (newickImporter.hasTree()) {
-				treeJebl = (RootedTree)newickImporter.importNextTree();
+				treeJebl = (SimpleRootedTree)newickImporter.importNextTree();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ImportException e) {
 			e.printStackTrace();
 		}
-		midRootCluster = new MidRootCluster(10, treeJebl);
+		midRootCluster = new MidRootCluster(10);
 	}
-
-	@Test
-	public void testJeblToPhyloGeoNode() {
-		Node node = midRootCluster.jeblToPhyloGeoNode(treeJebl.getRootNode(), null);
-		Assert.assertEquals(68, node.getLeaves().size());
-	}
-	
 }
