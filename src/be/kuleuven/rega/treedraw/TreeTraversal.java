@@ -1,6 +1,10 @@
 package be.kuleuven.rega.treedraw;
 
-import java.util.List;
+import java.util.Set;
+
+import be.kuleuven.rega.phylogeotool.tree.Edge;
+import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.tree.Shape;
 
 public class TreeTraversal {
 	
@@ -17,7 +21,7 @@ public class TreeTraversal {
 	 * @param simpleRootedTree
 	 * @param root
 	 */
-	public static void preOrder (Node root, List<Edge> edges, Shape shape) {
+	public static void preOrder (Node root, Set<Edge> edges, Shape shape) {
 		if(root == null) return;
 		
 		// Calculate x || Calculate r
@@ -69,12 +73,12 @@ public class TreeTraversal {
 	 * @param simpleRootedTree
 	 * @param root
 	 */
-	public static void postOrder (Node root, Shape shape, int nrLeaves) {
+	public static void postOrder (Node root, Shape shape, int nrLeaves, int deepestLevel) {
 		if(root == null) return;
 		// Inner node
 		if(root.getChildren().size() > 0) {
-			postOrder(root.getChildren().get(0), shape, nrLeaves);
-			postOrder(root.getChildren().get(1), shape, nrLeaves);
+			postOrder(root.getChildren().get(0), shape, nrLeaves, deepestLevel);
+			postOrder(root.getChildren().get(1), shape, nrLeaves, deepestLevel);
 			if(shape == Shape.RECTANGULAR_PHYLOGRAM || shape == Shape.RECTANGULAR_CLADOGRAM) {
 				root.setY((root.getChildren().get(0).getY() + root.getChildren().get(1).getY())/2);
 			} else if(shape == Shape.CIRCULAR_PHYLOGRAM) {
@@ -90,13 +94,13 @@ public class TreeTraversal {
 			}
 		// Leaf
 		} else {
-			postOrder(null, shape, nrLeaves);
+			postOrder(null, shape, nrLeaves, deepestLevel);
 			if(shape == Shape.RECTANGULAR_PHYLOGRAM || shape == Shape.RECTANGULAR_CLADOGRAM) {
 				root.setY(++y);
 			} else if(shape == Shape.CIRCULAR_PHYLOGRAM || shape == Shape.RADIAL) {
 				root.setTheta(2*Math.PI*((double)++y/nrLeaves));
 			} else if(shape == Shape.CIRCULAR_CLADOGRAM) {
-				root.setX(5.0);
+				root.setX(deepestLevel);
 				root.setTheta(2*Math.PI*((double)++y/nrLeaves));
 			}
 		}

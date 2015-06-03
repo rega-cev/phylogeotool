@@ -1,21 +1,22 @@
-package be.kuleuven.rega.treedraw;
+package be.kuleuven.rega.phylogeotool.tree;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
-	private String data;
+	private int id;
 	private String label;
 	private Node parent;
 	private List<Node> children;
 	private List<Node> leafs;
+	private List<String> leafsAsString;
 	private double x = 0.0;
 	private double y = 0.0;
 	private double theta = 0.0;
 	private int size = 0;
 	private Color nodeColor;
-	
+
 	public Node() {
 		this.children = new ArrayList<Node>();
 		this.label = "";
@@ -26,12 +27,18 @@ public class Node {
 		this.label = label;
 	}
 
-	public String getData() {
-		return data;
+	public Node(String label, int id) {
+		this.children = new ArrayList<Node>();
+		this.label = label;
+		this.id = id;
 	}
 
-	public void setData(String data) {
-		this.data = data;
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public Node getParent() {
@@ -54,6 +61,14 @@ public class Node {
 	// }
 	public void addChild(Node node) {
 		this.children.add(node);
+	}
+	
+	public void removeChild(Node node) {
+		this.children.remove(node);
+	}
+
+	public void removeChildren() {
+		this.children = new ArrayList<Node>();
 	}
 
 	public boolean hasChildren() {
@@ -83,7 +98,7 @@ public class Node {
 	public void setY(double y) {
 		this.y = y;
 	}
-	
+
 	public double getTheta() {
 		return theta;
 	}
@@ -102,6 +117,21 @@ public class Node {
 		return leafs;
 	}
 
+	public List<String> getLeavesAsString() {
+		if(leafsAsString != null) {
+			return leafsAsString;
+		} else {
+			leafsAsString = new ArrayList<String>();
+			if (leafs == null) {
+				this.getLeaves();
+			}
+			for(Node node:leafs) {
+				leafsAsString.add(node.getLabel());
+			}
+		}
+		return leafsAsString;
+	}
+
 	public void visitNode(Node node) {
 		if (node.hasChildren() && node.getChildren().get(0) != null) {
 			visitNode(node.getChildren().get(0));
@@ -113,11 +143,11 @@ public class Node {
 			leafs.add(node);
 		}
 	}
-	
+
 	public int getSize() {
 		return this.size;
 	}
-	
+
 	public void setSize(int size) {
 		this.size = size;
 	}
@@ -125,20 +155,35 @@ public class Node {
 	public void setColor(Color color) {
 		this.nodeColor = color;
 	}
-	
+
 	public Color getColor() {
 		return nodeColor;
 	}
-	
+
 	public static double polarToEucledianX(Node node) {
-		return node.getX()*Math.cos(node.getTheta());
+		return node.getX() * Math.cos(node.getTheta());
 	}
 
 	public static double polarToEucledianY(Node node) {
-		return node.getX()*Math.sin(node.getTheta());
+		return node.getX() * Math.sin(node.getTheta());
 	}
-	
+
 	public boolean hasParent() {
 		return getParent() != null;
+	}
+	
+	// TODO: Check if it's better to clone the leaves as well.
+	public Node clone() {
+		Node node = new Node(this.getLabel(), this.getId());
+		node.setColor(this.getColor());
+		node.setParent(this.getParent());
+		for(Node tempNode:this.getChildren()) {
+			node.addChild(tempNode);
+		}
+		node.setSize(this.getSize());
+		node.setTheta(this.getTheta());
+		node.setX(this.getX());
+		node.setY(this.getY());
+		return node;
 	}
 }

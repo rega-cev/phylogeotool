@@ -1,44 +1,53 @@
 package be.kuleuven.rega.treedraw;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.List;
+import java.util.Set;
 
+import be.kuleuven.rega.listeners.WCircleNodeClickListener;
+import be.kuleuven.rega.listeners.WCircleNodeDoubleClickListener;
+import be.kuleuven.rega.phylogeotool.tree.Edge;
+import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.tree.Shape;
+import be.kuleuven.rega.phylogeotool.tree.Tree;
+import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
+import be.kuleuven.rega.webapp.GraphWebApplication;
 import be.kuleuven.rega.webapp.WebGraphics2DMine;
-import eu.webtoolkit.jwt.WContainerWidget;
-import eu.webtoolkit.jwt.WLength;
-import eu.webtoolkit.jwt.WPaintDevice;
+import eu.webtoolkit.jwt.Cursor;
 import eu.webtoolkit.jwt.WPaintedWidget;
-import eu.webtoolkit.jwt.WPainter;
 
-public class DrawCircular extends WPaintedWidget {
+public class DrawCircular implements Draw {
 
 	private WebGraphics2DMine graphics = null;
-	private List<Node> nodes = null;
-	private List<Edge> edges = null;
+	private Tree tree;
+	private Set<Node> nodes = null;
+	private Set<Edge> edges = null;
 	private Shape shape = null;
 
-	public DrawCircular(WContainerWidget parent, List<Node> nodes, List<Edge> edges, Shape shape) {
-		super(parent);
-		this.nodes = nodes;
-		this.edges = edges;
+	public DrawCircular(Tree tree, Shape shape) {
+		this.tree = tree;
+		this.nodes = tree.getNodes();
+		this.edges = tree.getEdges();
 		this.shape = shape;
-		this.resize(new WLength(1200), new WLength(700));
 	}
 
-	@Override
-	protected void paintEvent(WPaintDevice paintDevice) {
-		WPainter painter = new WPainter(paintDevice);
-		graphics = new WebGraphics2DMine(painter);
+	public void paint(GraphWebApplication graphWebApplication, WPaintedWidget wPaintedWidget, WebGraphics2DMine graphics, double width, double height) {
 		// TODO: Look for height of component
-		double moveRight = getWidth().getValue() / 2;
-		double moveDown = getHeight().getValue() / 2;
+		this.graphics = graphics;
+//		double moveRight = width / 2;
+//		double moveDown = height / 2;
+		
+		double moveRight = 350;
+		double moveDown = 300;
+		
 //		Determine how to determine the factor. Now based on amount of height of screen and amount of nodes
-		double factor = (getHeight().getValue()*2)/(nodes.size()*1.5);
+//		double factor = (height*2)/(nodes.size()*1.5);
+		double factor = 20;
 		
 		double maxRadius = 80;
 		double maxNodeSurface = Math.PI * Math.pow(maxRadius, 2);
@@ -72,11 +81,12 @@ public class DrawCircular extends WPaintedWidget {
 				} else {
 					// Calculate the eucledian distance from the center of the tree to the startnode (this to know the width of the circle)
 					// d(p,q) = Math.sqrt(Math.pow((x1-x2),2) + Math.pow((y1-y2),2))
-					circleWidth = (int) (2 * Math.sqrt((Math.pow(((Node.polarToEucledianX(edge.getNode1()) * factor + moveRight)-(Node.polarToEucledianX(nodes.get(nodes.size() - 1)) * factor + moveRight)), 2) + Math.pow(((Node.polarToEucledianY(edge.getNode1()) * factor + moveRight)-(Node.polarToEucledianY(nodes.get(nodes.size() - 1)) * factor + moveRight)), 2))));
+					circleWidth = (int) (2 * Math.sqrt((Math.pow(((Node.polarToEucledianX(edge.getNode1()) * factor + moveRight)-(Node.polarToEucledianX(tree.getRootNode()) * factor + moveRight)), 2) + Math.pow(((Node.polarToEucledianY(edge.getNode1()) * factor + moveRight)-(Node.polarToEucledianY(tree.getRootNode()) * factor + moveRight)), 2))));
 				}
-				Rectangle boundingBox = new Rectangle((int) (Node.polarToEucledianX(nodes.get(nodes.size() - 1)) * factor + moveRight - circleWidth / 2), (int) (Node.polarToEucledianY(nodes.get(nodes.size() - 1)) * factor + moveDown - circleWidth / 2), circleWidth, circleWidth);
+				Rectangle boundingBox = new Rectangle((int) (Node.polarToEucledianX(tree.getRootNode()) * factor + moveRight - circleWidth / 2), (int) (Node.polarToEucledianY(tree.getRootNode()) * factor + moveDown - circleWidth / 2), circleWidth, circleWidth);
 				graphics.draw(new Arc2D.Double(boundingBox, 360 - Math.toDegrees(edge.getNode1().getTheta()), Math.toDegrees(edge.getNode1().getTheta()) - Math.toDegrees(edge.getNode2().getTheta()), Arc2D.Double.OPEN));
 				graphics.draw(new Line2D.Double(corner, end));
+				graphics.drawString(Integer.toString(edge.getNode2().getId()), (int)edge.getNode2().getX(), (int)edge.getNode2().getY());
 			} else if (shape == Shape.RADIAL) {
 				graphics.draw(new Line2D.Double(edge.getNode1().getX() * factor + moveRight, edge.getNode1().getY() * factor + moveDown, edge.getNode2().getX() * factor + moveRight, edge.getNode2().getY() * factor + moveDown));
 			}
@@ -97,7 +107,20 @@ public class DrawCircular extends WPaintedWidget {
 				graphics.fill(circle);
 				// If you want the circle to be surrounded
 				graphics.setColor(graphics.getColor().darker());
+//				graphics.setStroke(new BasicStroke(5));
 				graphics.draw(circle);
+				
+				final WCircleNode wCircle = new WCircleNode((int)(x), (int)(y), (int)(r/2), edge.getNode2());
+				wCircle.setToolTip("Node " + edge.getNode2().getId());
+				wCircle.setCursor(Cursor.CrossCursor);
+				
+				// TODO: Handle the clicks. How to?
+				wCircle.clicked().addListener(wPaintedWidget, new WCircleNodeClickListener(wCircle, graphWebApplication));
+				wCircle.doubleClicked().addListener(wPaintedWidget, new WCircleNodeDoubleClickListener(wCircle, graphWebApplication));
+				
+				wPaintedWidget.addArea(wCircle);
+				
+				graphics.drawString(Integer.toString(edge.getNode2().getSize()), (int)(x - 20), (int)(y + r/2 + 20));
 			}
 			if(!edge.getNode1().hasParent()) {
 				int r = 5;
@@ -110,8 +133,8 @@ public class DrawCircular extends WPaintedWidget {
 	
 	public double getRadius(double maxNodeSurface, double maxSize, int nrSequences) {
 		double toReturn = Math.sqrt((maxNodeSurface*(nrSequences/maxSize))/Math.PI);
-		if(toReturn < 2.5) {
-			return 2.5;
+		if(toReturn < 5) {
+			return 5;
 		} else {
 			return toReturn;
 		}

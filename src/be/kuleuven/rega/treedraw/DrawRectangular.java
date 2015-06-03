@@ -1,36 +1,55 @@
 package be.kuleuven.rega.treedraw;
 
+import java.awt.Color;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.Set;
 
+import be.kuleuven.rega.phylogeotool.tree.Edge;
+import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.tree.Shape;
+import be.kuleuven.rega.phylogeotool.tree.Tree;
+import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
+import be.kuleuven.rega.webapp.GraphWebApplication;
 import be.kuleuven.rega.webapp.WebGraphics2DMine;
+import eu.webtoolkit.jwt.Cursor;
 import eu.webtoolkit.jwt.WContainerWidget;
 import eu.webtoolkit.jwt.WLength;
 import eu.webtoolkit.jwt.WPaintDevice;
 import eu.webtoolkit.jwt.WPaintedWidget;
 import eu.webtoolkit.jwt.WPainter;
 
-public class DrawRectangular extends WPaintedWidget {
+public class DrawRectangular implements Draw {
 
 	private WebGraphics2DMine graphics = null;
-	private List<Node> nodes = null;
-	private List<Edge> edges = null;
-	private int nodeHeight = 10;
+	private Tree tree;
+	private Set<Node> nodes = null;
+	private Set<Edge> edges = null;
+	private Shape shape = null;
 	private int nodeWidth = 10;
+	private int nodeHeight = 10;
 	
-	public DrawRectangular(WContainerWidget parent, List<Node> nodes, List<Edge> edges) {
-		super(parent);
-		this.nodes = nodes;
-		this.edges = edges;
-		this.resize(new WLength(550), new WLength(550));
+	public DrawRectangular(Tree tree, Shape shape) {
+		this.tree = tree;
+		this.nodes = tree.getNodes();
+		this.edges = tree.getEdges();
+		this.shape = shape;
 	}
 	
-	@Override
-	protected void paintEvent(WPaintDevice paintDevice) {
-		WPainter painter = new WPainter(paintDevice);
-		//painter.setBrush(new WBrush(WColor.blue).clone());
-		graphics = new WebGraphics2DMine(painter);
+	public void paint(GraphWebApplication graphWebApplication, WPaintedWidget wPaintedWidget, WebGraphics2DMine graphics, double width, double height) {
+		this.graphics = graphics;
+//		double moveRight = width / 2;
+//		double moveDown = height / 2;
+		
+		double moveRight = 350;
+		double moveDown = 300;
+		
+//		Determine how to determine the factor. Now based on amount of height of screen and amount of nodes
+//		double factor = (height*2)/(nodes.size()*1.5);
+//		double factor = 20;
+		
 		double maxX = 0;
 		double maxY = 0;
 		/*
@@ -46,18 +65,66 @@ public class DrawRectangular extends WPaintedWidget {
 		}
 		
 		// TODO: Look for height of component
-		double factorX = 500d / maxX;
-		double factorY = 500d / maxY;
+//		double factorX = width / maxX;
+//		double factorY = height / maxY;
+		double factorX = 50;
+		double factorY = 50;
+		
+		double maxRadius = 80;
+		double maxNodeSurface = Math.PI * Math.pow(maxRadius, 2);
+		
+		int maxSize = 0;
+		for(Node node:nodes) {
+			if(!node.hasChildren()) {
+				if(node.getSize() > maxSize) {
+					maxSize = node.getSize();
+				}
+			}
+		}
+		
 //		for(Node node:nodes) {
 //			graphics.draw(new Rectangle((int)Math.ceil(node.getX()*factorX), (int)Math.ceil(node.getY()*factorY), nodeWidth, nodeHeight));
 //		}
 		
 		for(Edge edge:edges) {
-			Point2D corner = new Point2D.Double(Math.ceil(edge.getNode1().getX()*factorX) + nodeWidth/2, Math.ceil(edge.getNode2().getY()*factorY + nodeHeight/2));
-			Point2D start = new Point2D.Double(Math.ceil(edge.getNode1().getX()*factorX) + nodeWidth/2, Math.ceil(edge.getNode1().getY()*factorY + nodeHeight/2));
-			Point2D end = new Point2D.Double(Math.ceil(edge.getNode2().getX()*factorX) + nodeWidth/2, Math.ceil(edge.getNode2().getY()*factorY + nodeHeight/2));
+			graphics.setColor(Color.BLACK);
+			Point2D corner = new Point2D.Double(Math.ceil(edge.getNode1().getX()*factorX), Math.ceil(edge.getNode2().getY()*factorY));
+			Point2D start = new Point2D.Double(Math.ceil(edge.getNode1().getX()*factorX), Math.ceil(edge.getNode1().getY()*factorY));
+			Point2D end = new Point2D.Double(Math.ceil(edge.getNode2().getX()*factorX), Math.ceil(edge.getNode2().getY()*factorY));
 			graphics.draw(new Line2D.Double(start, corner));
 			graphics.draw(new Line2D.Double(corner, end));
+			
+			// Draw circles at the end
+			if (!edge.getNode2().hasChildren()) {
+				graphics.setColor(edge.getNode2().getColor());
+//				double r = getRadius(maxNodeSurface, maxSize, edge.getNode2().getSize());
+				double r = 20;
+				double x = end.getX();
+				double y = end.getY() - r/2;
+				Ellipse2D.Double circle = new Ellipse2D.Double(x, y, r, r);
+				graphics.fill(circle);
+				// If you want the circle to be surrounded
+				graphics.setColor(graphics.getColor().darker());
+				graphics.draw(circle);
+			
+//				final WCircleNode wCircle = new WCircleNode((int)(edge.getNode2().getX()), (int)(edge.getNode2().getY()), (int)(r/2), edge.getNode2());
+//				wCircle.setToolTip("Node " + edge.getNode2().getId());
+//				wCircle.setCursor(Cursor.CrossCursor);
+//				
+//				wPaintedWidget.addArea(wCircle);
+				
+//				graphics.drawString(Integer.toString(edge.getNode2().getSize()), (int)(x + r + 10), (int)(y + r/2 + 10));
+				graphics.drawString(edge.getNode2().getLabel(), (int)(x + r + 10), (int)(y + r/2 + 10));
+			}
+		}
+	}
+	
+	public double getRadius(double maxNodeSurface, double maxSize, int nrSequences) {
+		double toReturn = Math.sqrt((maxNodeSurface*(nrSequences/maxSize))/Math.PI);
+		if(toReturn < 5) {
+			return 5;
+		} else {
+			return toReturn;
 		}
 	}
 

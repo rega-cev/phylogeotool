@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.kuleuven.rega.phylogeotool.tree.Edge;
+import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.tree.Shape;
 import be.kuleuven.rega.treedraw.DrawCircular;
 import be.kuleuven.rega.treedraw.DrawRectangular;
-import be.kuleuven.rega.treedraw.Edge;
-import be.kuleuven.rega.treedraw.Node;
-import be.kuleuven.rega.treedraw.Shape;
 import be.kuleuven.rega.treedraw.TreeTraversal;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WEnvironment;
@@ -188,12 +188,12 @@ public class Application extends WApplication {
 		nodes.add(t19);
         setTitle("Tree draw");
         Shape shape = Shape.RECTANGULAR_PHYLOGRAM;
-        TreeTraversal.postOrder(t19, shape, t19.getLeaves().size());
-        TreeTraversal.preOrder(t19, edges, shape);
+//        TreeTraversal.postOrder(t19, shape, t19.getLeaves().size());
+//        TreeTraversal.preOrder(t19, edges, shape);
         if(shape == Shape.RECTANGULAR_CLADOGRAM || shape == Shape.RECTANGULAR_PHYLOGRAM) {
-        	new DrawRectangular(getRoot(), nodes, edges);
+//        	new DrawRectangular(getRoot(), nodes, edges);
         } else {
-        	new DrawCircular(getRoot(), nodes, edges, shape);
+//        	new DrawCircular(getRoot(), nodes, edges, shape);
         }
 	}
 }

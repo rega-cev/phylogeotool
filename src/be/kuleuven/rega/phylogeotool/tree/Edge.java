@@ -1,4 +1,4 @@
-package be.kuleuven.rega.treedraw;
+package be.kuleuven.rega.phylogeotool.tree;
 
 public class Edge {
 
@@ -51,5 +51,9 @@ public class Edge {
 	public void setDistance(double distance) {
 		this.distance = distance;
 	}
-
+	
+	@Override
+	public String toString() {
+		return this.label + " " + this.node1.getId() + " to " + this.node2.getId() + " distance: " + this.distance;
+	}
 }
