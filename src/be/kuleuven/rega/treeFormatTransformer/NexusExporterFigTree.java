@@ -17,6 +17,8 @@ import java.io.Writer;
 import java.util.*;
 import java.util.List;
 
+import be.kuleuven.rega.phylogeotool.tree.tools.JeblTools;
+
 /**
  * Export sequences and trees to Nexus format.
  *
@@ -321,6 +323,7 @@ public class NexusExporterFigTree {
 			// whet it is present.
 			if (parent != null) {
 				if (tree.hasLengths()) {
+					builder.append("[&!color=" + this.taxonNameToColor.get(JeblTools.getLeafNames(tree, node).get(0)) + "]");
 					builder.append(":").append(tree.getLength(node));
 				}
 			}
