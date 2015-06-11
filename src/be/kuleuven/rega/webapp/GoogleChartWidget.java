@@ -95,7 +95,8 @@ public class GoogleChartWidget extends WCompositeWidget {
 		StringBuilder strm = new StringBuilder();
 		String regionToView = "";
 		if(regionToDigit.containsKey(region)) { regionToView = regionToDigit.get(region); } else { regionToView = "world"; }
-		strm.append("var options = {explorer: {maxZoomOut:2,keepInBounds: true}};");
+//		strm.append("var options = {explorer: {maxZoomOut:2,keepInBounds: true}, backgroundColor: '#81d4fa', colorAxis: {colors: ['#00853f', 'black', '#e31b23']}};");
+		strm.append("var options = {explorer: {maxZoomOut:2,keepInBounds: true}, datalessRegionColor: 'white', backgroundColor: '#81d4fa', colorAxis: {colors: ['#e9e9e9', 'black']}};");
 		strm.append("options['region'] = '" +  regionToView  + "';");
 		strm.append("var data = google.visualization.arrayToDataTable([");
 		strm.append("['Country', 'Cohort size'],");
@@ -113,7 +114,6 @@ public class GoogleChartWidget extends WCompositeWidget {
 	 * Destructor.
 	 */
 	public void remove() {
-		;
 		super.remove();
 	}
 	

@@ -6,6 +6,6 @@ import eu.webtoolkit.jwt.WPaintedWidget;
 
 public interface Draw {
 
-	public void paint(GraphWebApplication graphWebApplication, WPaintedWidget wPaintedWidget, WebGraphics2DMine graphics, double width, double height);
+	public void paint(GraphWebApplication graphWebApplication, WPaintedWidget wPaintedWidget, WebGraphics2DMine graphics, double width, double height, double paintAreaWidth, double paintAreaHeigth);
 	
 }

@@ -11,6 +11,7 @@ import be.kuleuven.rega.phylogeotool.tree.Tree;
 import be.kuleuven.rega.prerendering.PreRendering;
 import be.kuleuven.rega.treedraw.Draw;
 import be.kuleuven.rega.treedraw.DrawCircular;
+import be.kuleuven.rega.treedraw.DrawRectangular;
 import be.kuleuven.rega.treedraw.TreeTraversal;
 import eu.webtoolkit.jwt.WAbstractArea;
 import eu.webtoolkit.jwt.WApplication;
@@ -119,23 +120,19 @@ public class GraphWidget extends WPaintedWidget {
 		this.treeClustered = treeClustered;
 	}
 
+	//TODO: Check why this method is called 2x
 	@Override
 	protected void paintEvent(WPaintDevice paintDevice) {
 		WPainter painter = new WPainter(paintDevice);
 		graphics = new WebGraphics2DMine(painter);
 		int deepestLevel = 0;
-		// TODO: See if this part of the method is necessary
-//		if ((int) paintDevice.getWidth().getValue() >= (int) paintDevice.getHeight().getValue()) {
-//			this.setSize(paintDevice.getHeight().getValue() / 10);
-//		} else {
-//			this.setSize(paintDevice.getWidth().getValue() / 10);
-//		}
 		//TODO : See if we can get the rectangular representation in here
-//		if(this.getTree().getNodeById(this.getTreeClustered().getRootNode().getId()).getLeaves().size() <= 100) {
-//		if(this.getTreeClustered().getRootNode().getSize() <= 100) {
-//			shape = Shape.RECTANGULAR_CLADOGRAM;
-//			draw = new DrawRectangular(this.getTreeClustered(), shape);
-//		} else {
+		//TODO: Do something about the fixed number 12
+//		if(this.preRendering.getNodeById(this.getTreeClustered().getRootNode().getId()).getLeaves().size() < 12) {
+		if(this.getTreeClustered().getLeaves().size() < 12) {
+			shape = Shape.RECTANGULAR_CLADOGRAM;
+			draw = new DrawRectangular(this.getTreeClustered(), shape);
+		} else {
 			shape = Shape.CIRCULAR_CLADOGRAM;
 			draw = new DrawCircular(this.getTreeClustered(), shape);
 			for(Node node:this.getTreeClustered().getNodes()) {
@@ -144,7 +141,7 @@ public class GraphWidget extends WPaintedWidget {
 					deepestLevel = nodeLevel;
 				}
 			}
-//		}
+		}
 		
 		this.graphProperties.setNodeColor(this.getTreeClustered());
 		TreeTraversal.y = 0;
@@ -153,7 +150,7 @@ public class GraphWidget extends WPaintedWidget {
         for(WAbstractArea area:this.getAreas()) {
         	this.removeArea(area);
         }
-        draw.paint(graphWebApplication, this, graphics, getWidth().getValue(), getHeight().getValue());
+        draw.paint(graphWebApplication, this, graphics, getWidth().getValue(), getHeight().getValue(), paintDevice.getWidth().getValue(), paintDevice.getHeight().getValue());
 	}
 	
 	// TODO: Fix the Nexus Exporter

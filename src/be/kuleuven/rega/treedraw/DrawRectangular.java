@@ -38,13 +38,13 @@ public class DrawRectangular implements Draw {
 		this.shape = shape;
 	}
 	
-	public void paint(GraphWebApplication graphWebApplication, WPaintedWidget wPaintedWidget, WebGraphics2DMine graphics, double width, double height) {
+	public void paint(GraphWebApplication graphWebApplication, WPaintedWidget wPaintedWidget, WebGraphics2DMine graphics, double width, double height, double paintAreaWidth, double paintAreaHeigth) {
 		this.graphics = graphics;
 //		double moveRight = width / 2;
 //		double moveDown = height / 2;
 		
-		double moveRight = 350;
-		double moveDown = 300;
+		double moveRight = paintAreaWidth;
+		double moveDown = paintAreaHeigth;
 		
 //		Determine how to determine the factor. Now based on amount of height of screen and amount of nodes
 //		double factor = (height*2)/(nodes.size()*1.5);

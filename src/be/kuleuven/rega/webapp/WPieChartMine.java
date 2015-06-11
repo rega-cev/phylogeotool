@@ -24,20 +24,19 @@ public class WPieChartMine {
 	private WPieChart chart = null;
 	private WHBoxLayout whBoxLayout = null;
 	private WVBoxLayout wvBoxLayout = null;
-	WWidget legend0 = null;
-	WWidget legend1 = null;
-	WWidget legend2 = null;
-	WWidget legend3 = null;
-	WWidget legend4 = null;
-	WWidget legend5 = null;
-	WWidget legend6 = null;
+	private WWidget legend0 = null;
+	private WWidget legend1 = null;
+	private WWidget legend2 = null;
+	private WWidget legend3 = null;
+	private WWidget legend4 = null;
+	private WWidget legend5 = null;
+	private WWidget legend6 = null;
 	
 	public WPieChartMine(Map<String,Integer> map) {
 		whBoxLayout = new WHBoxLayout();
 		wvBoxLayout = new WVBoxLayout();
 		chart = new WPieChart();
 		setData(map);
-		chart.resize(new WLength(160), new WLength(160));
 		chart.setMargin(new WLength(10), EnumSet.of(Side.Top, Side.Left));
 		whBoxLayout.addWidget(chart);
 		whBoxLayout.addLayout(wvBoxLayout);

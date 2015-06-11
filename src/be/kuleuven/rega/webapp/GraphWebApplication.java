@@ -41,6 +41,11 @@ public class GraphWebApplication extends WApplication {
 	private String csvRenderLocation = "/Users/ewout/Documents/phylogeo/EUResist/xml";
 	private String treeRenderLocation = "/Users/ewout/Documents/phylogeo/EUResist/treeview";
 
+	private double mapWidth = this.getEnvironment().getScreenWidth() * 0.45;
+	private double mapHeigth = this.getEnvironment().getScreenHeight() * 0.60;
+	private double graphWidth = this.getEnvironment().getScreenWidth() * 0.55;
+	private double graphHeigth = this.getEnvironment().getScreenHeight() * 0.95;
+	
 	public GraphWebApplication(WEnvironment env) {
 		super(env);
 		setTitle("PhyloGeoTool");
@@ -50,9 +55,9 @@ public class GraphWebApplication extends WApplication {
 			metaDataFile = new File("/Users/ewout/Documents/phylogeo/EUResist/EUResist.metadata.csv");
 //			metaDataFile = new File("/Users/ewout/Documents/phylogeo/EUResist_New/EUResist.metadata.csv");
 //			metaDataFile = new File("C:\\Program files\\rega_phylogeotool\\EUResist.metadata.csv");
-			WGroupBox wGroupBoxNorth = getNavigationWGroupBox();
+//			WGroupBox wGroupBoxNorth = getNavigationWGroupBox();
 			
-			layout.addWidget(wGroupBoxNorth, WBorderLayout.Position.North);
+//			layout.addWidget(wGroupBoxNorth, WBorderLayout.Position.North);
 			preRendering = new PreRendering(clusterRenderLocation, csvRenderLocation, treeRenderLocation);
 //			preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/portugal/clusters", "/Users/ewout/Documents/phylogeo/portugal/xml", "/Users/ewout/Documents/phylogeo/portugal/treeview");
 			graphWidget = new GraphWidget(this, null, null, preRendering);
@@ -60,25 +65,51 @@ public class GraphWebApplication extends WApplication {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		WGroupBox wGroupBoxGraphWidget = new WGroupBox();
+		WVBoxLayout wVBoxLayoutGraphWidget = new WVBoxLayout(wGroupBoxGraphWidget);
+		WPushButton wPushButton = new WPushButton("View Tree");
+		wPushButton.clicked().addListener(this, new Signal.Listener() {
+			public void trigger() {
+		        showDialog();
+		    }
+		});
+//		wPushButton.resize(30, 30);
+		wVBoxLayoutGraphWidget.addWidget(wPushButton);
+		wVBoxLayoutGraphWidget.addWidget(graphWidget);
 		//WApplication.getInstance().useStyleSheet("/phylogeotool/PhyloGeoTool/style/Cssexample.css");
 		//graphWidget.setStyleClass("CSS-example");
-		//graphWidget.resize(450, 350);
-		layout.addWidget(graphWidget, WBorderLayout.Position.Center);
+		//layout.addWidget(graphWidget, WBorderLayout.Position.Center);
+		
+		layout.addWidget(wGroupBoxGraphWidget, WBorderLayout.Position.East);
 		
 		//wGroupBoxPieChartWidget = getPieChartWGroupBox(null);
 		//wGroupBoxPieChartWidget.hide();
 		//layout.addWidget(wGroupBoxPieChartWidget, WBorderLayout.Position.East);
-		
-		wGroupBoxGoogleMapWidget = getGoogleChartWGroupBox(null,null,null);
+		try {
+			wGroupBoxGoogleMapWidget = getGoogleChartWGroupBox(null,null,null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		layout.addWidget(wGroupBoxGoogleMapWidget, WBorderLayout.Position.West);
 		
 		GraphWebApplication.this.googleChartWidget.setOptions("");
+		this.internalPathChanged().addListener(this,new Signal.Listener() {
+			@Override
+			public void trigger() {
+				pathChanged();
+			}
+		});
+
+//		wPushButton.resize(10, 10);
+		graphWidget.resize((int)graphWidth, (int)graphHeigth);
+//		wVBoxLayoutGraphWidget.resize((int)graphWidth - 100, 450);
+		wGroupBoxGoogleMapWidget.resize((int)mapWidth, 450);
 	}
 
 	public void clicked(Node node) {
 		if(node != null) {
 			HashMap<String, Integer> hashMapTemp = preRendering.readCsv(node.getId(), wComboBoxMetadata.getValueText());
-			System.out.println(hashMapTemp.keySet().size());
+//			System.out.println(hashMapTemp.keySet().size());
 			HashMap<String, Integer> countries = preRendering.readCsv(node.getId(), "COUNTRY_OF_ORIGIN_ISO");
 			GraphWebApplication.this.googleChartWidget.setCountries(countries);
 			GraphWebApplication.this.googleChartWidget.setRegion("");
@@ -93,27 +124,29 @@ public class GraphWebApplication extends WApplication {
 		graphWidget.setTree(node.getId());
 	}
 	
-	private WGroupBox getNavigationWGroupBox() throws IOException {
+	public void pathChanged() {
+		if (WApplication.getInstance().getInternalPath().contains("/root")) {
+			graphWidget.setTree(Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]));
+		} else {
+			// TODO: Change value of clusterId 
+			graphWidget.setTree(1);
+		}
+	}
+	
+	private WGroupBox getNavigationWGroupBox() {
 		WGroupBox wGroupBoxNorth = new WGroupBox();
-		wComboBoxMetadata = new MyComboBox(metaDataFile, csvDelimitor);
-		WPushButton wPushButton = new WPushButton("View Tree");
-		WPushButton wPushButtonBack = new WPushButton("Back");
+//		WPushButton wPushButtonBack = new WPushButton("Back");
 		WPushButton reset = new WPushButton("Reset");
-		wPushButton.clicked().addListener(this, new Signal.Listener() {
-			public void trigger() {
-		        showDialog();
-		    }
-		});
 		
-		// Todo: Add functionality to the back button. Tree should be redrawn
-		wPushButtonBack.clicked().addListener(this, new Signal.Listener() {
-			public void trigger() {
-				if (WApplication.getInstance().getInternalPath().contains("/root")) {
-					Integer previousRootId = graphWidget.getPreviousRootId();
-					graphWidget.setTree(previousRootId);
-				}
-		    }
-		});
+		// Todo: remove the back button
+//		wPushButtonBack.clicked().addListener(this, new Signal.Listener() {
+//			public void trigger() {
+//				if (WApplication.getInstance().getInternalPath().contains("/root")) {
+//					Integer previousRootId = graphWidget.getPreviousRootId();
+//					graphWidget.setTree(previousRootId);
+//				}
+//		    }
+//		});
 		
 		reset.clicked().addListener(this, new Signal.Listener() {
 			public void trigger() {
@@ -128,6 +161,39 @@ public class GraphWebApplication extends WApplication {
 		    }
 		});
 
+		
+//		wGroupBoxNorth.addWidget(wComboBoxMetadata);
+//		wGroupBoxNorth.addWidget(wComboBoxRegions);
+//		wGroupBoxNorth.addWidget(wPushButton);
+//		wGroupBoxNorth.addWidget(wPushButtonBack);
+		wGroupBoxNorth.addWidget(reset);
+		//wGroupBoxNorth.addWidget(slider);
+		return wGroupBoxNorth;
+	}
+
+	private final void showDialog() {
+	    final WDialog dialog = new WDialog("Tree");
+	    WImageTreeMine wImageTreeMine = null;
+	    if (WApplication.getInstance().getInternalPath().contains("/root")) {
+	    	wImageTreeMine = new WImageTreeMine(treeRenderLocation, WApplication.getInstance().getInternalPath().split("/")[2]);
+		} else {
+			// TODO: Change value of clusterId 
+			wImageTreeMine = new WImageTreeMine(treeRenderLocation, "1");
+		}
+	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
+	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
+	    dialog.rejectWhenEscapePressed();
+	    cancel.clicked().addListener(dialog,
+	            new Signal1.Listener<WMouseEvent>() {
+	                public void trigger(WMouseEvent e1) {
+	                    dialog.reject();
+	                }
+	            });
+	    dialog.show();
+	}
+	
+	private WGroupBox getGoogleChartWGroupBox(final HashMap<String, Integer> countries, String region, HashMap<String, Integer> hashMapTemp) throws IOException {
+		WGroupBox wGroupBoxGoogleMapWidget = new WGroupBox();
 		wComboBoxRegions = new WComboBox();
 		wComboBoxRegions.addItem("World");
 		wComboBoxRegions.addItem("Europe");
@@ -162,46 +228,25 @@ public class GraphWebApplication extends WApplication {
 				GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
 			}
 		});
-		
-		wGroupBoxNorth.addWidget(wComboBoxMetadata);
-		wGroupBoxNorth.addWidget(wComboBoxRegions);
-		wGroupBoxNorth.addWidget(wPushButton);
-		wGroupBoxNorth.addWidget(wPushButtonBack);
-		wGroupBoxNorth.addWidget(reset);
-		//wGroupBoxNorth.addWidget(slider);
-		return wGroupBoxNorth;
-	}
-
-	private final void showDialog() {
-	    final WDialog dialog = new WDialog("Tree");
-	    WImageTreeMine wImageTreeMine = null;
-	    if (WApplication.getInstance().getInternalPath().contains("/root")) {
-	    	wImageTreeMine = new WImageTreeMine(treeRenderLocation, WApplication.getInstance().getInternalPath().split("/")[2]);
-		} else {
-			// TODO: Change value of clusterId 
-			wImageTreeMine = new WImageTreeMine(treeRenderLocation, "1");
-		}
-	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
-	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
-	    dialog.rejectWhenEscapePressed();
-	    cancel.clicked().addListener(dialog,
-	            new Signal1.Listener<WMouseEvent>() {
-	                public void trigger(WMouseEvent e1) {
-	                    dialog.reject();
-	                }
-	            });
-	    dialog.show();
-	}
-	
-	private WGroupBox getGoogleChartWGroupBox(final HashMap<String, Integer> countries, String region, HashMap<String, Integer> hashMapTemp) {
-		WGroupBox wGroupBoxGoogleMapWidget = new WGroupBox();
 		WVBoxLayout wvBoxLayout = new WVBoxLayout(wGroupBoxGoogleMapWidget);
+		wvBoxLayout.addWidget(wComboBoxRegions);
 		googleChartWidget = new GoogleChartWidget(countries, region);
-		googleChartWidget.resize(new WLength(600), new WLength(500));
+		googleChartWidget.resize((int)this.mapWidth, (int)(mapHeigth));
 		wvBoxLayout.addWidget(googleChartWidget);
-		wGroupBoxGoogleMapWidget.resize(new WLength(600), new WLength(530));
 		wPieChartMine = new WPieChartMine(hashMapTemp);
+		wPieChartMine.getWPieChart().setWidth(new WLength(this.mapWidth * 0.25));
+		wPieChartMine.getWPieChart().setHeight(new WLength(this.getEnvironment().getScreenHeight() * 0.25));
+		wComboBoxMetadata = new MyComboBox(metaDataFile, csvDelimitor);
+		wvBoxLayout.addWidget(wComboBoxMetadata);
 		wvBoxLayout.addLayout(wPieChartMine.getWidget());
 		return wGroupBoxGoogleMapWidget;
+	}
+	
+	public double getGraphWidth() {
+		return this.graphWidth;
+	}
+	
+	public double getGraphHeight() {
+		return this.graphHeigth;
 	}
 }

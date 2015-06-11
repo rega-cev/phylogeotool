@@ -108,7 +108,7 @@ public class PreRendering {
 					currentNode = toDo.pop();
 					Tree tempTree = clusterAlgos.getCluster(tree,tree.getNodeById(currentNode.getId()), 12);
 //					this.writeTreeToXML(tempTree);
-					this.prepareCSV(currentNode.getId(), currentNode.getLeavesAsString(), csvLocation);
+					this.prepareCSV(currentNode.getId(), tree.getNodeById(currentNode.getId()).getLeavesAsString(), csvLocation);
 //					if(tempTree.getNodes().size() > 1) {
 //						graphProperties.setNodeColor(tempTree);
 //						this.prepareFullTreeView(currentNode.getId(), tree, tempTree, jeblTree);
@@ -252,7 +252,7 @@ public class PreRendering {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			System.out.println(new File(folderLocationCsvs + File.separator + clusterId + ".xml"));
+//			System.out.println(new File(folderLocationCsvs + File.separator + clusterId + ".xml"));
 			Document doc = dBuilder.parse(new File(folderLocationCsvs + File.separator + clusterId + ".xml"));
 			NodeList nList = doc.getElementsByTagName(key);
 		
@@ -260,7 +260,10 @@ public class PreRendering {
 				org.w3c.dom.Node nNode = nList.item(temp);
 				if (nNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-					hashMap.put(eElement.getAttribute("id"), Integer.parseInt(eElement.getTextContent()));
+					if(!eElement.getAttribute("id").equals("XX") && !eElement.getAttribute("id").equals("X1") && !eElement.getAttribute("id").equals("X2") &&
+							!eElement.getAttribute("id").equals("X3") && !eElement.getAttribute("id").equals("X4") && !eElement.getAttribute("id").equals("X5") &&
+							!eElement.getAttribute("id").equals("X6") && !eElement.getAttribute("id").equals(""))
+						hashMap.put(eElement.getAttribute("id"), Integer.parseInt(eElement.getTextContent()));
 //					System.out.println("Subtype : " + eElement.getAttribute("id"));
 //					System.out.println("Value : " + eElement.getTextContent());
 				}

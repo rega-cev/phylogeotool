@@ -16,6 +16,7 @@ import be.kuleuven.rega.phylogeotool.tree.Node;
 import be.kuleuven.rega.phylogeotool.tree.Shape;
 import be.kuleuven.rega.phylogeotool.tree.Tree;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
+import be.kuleuven.rega.treedraw.test.Application;
 import be.kuleuven.rega.webapp.GraphWebApplication;
 import be.kuleuven.rega.webapp.WebGraphics2DMine;
 import eu.webtoolkit.jwt.Cursor;
@@ -36,20 +37,42 @@ public class DrawCircular implements Draw {
 		this.shape = shape;
 	}
 
-	public void paint(GraphWebApplication graphWebApplication, WPaintedWidget wPaintedWidget, WebGraphics2DMine graphics, double width, double height) {
+	public void paint(GraphWebApplication graphWebApplication, WPaintedWidget wPaintedWidget, WebGraphics2DMine graphics, double width, double height, double paintAreaWidth, double paintAreaHeight) {
 		// TODO: Look for height of component
 		this.graphics = graphics;
 //		double moveRight = width / 2;
 //		double moveDown = height / 2;
 		
-		double moveRight = 350;
-		double moveDown = 300;
+		double moveRight = paintAreaWidth / 2;
+		double moveDown = paintAreaHeight / 2;
 		
 //		Determine how to determine the factor. Now based on amount of height of screen and amount of nodes
 //		double factor = (height*2)/(nodes.size()*1.5);
+
+		// TODO: Make this dynamic
 		double factor = 20;
+		if(paintAreaWidth < 500 && paintAreaHeight < 500) {
+			factor = 14;
+		} else if(paintAreaWidth < 600 && paintAreaHeight < 600) {
+			factor = 16;
+		} else if(paintAreaWidth < 700 && paintAreaHeight < 700) {
+			factor = 19;
+		} else if(paintAreaWidth < 800 && paintAreaHeight < 800) {
+			factor = 22;
+		} else if(paintAreaWidth < 900 && paintAreaHeight < 900) {
+			factor = 25;
+		} else if(paintAreaWidth < 1000 && paintAreaHeight < 1000) {
+			factor = 28;
+		} else if(paintAreaWidth > 1000 && paintAreaHeight > 800) {
+			factor = 31;
+		}
 		
 		double maxRadius = 80;
+		// TODO: Change the node sizes
+//		if(TreeTraversal.nodeLevel(edges.iterator().next().getNode1(), 0) < 5) {
+//			System.out.println("Here");
+//			maxRadius = 50;
+//		}
 		double maxNodeSurface = Math.PI * Math.pow(maxRadius, 2);
 		int maxSize = 0;
 		for(Node node:nodes) {
@@ -69,6 +92,8 @@ public class DrawCircular implements Draw {
 			graphics.setColor(Color.BLACK);
 			Point2D corner = null;
 			Point2D end = null;
+			
+			
 			if (shape == Shape.CIRCULAR_CLADOGRAM || shape == Shape.CIRCULAR_PHYLOGRAM) {
 				Node newNode = new Node();
 				newNode.setX(edge.getNode1().getX());
