@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import be.kuleuven.rega.form.MyComboBox;
 import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.utils.Settings;
 import be.kuleuven.rega.prerendering.PreRendering;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
@@ -37,22 +38,34 @@ public class GraphWebApplication extends WApplication {
 //	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/EwoutTrees/test.tree";
 //	private String treeLocation = "C:\\Program files\\rega_phylogeotool\\tree.newick";
 	
-	private String clusterRenderLocation = "/Users/ewout/Documents/phylogeo/EUResist/clusters";
-	private String csvRenderLocation = "/Users/ewout/Documents/phylogeo/EUResist/xml";
-	private String treeRenderLocation = "/Users/ewout/Documents/phylogeo/EUResist/treeview";
+//	private String clusterRenderLocation = "/Users/ewout/Documents/phylogeo/EUResist/clusters";
+//	private String csvRenderLocation = "/Users/ewout/Documents/phylogeo/EUResist/xml";
+//	private String treeRenderLocation = "/Users/ewout/Documents/phylogeo/EUResist/treeview";
+	
+	private String clusterRenderLocation = "";
+	private String csvRenderLocation = "";
+	private String treeRenderLocation = "";
 
 	private double mapWidth = this.getEnvironment().getScreenWidth() * 0.45;
 	private double mapHeigth = this.getEnvironment().getScreenHeight() * 0.60;
 	private double graphWidth = this.getEnvironment().getScreenWidth() * 0.55;
 	private double graphHeigth = this.getEnvironment().getScreenHeight() * 0.95;
 	
+	private Settings settings;
+	
 	public GraphWebApplication(WEnvironment env) {
 		super(env);
 		setTitle("PhyloGeoTool");
 
+		this.settings = Settings.getInstance(null);
+		this.clusterRenderLocation = settings.getClusterPath();
+		this.csvRenderLocation = settings.getXmlPath();
+		this.treeRenderLocation = settings.getTreeviewPath();
+		this.metaDataFile = new File(settings.getMetaDataFile());
+		
 		try {
 //			metaDataFile = new File("/Users/ewout/git/phylogeotool/lib/EwoutTrees/temp.csv");
-			metaDataFile = new File("/Users/ewout/Documents/phylogeo/EUResist/EUResist.metadata.csv");
+//			metaDataFile = new File("/Users/ewout/Documents/phylogeo/EUResist/EUResist.metadata.csv");
 //			metaDataFile = new File("/Users/ewout/Documents/phylogeo/EUResist_New/EUResist.metadata.csv");
 //			metaDataFile = new File("C:\\Program files\\rega_phylogeotool\\EUResist.metadata.csv");
 //			WGroupBox wGroupBoxNorth = getNavigationWGroupBox();
@@ -108,9 +121,9 @@ public class GraphWebApplication extends WApplication {
 
 	public void clicked(Node node) {
 		if(node != null) {
-			HashMap<String, Integer> hashMapTemp = preRendering.readCsv(node.getId(), wComboBoxMetadata.getValueText());
+			HashMap<String, Integer> hashMapTemp = preRendering.readCsv(node.getId(), wComboBoxMetadata.getValueText(), settings.getShowNAData());
 //			System.out.println(hashMapTemp.keySet().size());
-			HashMap<String, Integer> countries = preRendering.readCsv(node.getId(), "COUNTRY_OF_ORIGIN_ISO");
+			HashMap<String, Integer> countries = preRendering.readCsv(node.getId(), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
 			GraphWebApplication.this.googleChartWidget.setCountries(countries);
 			GraphWebApplication.this.googleChartWidget.setRegion("");
 			GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
@@ -230,7 +243,7 @@ public class GraphWebApplication extends WApplication {
 		});
 		WVBoxLayout wvBoxLayout = new WVBoxLayout(wGroupBoxGoogleMapWidget);
 		wvBoxLayout.addWidget(wComboBoxRegions);
-		googleChartWidget = new GoogleChartWidget(countries, region);
+		googleChartWidget = new GoogleChartWidget(countries, region, settings.getDatalessRegionColor(), settings.getBackgroundcolor(), settings.getColorAxis());
 		googleChartWidget.resize((int)this.mapWidth, (int)(mapHeigth));
 		wvBoxLayout.addWidget(googleChartWidget);
 		wPieChartMine = new WPieChartMine(hashMapTemp);
@@ -248,5 +261,9 @@ public class GraphWebApplication extends WApplication {
 	
 	public double getGraphHeight() {
 		return this.graphHeigth;
+	}
+	
+	public Settings getSettings() {
+		return settings;
 	}
 }

@@ -18,6 +18,9 @@ public class GoogleChartWidget extends WCompositeWidget {
 	private static Logger logger = LoggerFactory.getLogger(GoogleChartWidget.class);
 	private HashMap<String, Integer> countries = null;
 	private String region;
+	private String datalessRegionColor;
+	private String backgroundColor;
+	private String[] colorAxis;
 	private static final HashMap<String, String> regionToDigit;
 	static {
 		regionToDigit = new HashMap<String, String>();
@@ -61,10 +64,13 @@ public class GoogleChartWidget extends WCompositeWidget {
 			parent.addWidget(this);
 		}
 	}
-	public GoogleChartWidget(HashMap<String, Integer> countries, String region) {
+	public GoogleChartWidget(HashMap<String, Integer> countries, String region, String datalessRegionColor, String backgroundColor, String[] colorAxis) {
 		this((WContainerWidget) null);
 		this.countries = countries;
 		this.region = region;
+		this.datalessRegionColor = datalessRegionColor;
+		this.backgroundColor = backgroundColor;
+		this.colorAxis = colorAxis;
 	}
 	public GoogleChartWidget() {
 		this((WContainerWidget) null);
@@ -96,7 +102,16 @@ public class GoogleChartWidget extends WCompositeWidget {
 		String regionToView = "";
 		if(regionToDigit.containsKey(region)) { regionToView = regionToDigit.get(region); } else { regionToView = "world"; }
 //		strm.append("var options = {explorer: {maxZoomOut:2,keepInBounds: true}, backgroundColor: '#81d4fa', colorAxis: {colors: ['#00853f', 'black', '#e31b23']}};");
-		strm.append("var options = {explorer: {maxZoomOut:2,keepInBounds: true}, datalessRegionColor: 'white', backgroundColor: '#81d4fa', colorAxis: {colors: ['#e9e9e9', 'black']}};");
+		strm.append("var options = {explorer: {maxZoomOut:2,keepInBounds: true}, datalessRegionColor: '" + this.datalessRegionColor + "', backgroundColor: '" + this.backgroundColor +"'");
+		if(this.colorAxis.length > 0) {
+			StringBuilder colorAxisBuilder = new StringBuilder();
+			for(String color:this.colorAxis) {
+				colorAxisBuilder.append("'" + color + "',");
+			}
+			String colorAxisString = colorAxisBuilder.toString();
+			strm.append(", colorAxis: {colors: [" + colorAxisBuilder.toString().substring(0, colorAxisString.length() - 1) + "]}");	
+		}
+		strm.append("};");
 		strm.append("options['region'] = '" +  regionToView  + "';");
 		strm.append("var data = google.visualization.arrayToDataTable([");
 		strm.append("['Country', 'Cohort size'],");
@@ -135,7 +150,7 @@ public class GoogleChartWidget extends WCompositeWidget {
 					.append(";if (!self) { setTimeout(").append(initFunction)
 					.append(", 0);return;}");
 				strm.append("var chart = new google.visualization.GeoChart(self);");
-				strm.append(buildChart(region));
+				strm.append(buildChart(this.region));
 				strm.append("chart.draw(data, options);");
 			strm.append("self.chart = chart;");
 			this.streamJSListener(this.selected_, "select", strm);

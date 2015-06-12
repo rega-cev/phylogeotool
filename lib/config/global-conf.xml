@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  This is a sample config file. Fill in the correct paths for your project -->
+<phylogeotool-settings>
+  <!-- xmlPath
+     Directory containing the xml files and pre rendered csv data,
+     located in this projects xml/ directory.
+   -->
+  <property name="xmlPath">
+    /../xml
+  </property>
+  
+  <!-- clusterPath
+   Directory containing the xml files and pre rendered clusters, 
+   located in this projects xml/ directory.
+  -->
+  <property name="clusterPath">
+    /../clusters
+  </property>
+  
+  <!-- fullTreeImagesPath
+   Directory containing the xml files and pre rendered full tree images, 
+   located in this projects xml/ directory.
+  -->   
+  <property name="fullTreeImagesPath">
+    /../treeview
+  </property>
+
+  <!-- metadataFile
+   Pointer to the location of the csv file containing all the information on the individual sequences..
+  -->
+  <property name="metadataFile">
+    /../EUResist.metadata.csv
+  </property>
+
+  <!-- showNAData 
+   Include Non Assigned (NA) data in the graphs
+  -->
+  <property name="showNAData">
+    false
+  </property>
+
+  <!-- 
+   Color codes used for the google chart
+  -->
+  <property name="colorCodes">
+    <chart name="datalessregion">white</chart>
+    <chart name="backgroundcolor">#81d4fa</chart>
+    <chart name="colorAxis">#e9e9e9,red</chart>
+  </property>
+
+</phylogeotool-settings>

@@ -247,7 +247,7 @@ public class PreRendering {
 		}
 	}
 	
-	public HashMap<String, Integer> readCsv(int clusterId, String key) {
+	public HashMap<String, Integer> readCsv(int clusterId, String key, boolean readNA) {
 		HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -260,10 +260,13 @@ public class PreRendering {
 				org.w3c.dom.Node nNode = nList.item(temp);
 				if (nNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-					if(!eElement.getAttribute("id").equals("XX") && !eElement.getAttribute("id").equals("X1") && !eElement.getAttribute("id").equals("X2") &&
+					if(!readNA && !eElement.getAttribute("id").equals("XX") && !eElement.getAttribute("id").equals("X1") && !eElement.getAttribute("id").equals("X2") &&
 							!eElement.getAttribute("id").equals("X3") && !eElement.getAttribute("id").equals("X4") && !eElement.getAttribute("id").equals("X5") &&
-							!eElement.getAttribute("id").equals("X6") && !eElement.getAttribute("id").equals(""))
+							!eElement.getAttribute("id").equals("X6") && !eElement.getAttribute("id").equals("")) {
 						hashMap.put(eElement.getAttribute("id"), Integer.parseInt(eElement.getTextContent()));
+					} else if(readNA) {
+						hashMap.put(eElement.getAttribute("id"), Integer.parseInt(eElement.getTextContent()));
+					}
 //					System.out.println("Subtype : " + eElement.getAttribute("id"));
 //					System.out.println("Value : " + eElement.getTextContent());
 				}
