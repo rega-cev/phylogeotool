@@ -47,6 +47,10 @@ public class Settings {
 		return treeviewPath;
 	}
 	
+	public String getLeafsIdsPath() {
+		return leafIdsPath;
+	}
+	
 	public String getMetaDataFile() {
 		return metaDataFile;
 	}
@@ -70,6 +74,7 @@ public class Settings {
 	private String xmlPath;
 	private String clusterPath;
 	private String treeviewPath;
+	private String leafIdsPath;
 	private String metaDataFile;
 	private boolean showNAData;
 	private String datalessRegionColor;
@@ -100,6 +105,8 @@ public class Settings {
             	clusterPath = e.getValue().trim();
             } else if(name.equals("fullTreeImagesPath")) {
             	treeviewPath = e.getValue().trim();
+            } else if(name.equals("leafIdsPath")) {
+            	leafIdsPath = e.getValue().trim();
             } else if(name.equals("metadataFile")) {
             	metaDataFile = e.getValue().trim();
             } else if(name.equals("showNAData")) {

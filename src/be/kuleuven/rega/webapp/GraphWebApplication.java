@@ -2,23 +2,34 @@ package be.kuleuven.rega.webapp;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 
 import be.kuleuven.rega.form.MyComboBox;
+import be.kuleuven.rega.model.VirtualModel;
+import be.kuleuven.rega.phylogeotool.data.csv.CsvUtilsMetadata;
 import be.kuleuven.rega.phylogeotool.tree.Node;
 import be.kuleuven.rega.phylogeotool.utils.Settings;
 import be.kuleuven.rega.prerendering.PreRendering;
+import eu.webtoolkit.jwt.SelectionMode;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
+import eu.webtoolkit.jwt.WAbstractItemView;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WBorderLayout;
 import eu.webtoolkit.jwt.WComboBox;
 import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WEnvironment;
 import eu.webtoolkit.jwt.WGroupBox;
+import eu.webtoolkit.jwt.WHBoxLayout;
 import eu.webtoolkit.jwt.WLength;
 import eu.webtoolkit.jwt.WMouseEvent;
+import eu.webtoolkit.jwt.WMouseEvent.Button;
 import eu.webtoolkit.jwt.WPushButton;
+import eu.webtoolkit.jwt.WStandardItem;
+import eu.webtoolkit.jwt.WStandardItemModel;
+import eu.webtoolkit.jwt.WTableView;
 import eu.webtoolkit.jwt.WVBoxLayout;
 
 public class GraphWebApplication extends WApplication {
@@ -45,6 +56,7 @@ public class GraphWebApplication extends WApplication {
 	private String clusterRenderLocation = "";
 	private String csvRenderLocation = "";
 	private String treeRenderLocation = "";
+	private String leafIdsLocation = "";
 
 	private double mapWidth = this.getEnvironment().getScreenWidth() * 0.45;
 	private double mapHeigth = this.getEnvironment().getScreenHeight() * 0.60;
@@ -61,6 +73,7 @@ public class GraphWebApplication extends WApplication {
 		this.clusterRenderLocation = settings.getClusterPath();
 		this.csvRenderLocation = settings.getXmlPath();
 		this.treeRenderLocation = settings.getTreeviewPath();
+		this.leafIdsLocation = settings.getLeafsIdsPath();
 		this.metaDataFile = new File(settings.getMetaDataFile());
 		
 		try {
@@ -71,7 +84,7 @@ public class GraphWebApplication extends WApplication {
 //			WGroupBox wGroupBoxNorth = getNavigationWGroupBox();
 			
 //			layout.addWidget(wGroupBoxNorth, WBorderLayout.Position.North);
-			preRendering = new PreRendering(clusterRenderLocation, csvRenderLocation, treeRenderLocation);
+			preRendering = new PreRendering(clusterRenderLocation, csvRenderLocation, treeRenderLocation, leafIdsLocation);
 //			preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/portugal/clusters", "/Users/ewout/Documents/phylogeo/portugal/xml", "/Users/ewout/Documents/phylogeo/portugal/treeview");
 			graphWidget = new GraphWidget(this, null, null, preRendering);
 //			graphWidget = new GraphWidget(this, null, null, new File("/Users/ewout/example.tree"));
@@ -86,8 +99,16 @@ public class GraphWebApplication extends WApplication {
 		        showDialog();
 		    }
 		});
-//		wPushButton.resize(30, 30);
-		wVBoxLayoutGraphWidget.addWidget(wPushButton);
+		WPushButton exportSequencesButton = new WPushButton("Export sequences");
+		exportSequencesButton.clicked().addListener(this, new Signal.Listener() {
+			public void trigger() {
+		       showSequenceData(preRendering.getLeafIdFromXML(WApplication.getInstance().getInternalPath().split("/")[2]));
+			}
+		});
+		WHBoxLayout wHBoxLayout = new WHBoxLayout();
+		wHBoxLayout.addWidget(wPushButton);
+		wHBoxLayout.addWidget(exportSequencesButton);
+		wVBoxLayoutGraphWidget.addLayout(wHBoxLayout);
 		wVBoxLayoutGraphWidget.addWidget(graphWidget);
 		//WApplication.getInstance().useStyleSheet("/phylogeotool/PhyloGeoTool/style/Cssexample.css");
 		//graphWidget.setStyleClass("CSS-example");
@@ -113,21 +134,23 @@ public class GraphWebApplication extends WApplication {
 			}
 		});
 
-//		wPushButton.resize(10, 10);
 		graphWidget.resize((int)graphWidth, (int)graphHeigth);
-//		wVBoxLayoutGraphWidget.resize((int)graphWidth - 100, 450);
 		wGroupBoxGoogleMapWidget.resize((int)mapWidth, 450);
 	}
 
-	public void clicked(Node node) {
+	public void clicked(WMouseEvent wMouseEvent, Node node) {
 		if(node != null) {
-			HashMap<String, Integer> hashMapTemp = preRendering.readCsv(node.getId(), wComboBoxMetadata.getValueText(), settings.getShowNAData());
-//			System.out.println(hashMapTemp.keySet().size());
-			HashMap<String, Integer> countries = preRendering.readCsv(node.getId(), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
-			GraphWebApplication.this.googleChartWidget.setCountries(countries);
-			GraphWebApplication.this.googleChartWidget.setRegion("");
-			GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
-			wPieChartMine.setData(hashMapTemp);
+			if(wMouseEvent.getButton().equals(Button.LeftButton)) {
+				HashMap<String, Integer> hashMapTemp = preRendering.readCsv(node.getId(), wComboBoxMetadata.getValueText(), settings.getShowNAData());
+	//			System.out.println(hashMapTemp.keySet().size());
+				HashMap<String, Integer> countries = preRendering.readCsv(node.getId(), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
+				GraphWebApplication.this.googleChartWidget.setCountries(countries);
+				GraphWebApplication.this.googleChartWidget.setRegion("");
+				GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
+				wPieChartMine.setData(hashMapTemp);
+			} else if(wMouseEvent.getButton().equals(Button.RightButton)) {
+				System.out.println("Right mouse has been clicked on the node.");
+			}
 		}
 	}
 	
@@ -135,6 +158,10 @@ public class GraphWebApplication extends WApplication {
 //		Node tmpNode = graphWidget.getTree().getNodeById(node.getId());
 		graphWidget.addPreviousRootId(graphWidget.getTreeClustered().getRootNode().getId());
 		graphWidget.setTree(node.getId());
+	}
+	
+	public void rightMouseClick(Node node) {
+		System.out.println(node.getId() + " has been right mouse clicked.");
 	}
 	
 	public void pathChanged() {
@@ -148,18 +175,7 @@ public class GraphWebApplication extends WApplication {
 	
 	private WGroupBox getNavigationWGroupBox() {
 		WGroupBox wGroupBoxNorth = new WGroupBox();
-//		WPushButton wPushButtonBack = new WPushButton("Back");
 		WPushButton reset = new WPushButton("Reset");
-		
-		// Todo: remove the back button
-//		wPushButtonBack.clicked().addListener(this, new Signal.Listener() {
-//			public void trigger() {
-//				if (WApplication.getInstance().getInternalPath().contains("/root")) {
-//					Integer previousRootId = graphWidget.getPreviousRootId();
-//					graphWidget.setTree(previousRootId);
-//				}
-//		    }
-//		});
 		
 		reset.clicked().addListener(this, new Signal.Listener() {
 			public void trigger() {
@@ -174,13 +190,7 @@ public class GraphWebApplication extends WApplication {
 		    }
 		});
 
-		
-//		wGroupBoxNorth.addWidget(wComboBoxMetadata);
-//		wGroupBoxNorth.addWidget(wComboBoxRegions);
-//		wGroupBoxNorth.addWidget(wPushButton);
-//		wGroupBoxNorth.addWidget(wPushButtonBack);
 		wGroupBoxNorth.addWidget(reset);
-		//wGroupBoxNorth.addWidget(slider);
 		return wGroupBoxNorth;
 	}
 
@@ -194,6 +204,59 @@ public class GraphWebApplication extends WApplication {
 			wImageTreeMine = new WImageTreeMine(treeRenderLocation, "1");
 		}
 	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
+	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
+	    dialog.rejectWhenEscapePressed();
+	    cancel.clicked().addListener(dialog,
+	            new Signal1.Listener<WMouseEvent>() {
+	                public void trigger(WMouseEvent e1) {
+	                    dialog.reject();
+	                }
+	            });
+	    dialog.show();
+	}
+	
+	private final void showSequenceData(List<String> ids) {
+		final WDialog dialog = new WDialog("Sequences");
+		WTableView tableView = new WTableView();
+		List<String> metaDatas = null;
+		try {
+			metaDatas = CsvUtilsMetadata.getDataFromIds(ids, this.metaDataFile, ';');
+		} catch(IOException e) {
+			System.err.println(CsvUtilsMetadata.class + " Couldn't create fileReader on " + this.metaDataFile.getPath());
+		}
+		WStandardItemModel wStandardItemModel = new WStandardItemModel(metaDatas.size(),10);
+
+		int i = 0;
+		int j = 0;
+		for(String line:metaDatas) {
+			j = 0;
+			String [] data = line.split(";");
+			for(String dataItem:data) {
+				wStandardItemModel.setItem(i, j++, new WStandardItem(dataItem));
+			}
+			i++;
+		}
+		
+		wStandardItemModel.setHeaderData(0, "ID");
+		wStandardItemModel.setHeaderData(1, "YEAR OF BIRTH");
+		wStandardItemModel.setHeaderData(2, "GENDER");
+		wStandardItemModel.setHeaderData(3, "COUNTRY OF ORIGIN");
+		wStandardItemModel.setHeaderData(4, "COUNTRY OF ORIGIN");
+		wStandardItemModel.setHeaderData(5, "COUNTRY OF INFECTION");
+		wStandardItemModel.setHeaderData(6, "COUNTRY OF INFECTION");
+		wStandardItemModel.setHeaderData(7, "ETHNIC GROUP");
+		wStandardItemModel.setHeaderData(8, "RISK GROUP");
+		wStandardItemModel.setHeaderData(9, "SUBTYPE");
+		tableView.setModel(wStandardItemModel);
+		tableView.setRowHeaderCount(1);
+		tableView.setSortingEnabled(false);
+		tableView.setAlternatingRowColors(true);
+		tableView.setRowHeight(new WLength(28));
+		tableView.setHeaderHeight(new WLength(28));
+		tableView.setSelectionMode(SelectionMode.ExtendedSelection);
+		tableView.setEditTriggers(EnumSet.of(WAbstractItemView.EditTrigger.NoEditTrigger));
+		tableView.resize(new WLength(650), new WLength(400));
+	    dialog.getContents().addWidget(tableView);
 	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
 	    dialog.rejectWhenEscapePressed();
 	    cancel.clicked().addListener(dialog,
