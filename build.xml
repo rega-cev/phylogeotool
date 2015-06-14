@@ -53,6 +53,7 @@
 
     <war destfile="${dist}/${proj.name}-${proj.version}.war" 
 	 webxml="WebRoot/WEB-INF/web.xml">
+   	 <metainf file="WebRoot/META-INF/context.xml" />
 	 <fileset dir="${src}"/>
 	 <lib dir="${dist}/deps/"/>
 	 <classes dir="${build}"/>
