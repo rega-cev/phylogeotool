@@ -1,22 +1,24 @@
 package be.kuleuven.rega.treedraw;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import be.kuleuven.rega.listeners.WCircleMouseWentOutListener;
+import be.kuleuven.rega.listeners.WCircleMouseWentOverListener;
 import be.kuleuven.rega.listeners.WCircleNodeClickListener;
-import be.kuleuven.rega.listeners.WCircleNodeDoubleClickListener;
 import be.kuleuven.rega.phylogeotool.tree.Edge;
 import be.kuleuven.rega.phylogeotool.tree.Node;
 import be.kuleuven.rega.phylogeotool.tree.Shape;
 import be.kuleuven.rega.phylogeotool.tree.Tree;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
-import be.kuleuven.rega.treedraw.test.Application;
 import be.kuleuven.rega.webapp.GraphWebApplication;
 import be.kuleuven.rega.webapp.WebGraphics2DMine;
 import eu.webtoolkit.jwt.Cursor;
@@ -29,6 +31,7 @@ public class DrawCircular implements Draw {
 	private Set<Node> nodes = null;
 	private Set<Edge> edges = null;
 	private Shape shape = null;
+	private Point centerDrawing = null;
 
 	public DrawCircular(Tree tree, Shape shape) {
 		this.tree = tree;
@@ -52,19 +55,19 @@ public class DrawCircular implements Draw {
 		// TODO: Make this dynamic
 		double factor = 20;
 		if(paintAreaWidth < 500 && paintAreaHeight < 500) {
-			factor = 14;
+			factor = 12;
 		} else if(paintAreaWidth < 600 && paintAreaHeight < 600) {
-			factor = 16;
+			factor = 14;
 		} else if(paintAreaWidth < 700 && paintAreaHeight < 700) {
-			factor = 19;
+			factor = 17;
 		} else if(paintAreaWidth < 800 && paintAreaHeight < 800) {
-			factor = 22;
+			factor = 20;
 		} else if(paintAreaWidth < 900 && paintAreaHeight < 900) {
-			factor = 25;
+			factor = 23;
 		} else if(paintAreaWidth < 1000 && paintAreaHeight < 1000) {
-			factor = 28;
+			factor = 26;
 		} else if(paintAreaWidth > 1000 && paintAreaHeight > 800) {
-			factor = 31;
+			factor = 29;
 		}
 		
 		double maxRadius = 80;
@@ -88,6 +91,7 @@ public class DrawCircular implements Draw {
 //			 graphics.drawString(node.getLabel(), (int)Math.ceil(Node.polarToEucledianX(node)*factor) + moveRight, (int)Math.ceil(Node.polarToEucledianY(node)*factor) + moveRight);
 //			 graphics.draw(new Rectangle((int)Math.ceil(Node.polarToEucledianX(node)*factor) + moveRight, (int)Math.ceil(Node.polarToEucledianY(node)*factor) + moveRight, nodeWidth, nodeHeight));
 //		 }
+		List<WCircleNode> circleNodes = new ArrayList<WCircleNode>();
 		for (Edge edge : edges) {
 			graphics.setColor(Color.BLACK);
 			Point2D corner = null;
@@ -136,12 +140,15 @@ public class DrawCircular implements Draw {
 				graphics.draw(circle);
 				
 				final WCircleNode wCircle = new WCircleNode((int)(x), (int)(y), (int)(r/2), edge.getNode2());
+				circleNodes.add(wCircle);
 				wCircle.setToolTip("Node " + edge.getNode2().getId());
 				wCircle.setCursor(Cursor.CrossCursor);
 				
 				// TODO: Handle the clicks. How to?
 				wCircle.clicked().addListener(wPaintedWidget, new WCircleNodeClickListener(wCircle, graphWebApplication));
-				wCircle.doubleClicked().addListener(wPaintedWidget, new WCircleNodeDoubleClickListener(wCircle, graphWebApplication));
+//				wCircle.doubleClicked().addListener(wPaintedWidget, new WCircleNodeDoubleClickListener(wCircle, graphWebApplication));
+				wCircle.mouseWentOver().addListener(wPaintedWidget, new WCircleMouseWentOverListener(wCircle, graphWebApplication));
+				wCircle.mouseWentOut().addListener(wPaintedWidget, new WCircleMouseWentOutListener(wCircle, graphWebApplication));
 				
 				wPaintedWidget.addArea(wCircle);
 				
@@ -149,10 +156,15 @@ public class DrawCircular implements Draw {
 			}
 			if(!edge.getNode1().hasParent()) {
 				int r = 5;
-				Ellipse2D.Double circle = new Ellipse2D.Double(Node.polarToEucledianX(edge.getNode1()) * factor + moveRight - (r / 2), Node.polarToEucledianY(edge.getNode1()) * factor + moveDown - (r / 2), r, r);
+				Ellipse2D.Double center = new Ellipse2D.Double(Node.polarToEucledianX(edge.getNode1()) * factor + moveRight - (r / 2), Node.polarToEucledianY(edge.getNode1()) * factor + moveDown - (r / 2), r, r);
 				graphics.setColor(Color.BLACK);
-				graphics.fill(circle);
+				graphics.fill(center);
+				this.centerDrawing = new Point((int)center.getCenterX(), (int)center.getCenterY());
 			}
+		}
+		
+		for(WCircleNode wCircleNode:circleNodes) {
+			wCircleNode.setCenterDrawing(this.centerDrawing);
 		}
 	}
 	

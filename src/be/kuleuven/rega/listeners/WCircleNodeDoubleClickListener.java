@@ -16,7 +16,7 @@ public class WCircleNodeDoubleClickListener implements Signal.Listener {
 	
 	@Override
 	public void trigger() {
-		graphWebApplication.doubleClicked(wCircleNode.getNode());
+//		graphWebApplication.doubleClicked(wCircleNode.getNode());
 	}
 
 }

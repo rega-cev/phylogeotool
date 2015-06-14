@@ -162,7 +162,7 @@ public class PreRendering {
 					currentNode = toDo.pop();
 					Tree tempTree = clusterAlgos.getCluster(tree,tree.getNodeById(currentNode.getId()), 12);
 //					this.writeTreeToXML(tempTree);
-//					this.prepareCSV(currentNode.getId(), tree.getNodeById(currentNode.getId()).getLeavesAsString(), csvLocation);
+					this.prepareCSV(currentNode.getId(), tree.getNodeById(currentNode.getId()).getLeavesAsString(), csvLocation);
 //					if(tempTree.getNodes().size() > 1) {
 //						graphProperties.setNodeColor(tempTree);
 //						this.prepareFullTreeView(currentNode.getId(), tree, tempTree, jeblTree);
@@ -347,7 +347,7 @@ public class PreRendering {
 //		preRendering.preRender("/Users/ewout/Documents/phylogeo/EUResist_New/tree/besttree.midpoint.newick", "/Users/ewout/Documents/phylogeo/EUResist_New/EUResist.metadata.csv");		//		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/EUResist_New/clusters", "/Users/ewout/Documents/phylogeo/EUResist_New/xml", "/Users/ewout/Documents/phylogeo/EUResist_New/treeview");
 //		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/portugal/clusters", "/Users/ewout/Documents/phylogeo/portugal/xml", "/Users/ewout/Documents/phylogeo/portugal/treeview");
 		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/EUResist/clusters", "/Users/ewout/Documents/phylogeo/EUResist/xml", "/Users/ewout/Documents/phylogeo/EUResist/treeview", "/Users/ewout/Documents/phylogeo/EUResist/leafIds");
-		preRendering.preRender("/Users/ewout/Documents/phylogeo/EUResist_New/tree/besttree.midpoint.newick", "/Users/ewout/Documents/phylogeo/EUResist/EUResist.metadata.csv");
+		preRendering.preRender("/Users/ewout/Documents/phylogeo/EUResist_New/tree/besttree.midpoint.newick", "/Users/ewout/Documents/phylogeo/EUResist/EUResist.metadata.cleaned.csv");
 //		preRendering.preRender("/Users/ewout/git/phylogeotool/lib/EwoutTrees/test.tree", "/Users/ewout/git/phylogeotool/lib/EwoutTrees/temp.csv");
 //		preRendering.getLeafIdFromXML("1");
 	}

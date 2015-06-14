@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import be.kuleuven.rega.form.MyComboBox;
-import be.kuleuven.rega.model.VirtualModel;
 import be.kuleuven.rega.phylogeotool.data.csv.CsvUtilsMetadata;
 import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
 import be.kuleuven.rega.phylogeotool.utils.Settings;
 import be.kuleuven.rega.prerendering.PreRendering;
 import eu.webtoolkit.jwt.SelectionMode;
@@ -19,13 +19,15 @@ import eu.webtoolkit.jwt.WAbstractItemView;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WBorderLayout;
 import eu.webtoolkit.jwt.WComboBox;
+import eu.webtoolkit.jwt.WContainerWidget;
+import eu.webtoolkit.jwt.WCssTextRule;
 import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WEnvironment;
 import eu.webtoolkit.jwt.WGroupBox;
 import eu.webtoolkit.jwt.WHBoxLayout;
 import eu.webtoolkit.jwt.WLength;
+import eu.webtoolkit.jwt.WLength.Unit;
 import eu.webtoolkit.jwt.WMouseEvent;
-import eu.webtoolkit.jwt.WMouseEvent.Button;
 import eu.webtoolkit.jwt.WPushButton;
 import eu.webtoolkit.jwt.WStandardItem;
 import eu.webtoolkit.jwt.WStandardItemModel;
@@ -64,6 +66,10 @@ public class GraphWebApplication extends WApplication {
 	private double graphHeigth = this.getEnvironment().getScreenHeight() * 0.95;
 	
 	private Settings settings;
+	
+	//TODO: Put back in the method
+	private WContainerWidget wContainerWidgetNorth;
+	private WPieChartMine wPieChartMineFloat;
 	
 	public GraphWebApplication(WEnvironment env) {
 		super(env);
@@ -106,26 +112,32 @@ public class GraphWebApplication extends WApplication {
 			}
 		});
 		WHBoxLayout wHBoxLayout = new WHBoxLayout();
+		wPushButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(5));
 		wHBoxLayout.addWidget(wPushButton);
+		exportSequencesButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(5));
 		wHBoxLayout.addWidget(exportSequencesButton);
+		wContainerWidgetNorth = new WContainerWidget();
+		wContainerWidgetNorth.setMaximumSize(new WLength(1, Unit.Pixel), new WLength(1, Unit.Pixel));
 		wVBoxLayoutGraphWidget.addLayout(wHBoxLayout);
+		wVBoxLayoutGraphWidget.addWidget(wContainerWidgetNorth);
 		wVBoxLayoutGraphWidget.addWidget(graphWidget);
-		//WApplication.getInstance().useStyleSheet("/phylogeotool/PhyloGeoTool/style/Cssexample.css");
-		//graphWidget.setStyleClass("CSS-example");
-		//layout.addWidget(graphWidget, WBorderLayout.Position.Center);
-		
 		layout.addWidget(wGroupBoxGraphWidget, WBorderLayout.Position.East);
 		
-		//wGroupBoxPieChartWidget = getPieChartWGroupBox(null);
-		//wGroupBoxPieChartWidget.hide();
-		//layout.addWidget(wGroupBoxPieChartWidget, WBorderLayout.Position.East);
 		try {
-			wGroupBoxGoogleMapWidget = getGoogleChartWGroupBox(null,null,null);
+			HashMap<String, Integer> countries = null;
+			if (WApplication.getInstance().getInternalPath().contains("/root")) {
+		    	countries = preRendering.readCsv(Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
+			} else {
+				// TODO: Change value of clusterId 
+				countries = preRendering.readCsv(1, "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
+			}
+			
+			wGroupBoxGoogleMapWidget = getGoogleChartWGroupBox(countries,null,null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		layout.addWidget(wGroupBoxGoogleMapWidget, WBorderLayout.Position.West);
-		
+//		layout.addWidget(wContainerWidgetNorth,  WBorderLayout.Position.North);
 		GraphWebApplication.this.googleChartWidget.setOptions("");
 		this.internalPathChanged().addListener(this,new Signal.Listener() {
 			@Override
@@ -136,32 +148,97 @@ public class GraphWebApplication extends WApplication {
 
 		graphWidget.resize((int)graphWidth, (int)graphHeigth);
 		wGroupBoxGoogleMapWidget.resize((int)mapWidth, 450);
+		this.getStyleSheet().addRule(new WCssTextRule(".CSS-example", "background: blue;position: fixed; width: 100%;top: 0px; left: 0px;z-index: 1"));
+		wContainerWidgetNorth.setStyleClass("CSS-example");
 	}
 
-	public void clicked(WMouseEvent wMouseEvent, Node node) {
-		if(node != null) {
-			if(wMouseEvent.getButton().equals(Button.LeftButton)) {
-				HashMap<String, Integer> hashMapTemp = preRendering.readCsv(node.getId(), wComboBoxMetadata.getValueText(), settings.getShowNAData());
-	//			System.out.println(hashMapTemp.keySet().size());
-				HashMap<String, Integer> countries = preRendering.readCsv(node.getId(), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
-				GraphWebApplication.this.googleChartWidget.setCountries(countries);
-				GraphWebApplication.this.googleChartWidget.setRegion("");
-				GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
-				wPieChartMine.setData(hashMapTemp);
-			} else if(wMouseEvent.getButton().equals(Button.RightButton)) {
-				System.out.println("Right mouse has been clicked on the node.");
-			}
+	public void clicked(WMouseEvent wMouseEvent, Node node, WCircleNode wCircleNode) {
+		graphWidget.setTree(node.getId());
+		mouseWentOut(null, wCircleNode);
+		
+		HashMap<String, Integer> hashMapTemp = preRendering.readCsv(wCircleNode.getNode().getId(), wComboBoxMetadata.getValueText(), settings.getShowNAData());
+		HashMap<String, Integer> countries = preRendering.readCsv(wCircleNode.getNode().getId(), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
+		GraphWebApplication.this.googleChartWidget.setCountries(countries);
+		GraphWebApplication.this.googleChartWidget.setRegion("");
+		GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
+		
+		wPieChartMine.setData(hashMapTemp);
+		
+//		GraphWebApplication.this.googleChartWidget.setCountries(null);
+//		GraphWebApplication.this.googleChartWidget.setRegion("");
+//		GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
+	}
+	
+	public void mouseWentOver(WMouseEvent wMouseEvent, WCircleNode wCircleNode) {
+		HashMap<String, Integer> hashMapTemp = preRendering.readCsv(wCircleNode.getNode().getId(), wComboBoxMetadata.getValueText(), settings.getShowNAData());
+		HashMap<String, Integer> countries = preRendering.readCsv(wCircleNode.getNode().getId(), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
+		GraphWebApplication.this.googleChartWidget.setCountries(countries);
+		GraphWebApplication.this.googleChartWidget.setRegion("");
+		GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
+		double xValue = wCircleNode.getCenterDrawing().getX();
+		double yValue = wCircleNode.getCenterDrawing().getY();
+		
+		this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .div", "visibility: visible;position: absolute;z-index: 2;left: " + Double.toString(xValue - ((this.mapWidth * 0.25)/2) - 3) + "px; top: " + Double.toString(yValue - ((this.getEnvironment().getScreenHeight() * 0.25)/2)) + "px;width: 100px; height: 80px"));
+		
+		wPieChartMineFloat = new WPieChartMine(null, wContainerWidgetNorth);
+		wPieChartMineFloat.getWPieChart().setStyleClass("div");
+		wPieChartMineFloat.getWPieChart().setInline(false);
+		wPieChartMineFloat.setData(hashMapTemp);
+		
+		wPieChartMineFloat.getWPieChart().setWidth(new WLength(this.mapWidth * 0.25));
+		wPieChartMineFloat.getWPieChart().setHeight(new WLength(this.getEnvironment().getScreenHeight() * 0.25));
+		
+		wContainerWidgetNorth.addWidget(wPieChartMineFloat.getWPieChart());
+		
+		/**
+		 * We don't want to show all of the legend items if that is not necessary.
+		 */
+		if(hashMapTemp.keySet().size() > 0) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText0", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 10 + "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend0().addStyleClass("wText0");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend0());
+		}
+		if(hashMapTemp.keySet().size() > 1) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText1", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 30+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend1().addStyleClass("wText1");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend1());
+		}
+		if(hashMapTemp.keySet().size() > 2) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText2", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 50+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend2().addStyleClass("wText2");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend2());
+		}
+		if(hashMapTemp.keySet().size() > 3) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText3", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 70+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend3().addStyleClass("wText3");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend3());
+		}
+		if(hashMapTemp.keySet().size() > 4) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText4", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 90+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend4().addStyleClass("wText4");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend4());
+		}
+		if(hashMapTemp.keySet().size() > 5) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText5", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 110+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend5().addStyleClass("wText5");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend5());
+		}
+		if(hashMapTemp.keySet().size() > 6) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText6", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 130+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend6().addStyleClass("wText6");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend6());
 		}
 	}
 	
-	public void doubleClicked(Node node) {
-//		Node tmpNode = graphWidget.getTree().getNodeById(node.getId());
-		graphWidget.addPreviousRootId(graphWidget.getTreeClustered().getRootNode().getId());
-		graphWidget.setTree(node.getId());
-	}
-	
-	public void rightMouseClick(Node node) {
-		System.out.println(node.getId() + " has been right mouse clicked.");
+	public void mouseWentOut(WMouseEvent wMouseEvent, WCircleNode wCircleNode) {
+		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getWPieChart());
+		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend0());
+		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend1());
+		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend2());
+		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend3());
+		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend4());
+		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend5());
+		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend6());
 	}
 	
 	public void pathChanged() {
@@ -312,7 +389,19 @@ public class GraphWebApplication extends WApplication {
 		wPieChartMine = new WPieChartMine(hashMapTemp);
 		wPieChartMine.getWPieChart().setWidth(new WLength(this.mapWidth * 0.25));
 		wPieChartMine.getWPieChart().setHeight(new WLength(this.getEnvironment().getScreenHeight() * 0.25));
+		
 		wComboBoxMetadata = new MyComboBox(metaDataFile, csvDelimitor);
+		wComboBoxMetadata.changed().addListener(this, new Signal.Listener() {
+			public void trigger() {	
+				if (WApplication.getInstance().getInternalPath().contains("/root")) {
+			    	GraphWebApplication.this.wPieChartMine.setData(preRendering.readCsv(Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]), wComboBoxMetadata.getValueText(), settings.getShowNAData()));
+				} else {
+					// TODO: Change value of clusterId 
+					GraphWebApplication.this.wPieChartMine.setData(preRendering.readCsv(1, wComboBoxMetadata.getValueText(), settings.getShowNAData()));
+				}
+			}
+		});
+		wComboBoxMetadata.changed().trigger();
 		wvBoxLayout.addWidget(wComboBoxMetadata);
 		wvBoxLayout.addLayout(wPieChartMine.getWidget());
 		return wGroupBoxGoogleMapWidget;

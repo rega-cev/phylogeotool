@@ -5,19 +5,19 @@ import be.kuleuven.rega.webapp.GraphWebApplication;
 import eu.webtoolkit.jwt.Signal1;
 import eu.webtoolkit.jwt.WMouseEvent;
 
-public class WCircleNodeClickListener implements Signal1.Listener<WMouseEvent> {
+public class WCircleMouseWentOutListener implements Signal1.Listener<WMouseEvent> {
 
 	private WCircleNode wCircleNode = null;
 	private GraphWebApplication graphWebApplication = null;
 	
-	public WCircleNodeClickListener(WCircleNode wCircleNode, GraphWebApplication graphWebApplication) {
+	public WCircleMouseWentOutListener(WCircleNode wCircleNode, GraphWebApplication graphWebApplication) {
 		this.wCircleNode = wCircleNode;
 		this.graphWebApplication = graphWebApplication;
 	}
 	
 	@Override
 	public void trigger(WMouseEvent wMouseEvent) {
-		graphWebApplication.clicked(wMouseEvent, wCircleNode.getNode(), wCircleNode);
+		graphWebApplication.mouseWentOut(wMouseEvent, wCircleNode);
 	}
 
 }

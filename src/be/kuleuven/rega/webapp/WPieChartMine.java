@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import eu.webtoolkit.jwt.Side;
+import eu.webtoolkit.jwt.WContainerWidget;
 import eu.webtoolkit.jwt.WHBoxLayout;
 import eu.webtoolkit.jwt.WLength;
 import eu.webtoolkit.jwt.WStandardItemModel;
@@ -31,6 +32,16 @@ public class WPieChartMine {
 	private WWidget legend4 = null;
 	private WWidget legend5 = null;
 	private WWidget legend6 = null;
+	
+	public WPieChartMine(Map<String,Integer> map, WContainerWidget parent) {
+		whBoxLayout = new WHBoxLayout();
+		wvBoxLayout = new WVBoxLayout();
+		chart = new WPieChart(parent);
+		setData(map);
+		chart.setMargin(new WLength(10), EnumSet.of(Side.Top, Side.Left));
+		whBoxLayout.addWidget(chart);
+		whBoxLayout.addLayout(wvBoxLayout);
+	}
 	
 	public WPieChartMine(Map<String,Integer> map) {
 		whBoxLayout = new WHBoxLayout();
@@ -146,5 +157,32 @@ public class WPieChartMine {
 		}
 		return sortedMap;
 	}
-	
+
+	public WWidget getLegend0() {
+		return legend0;
+	}
+
+	public WWidget getLegend1() {
+		return legend1;
+	}
+
+	public WWidget getLegend2() {
+		return legend2;
+	}
+
+	public WWidget getLegend3() {
+		return legend3;
+	}
+
+	public WWidget getLegend4() {
+		return legend4;
+	}
+
+	public WWidget getLegend5() {
+		return legend5;
+	}
+
+	public WWidget getLegend6() {
+		return legend6;
+	}
 }
