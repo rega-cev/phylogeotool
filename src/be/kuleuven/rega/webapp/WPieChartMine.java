@@ -114,27 +114,41 @@ public class WPieChartMine {
 		}
 		
 		int legendWidth = 150;
-		legend0 = chart.createLegendItemWidget(0, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
-		legend0.setWidth(new WLength(legendWidth));
-		legend1 = chart.createLegendItemWidget(1, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
-		legend1.setWidth(new WLength(legendWidth));
-		legend2 = chart.createLegendItemWidget(2, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
-		legend2.setWidth(new WLength(legendWidth));
-		legend3 = chart.createLegendItemWidget(3, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
-		legend3.setWidth(new WLength(legendWidth));
-		legend4 = chart.createLegendItemWidget(4, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
-		legend4.setWidth(new WLength(legendWidth));
-		legend5 = chart.createLegendItemWidget(5, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
-		legend5.setWidth(new WLength(legendWidth));
-		legend6 = chart.createLegendItemWidget(6, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
-		legend6.setWidth(new WLength(legendWidth));
-		wvBoxLayout.addWidget(legend0);
-		wvBoxLayout.addWidget(legend1);
-		wvBoxLayout.addWidget(legend2);
-		wvBoxLayout.addWidget(legend3);
-		wvBoxLayout.addWidget(legend4);
-		wvBoxLayout.addWidget(legend5);
-		wvBoxLayout.addWidget(legend6);
+		if(map != null && map.keySet().size() > 0) {
+			legend0 = chart.createLegendItemWidget(0, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
+			legend0.setWidth(new WLength(legendWidth));
+			wvBoxLayout.addWidget(legend0);
+			if(map.keySet().size() > 1) {
+				legend1 = chart.createLegendItemWidget(1, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
+				legend1.setWidth(new WLength(legendWidth));
+				wvBoxLayout.addWidget(legend1);
+				if(map.keySet().size() > 2) {
+					legend2 = chart.createLegendItemWidget(2, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
+					legend2.setWidth(new WLength(legendWidth));
+					wvBoxLayout.addWidget(legend2);
+					if(map.keySet().size() > 3) {
+						legend3 = chart.createLegendItemWidget(3, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
+						legend3.setWidth(new WLength(legendWidth));
+						wvBoxLayout.addWidget(legend3);
+						if(map.keySet().size() > 4) {
+							legend4 = chart.createLegendItemWidget(4, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
+							legend4.setWidth(new WLength(legendWidth));
+							wvBoxLayout.addWidget(legend4);
+							if(map.keySet().size() > 5) {
+								legend5 = chart.createLegendItemWidget(5, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
+								legend5.setWidth(new WLength(legendWidth));
+								wvBoxLayout.addWidget(legend5);
+								if(map.keySet().size() > 6) {
+									legend6 = chart.createLegendItemWidget(6, EnumUtils.or(EnumSet.of(LabelOption.Outside, LabelOption.TextLabel), LabelOption.TextPercentage));
+									legend6.setWidth(new WLength(legendWidth));
+									wvBoxLayout.addWidget(legend6);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public <K, V extends Comparable<? super V>> Map<K, V> sortMap(final Map<K, V> mapToSort) {

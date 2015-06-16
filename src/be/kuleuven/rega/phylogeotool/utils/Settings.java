@@ -7,6 +7,7 @@ package be.kuleuven.rega.phylogeotool.utils;
  */
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -70,6 +71,10 @@ public class Settings {
 	public boolean getShowNAData() {
 		return showNAData;
 	}
+	
+	public List<String> getColumnsToExport() {
+		return this.columnsToExport;
+	}
 
 	private String xmlPath;
 	private String clusterPath;
@@ -80,6 +85,7 @@ public class Settings {
 	private String datalessRegionColor;
 	private String backgroundcolor;
 	private String[] colorAxis;
+	private List<String> columnsToExport;
 	
     @SuppressWarnings("unchecked")
 	private void parseConfFile(File confFile) {
@@ -124,6 +130,12 @@ public class Settings {
             			String temp = child.getValue().trim();
             			colorAxis = temp.split(",");
             		}
+            	}
+            } else if(name.equals("exportFields")) {
+            	columnsToExport = new ArrayList<String>();
+            	List<Element> headersToExport = e.getChildren();
+            	for (Element child : headersToExport) {
+            		columnsToExport.add(child.getValue().trim());
             	}
             }
         }

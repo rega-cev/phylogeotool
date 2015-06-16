@@ -105,17 +105,23 @@ public class GraphWebApplication extends WApplication {
 		        showDialog();
 		    }
 		});
-		WPushButton exportSequencesButton = new WPushButton("Export sequences");
+		//TODO: Implement the way how the report should be written. Currently disabled, should be updated later on.
+		WPushButton exportSequencesButton = new WPushButton("Report");
 		exportSequencesButton.clicked().addListener(this, new Signal.Listener() {
 			public void trigger() {
-		       showSequenceData(preRendering.getLeafIdFromXML(WApplication.getInstance().getInternalPath().split("/")[2]));
+				if (WApplication.getInstance().getInternalPath().contains("/root")) {
+					showReport(preRendering.getLeafIdFromXML(WApplication.getInstance().getInternalPath().split("/")[2]), settings.getColumnsToExport());
+				} else {
+					// TODO: Change value of clusterId 
+					showReport(preRendering.getLeafIdFromXML("1"), settings.getColumnsToExport());
+				}
 			}
 		});
 		WHBoxLayout wHBoxLayout = new WHBoxLayout();
 		wPushButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(5));
 		wHBoxLayout.addWidget(wPushButton);
 		exportSequencesButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(5));
-		wHBoxLayout.addWidget(exportSequencesButton);
+//		wHBoxLayout.addWidget(exportSequencesButton);
 		wContainerWidgetNorth = new WContainerWidget();
 		wContainerWidgetNorth.setMaximumSize(new WLength(1, Unit.Pixel), new WLength(1, Unit.Pixel));
 		wVBoxLayoutGraphWidget.addLayout(wHBoxLayout);
@@ -156,34 +162,24 @@ public class GraphWebApplication extends WApplication {
 		graphWidget.setTree(node.getId());
 		mouseWentOut(null, wCircleNode);
 		
-		HashMap<String, Integer> hashMapTemp = preRendering.readCsv(wCircleNode.getNode().getId(), wComboBoxMetadata.getValueText(), settings.getShowNAData());
-		HashMap<String, Integer> countries = preRendering.readCsv(wCircleNode.getNode().getId(), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
-		GraphWebApplication.this.googleChartWidget.setCountries(countries);
-		GraphWebApplication.this.googleChartWidget.setRegion("");
-		GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
-		
-		wPieChartMine.setData(hashMapTemp);
-		
+		this.setStatisticGraph(wPieChartMine, wCircleNode.getNode().getId());
+		this.setGoogleChart(wCircleNode.getNode().getId());
 //		GraphWebApplication.this.googleChartWidget.setCountries(null);
 //		GraphWebApplication.this.googleChartWidget.setRegion("");
 //		GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
 	}
 	
 	public void mouseWentOver(WMouseEvent wMouseEvent, WCircleNode wCircleNode) {
-		HashMap<String, Integer> hashMapTemp = preRendering.readCsv(wCircleNode.getNode().getId(), wComboBoxMetadata.getValueText(), settings.getShowNAData());
-		HashMap<String, Integer> countries = preRendering.readCsv(wCircleNode.getNode().getId(), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
-		GraphWebApplication.this.googleChartWidget.setCountries(countries);
-		GraphWebApplication.this.googleChartWidget.setRegion("");
-		GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
+		this.setGoogleChart(wCircleNode.getNode().getId());
 		double xValue = wCircleNode.getCenterDrawing().getX();
 		double yValue = wCircleNode.getCenterDrawing().getY();
 		
-		this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .div", "visibility: visible;position: absolute;z-index: 2;left: " + Double.toString(xValue - ((this.mapWidth * 0.25)/2) - 3) + "px; top: " + Double.toString(yValue - ((this.getEnvironment().getScreenHeight() * 0.25)/2)) + "px;width: 100px; height: 80px"));
+		this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .div", "visibility: visible;position: absolute;z-index: 2;left: " + Double.toString(xValue - ((this.mapWidth * 0.25)/2) - 8) + "px; top: " + Double.toString(yValue - ((this.getEnvironment().getScreenHeight() * 0.25)/2) - 4) + "px;width: 100px; height: 80px"));
 		
 		wPieChartMineFloat = new WPieChartMine(null, wContainerWidgetNorth);
 		wPieChartMineFloat.getWPieChart().setStyleClass("div");
 		wPieChartMineFloat.getWPieChart().setInline(false);
-		wPieChartMineFloat.setData(hashMapTemp);
+		this.setStatisticGraph(wPieChartMineFloat, wCircleNode.getNode().getId());
 		
 		wPieChartMineFloat.getWPieChart().setWidth(new WLength(this.mapWidth * 0.25));
 		wPieChartMineFloat.getWPieChart().setHeight(new WLength(this.getEnvironment().getScreenHeight() * 0.25));
@@ -193,37 +189,37 @@ public class GraphWebApplication extends WApplication {
 		/**
 		 * We don't want to show all of the legend items if that is not necessary.
 		 */
-		if(hashMapTemp.keySet().size() > 0) {
+		if(wPieChartMineFloat.getLegend0() != null) {
 			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText0", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 10 + "px;width: 70px; height: 20px"));
 			wPieChartMineFloat.getLegend0().addStyleClass("wText0");
 			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend0());
 		}
-		if(hashMapTemp.keySet().size() > 1) {
+		if(wPieChartMineFloat.getLegend1() != null) {
 			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText1", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 30+ "px;width: 70px; height: 20px"));
 			wPieChartMineFloat.getLegend1().addStyleClass("wText1");
 			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend1());
 		}
-		if(hashMapTemp.keySet().size() > 2) {
+		if(wPieChartMineFloat.getLegend2() != null) {
 			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText2", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 50+ "px;width: 70px; height: 20px"));
 			wPieChartMineFloat.getLegend2().addStyleClass("wText2");
 			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend2());
 		}
-		if(hashMapTemp.keySet().size() > 3) {
+		if(wPieChartMineFloat.getLegend3() != null) {
 			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText3", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 70+ "px;width: 70px; height: 20px"));
 			wPieChartMineFloat.getLegend3().addStyleClass("wText3");
 			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend3());
 		}
-		if(hashMapTemp.keySet().size() > 4) {
+		if(wPieChartMineFloat.getLegend4() != null) {
 			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText4", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 90+ "px;width: 70px; height: 20px"));
 			wPieChartMineFloat.getLegend4().addStyleClass("wText4");
 			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend4());
 		}
-		if(hashMapTemp.keySet().size() > 5) {
+		if(wPieChartMineFloat.getLegend5() != null) {
 			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText5", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 110+ "px;width: 70px; height: 20px"));
 			wPieChartMineFloat.getLegend5().addStyleClass("wText5");
 			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend5());
 		}
-		if(hashMapTemp.keySet().size() > 6) {
+		if(wPieChartMineFloat.getLegend6() != null) {
 			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText6", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 130+ "px;width: 70px; height: 20px"));
 			wPieChartMineFloat.getLegend6().addStyleClass("wText6");
 			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend6());
@@ -232,45 +228,46 @@ public class GraphWebApplication extends WApplication {
 	
 	public void mouseWentOut(WMouseEvent wMouseEvent, WCircleNode wCircleNode) {
 		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getWPieChart());
-		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend0());
-		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend1());
-		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend2());
-		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend3());
-		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend4());
-		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend5());
-		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend6());
+		if(wPieChartMineFloat.getLegend0() != null)
+			wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend0());
+		if(wPieChartMineFloat.getLegend1() != null)
+			wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend1());
+		if(wPieChartMineFloat.getLegend2() != null)
+			wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend2());
+		if(wPieChartMineFloat.getLegend3() != null)
+			wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend3());
+		if(wPieChartMineFloat.getLegend4() != null)
+			wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend4());
+		if(wPieChartMineFloat.getLegend5() != null)
+			wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend5());
+		if(wPieChartMineFloat.getLegend6() != null)
+			wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getLegend6());
 	}
 	
 	public void pathChanged() {
+		int id;
 		if (WApplication.getInstance().getInternalPath().contains("/root")) {
-			graphWidget.setTree(Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]));
+			id = Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]);
 		} else {
 			// TODO: Change value of clusterId 
-			graphWidget.setTree(1);
+			id = 1;
 		}
+		graphWidget.setTree(id);
+		setGoogleChart(id);
+		setStatisticGraph(this.wPieChartMine, id);
 	}
 	
-	private WGroupBox getNavigationWGroupBox() {
-		WGroupBox wGroupBoxNorth = new WGroupBox();
-		WPushButton reset = new WPushButton("Reset");
-		
-		reset.clicked().addListener(this, new Signal.Listener() {
-			public void trigger() {
-//				WApplication.getInstance().setInternalPath("/root/1");
-				// TODO: Fix the root representation. Shouldn't stay the integer 1
-				graphWidget.setTree(1);
-				GraphWebApplication.this.googleChartWidget.setCountries(new HashMap<String, Integer>());
-				GraphWebApplication.this.googleChartWidget.setRegion("");
-				GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
-				wPieChartMine.setData(new HashMap<String, Integer>());
-				graphWidget.emptyPreviousRootId();
-		    }
-		});
-
-		wGroupBoxNorth.addWidget(reset);
-		return wGroupBoxNorth;
+	private void setGoogleChart(int nodeId) {
+		HashMap<String, Integer> countries = preRendering.readCsv(nodeId, "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
+		this.googleChartWidget.setCountries(countries);
+		this.googleChartWidget.setRegion("");
+		this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
 	}
-
+	
+	private void setStatisticGraph(WPieChartMine wPieChartMine, int id) {
+		wPieChartMine.setData(preRendering.readCsv(Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]), wComboBoxMetadata.getValueText(), settings.getShowNAData()));
+	}
+	
 	private final void showDialog() {
 	    final WDialog dialog = new WDialog("Tree");
 	    WImageTreeMine wImageTreeMine = null;
@@ -292,14 +289,16 @@ public class GraphWebApplication extends WApplication {
 	    dialog.show();
 	}
 	
-	private final void showSequenceData(List<String> ids) {
+	private final void showReport(List<String> ids, List<String> headersToShow) {
 		final WDialog dialog = new WDialog("Sequences");
 		WTableView tableView = new WTableView();
 		List<String> metaDatas = null;
 		try {
-			metaDatas = CsvUtilsMetadata.getDataFromIds(ids, this.metaDataFile, ';');
+			metaDatas = CsvUtilsMetadata.getDataFromIds(ids, headersToShow, this.metaDataFile, ';');
 		} catch(IOException e) {
 			System.err.println(CsvUtilsMetadata.class + " Couldn't create fileReader on " + this.metaDataFile.getPath());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		WStandardItemModel wStandardItemModel = new WStandardItemModel(metaDatas.size(),10);
 
@@ -314,16 +313,10 @@ public class GraphWebApplication extends WApplication {
 			i++;
 		}
 		
-		wStandardItemModel.setHeaderData(0, "ID");
-		wStandardItemModel.setHeaderData(1, "YEAR OF BIRTH");
-		wStandardItemModel.setHeaderData(2, "GENDER");
-		wStandardItemModel.setHeaderData(3, "COUNTRY OF ORIGIN");
-		wStandardItemModel.setHeaderData(4, "COUNTRY OF ORIGIN");
-		wStandardItemModel.setHeaderData(5, "COUNTRY OF INFECTION");
-		wStandardItemModel.setHeaderData(6, "COUNTRY OF INFECTION");
-		wStandardItemModel.setHeaderData(7, "ETHNIC GROUP");
-		wStandardItemModel.setHeaderData(8, "RISK GROUP");
-		wStandardItemModel.setHeaderData(9, "SUBTYPE");
+		int k = 0;
+		for(String header:headersToShow) {
+			wStandardItemModel.setHeaderData(k++, header);
+		}
 		tableView.setModel(wStandardItemModel);
 		tableView.setRowHeaderCount(1);
 		tableView.setSortingEnabled(false);
@@ -392,13 +385,15 @@ public class GraphWebApplication extends WApplication {
 		
 		wComboBoxMetadata = new MyComboBox(metaDataFile, csvDelimitor);
 		wComboBoxMetadata.changed().addListener(this, new Signal.Listener() {
-			public void trigger() {	
+			public void trigger() {
+				int id;
 				if (WApplication.getInstance().getInternalPath().contains("/root")) {
-			    	GraphWebApplication.this.wPieChartMine.setData(preRendering.readCsv(Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]), wComboBoxMetadata.getValueText(), settings.getShowNAData()));
+					id = Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]);
 				} else {
-					// TODO: Change value of clusterId 
-					GraphWebApplication.this.wPieChartMine.setData(preRendering.readCsv(1, wComboBoxMetadata.getValueText(), settings.getShowNAData()));
+					// TODO: Change value of clusterId
+					id = 1;
 				}
+				setStatisticGraph(wPieChartMine, id);
 			}
 		});
 		wComboBoxMetadata.changed().trigger();

@@ -48,4 +48,18 @@
     <chart name="colorAxis">#e9e9e9,red</chart>
   </property>
 
+  <!--
+    Fields from the csv file that you want people to be able to export.
+  -->
+  <property name=“exportFields">
+    <metaData name=“header1”>ID</metaData>
+    <metaData name=“header2”>YEAR_OF_BIRTH</metaData>
+    <metaData name=“header3”>GENDER</metaData>
+    <metaData name=“header4”>COUNTRY_OF_ORIGIN_EN</metaData>
+    <metaData name=“header5”>COUNTRY_OF_INFECTION_EN</metaData>
+    <metaData name=“header6”>ETHNIC_GROUP</metaData>
+    <metaData name=“header7”>RISK_GROUP</metaData>
+    <metaData name=“header8”>subtype</metaData>
+  </property>
+
 </phylogeotool-settings>
