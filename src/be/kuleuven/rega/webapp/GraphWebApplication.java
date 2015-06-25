@@ -31,12 +31,16 @@ import eu.webtoolkit.jwt.WGroupBox;
 import eu.webtoolkit.jwt.WHBoxLayout;
 import eu.webtoolkit.jwt.WLength;
 import eu.webtoolkit.jwt.WLength.Unit;
+import eu.webtoolkit.jwt.WLink;
 import eu.webtoolkit.jwt.WMouseEvent;
 import eu.webtoolkit.jwt.WPushButton;
 import eu.webtoolkit.jwt.WStandardItem;
 import eu.webtoolkit.jwt.WStandardItemModel;
+import eu.webtoolkit.jwt.WString;
 import eu.webtoolkit.jwt.WTableView;
+import eu.webtoolkit.jwt.WTemplate;
 import eu.webtoolkit.jwt.WVBoxLayout;
+import eu.webtoolkit.jwt.WXmlLocalizedStrings;
 
 public class GraphWebApplication extends WApplication {
 
@@ -132,6 +136,7 @@ public class GraphWebApplication extends WApplication {
 		wVBoxLayoutGraphWidget.addWidget(wContainerWidgetNorth);
 		wVBoxLayoutGraphWidget.addWidget(graphWidget);
 		wVBoxLayoutGraphWidget.setSpacing(0);
+		layout.addWidget(this.createHeader(), WBorderLayout.Position.North);
 		layout.addWidget(wGroupBoxGraphWidget, WBorderLayout.Position.East);
 		
 		try {
@@ -161,6 +166,17 @@ public class GraphWebApplication extends WApplication {
 		wGroupBoxGoogleMapWidget.resize((int)mapWidth, 450);
 		this.getStyleSheet().addRule(new WCssTextRule(".CSS-example", "background: blue;position: fixed; width: 100%;top: 0px; left: 0px;z-index: 1"));
 		wContainerWidgetNorth.setStyleClass("CSS-example");
+	}
+	
+	private WTemplate createHeader() {
+		WTemplate wTemplate = new WTemplate(WString.tr("euresist"));
+		WXmlLocalizedStrings resources = new WXmlLocalizedStrings();
+		resources.use("/be/kuleuven/rega/webapp/resources");
+		this.setLocalizedStrings(resources);
+		this.useStyleSheet(new WLink("style/euresist/euresist.css"));
+		wTemplate.bindString("server", "http://engine.euresist.org");
+//		this.getRoot().addWidget(wTemplate);
+		return wTemplate;
 	}
 
 	public void clicked(WMouseEvent wMouseEvent, Node node, WCircleNode wCircleNode) {

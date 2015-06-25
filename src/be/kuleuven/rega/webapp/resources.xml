@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages>
+	<message id="euresist">
+		<div class="ee_topbanner">
+    		<div id="ee_header">
+        		<div id="ee_menup">
+            		<div class="ee_br">
+                		<ul>
+                    		<li><a href="${server}/data_analysis/">EuResist Engine</a>\</li> 
+                    		<li><a href="${server}/front/contact/">Contact</a>\</li>
+                    		<li><a href="${server}/front/disclaimer">Disclaimer</a></li>
+                		</ul>
+            		</div>
+        		</div>
+        		<h1>
+            		<img alt="logo EuResist Engine" title="Euresist - Integration of viral genomics with clinical data to predict response to anti-HIV" src="${server}/images/logo2.jpg" width="250" />
+        		</h1>
+    		</div>
+		</div>
+	</message>
+</messages>

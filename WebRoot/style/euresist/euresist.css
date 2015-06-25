@@ -1,0 +1,43 @@
+html body { margin: 0px; }
+.ee_topbanner
+{
+	margin: 0pt; 
+	padding: 0pt; 
+    font-family: Arial,Helvetica,sans-serif; 
+    font-size: 100%; 
+    color: rgb(130, 124, 110); 
+    background-attachment: scroll; 
+    background-image: url('images/bg_body_up.jpg'); 
+    background-repeat: no-repeat; 
+    background-position: center top; 
+}
+    
+    #ee_menup 
+    { 
+	    background:#F76F25 url('images/br.gif') no-repeat scroll 100% 37px;
+	    color:#FFFFFF;
+	    font-size:0.75em;
+	    line-height:normal;
+	    margin-top:-2px;
+	    float:right;
+    }
+
+    .ee_br 
+    {
+	    background: transparent url('images/bl.gif')  no-repeat scroll 0 100%;
+	    padding: 0px 5px 5px 5px;
+    }
+
+    #ee_menup ul { padding: 0px; font-size: 1em; margin: 0px;}
+    #ee_menup ul li { border: medium none ; margin: 0px; color: rgb(255, 255, 255); display: inline; font-weight: normal; list-style-image: none; list-style-position: outside; list-style-type: none; padding-left: 0em; }
+    #ee_menup li a { margin: 0pt 4px; color: rgb(255, 255, 255); text-decoration: none; }
+    #ee_menup li a:hover { color: rgb(0, 0, 0); }
+
+    #ee_header { 
+	    margin: 0px; 
+	    padding: 8px 0px 0px 0px; 
+	    position: relative; 
+    }
+
+    #ee_header h1 { margin: 0px; }
+    #ee_header img { margin-left: 5px; }

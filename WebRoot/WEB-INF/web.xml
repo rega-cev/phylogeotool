@@ -29,6 +29,17 @@
     <url-pattern>/phylogeotool/*</url-pattern>
   </servlet-mapping>
     
+  <servlet>
+   <servlet-name>service</servlet-name>
+   <display-name>PhyloGeoTool service</display-name>
+   <description>PhyloGeoTool service</description>
+   <servlet-class>be.kuleuven.rega.treedraw.test.PhyloGeoService</servlet-class>
+  </servlet>
+
+   <servlet-mapping>
+     <servlet-name>service</servlet-name>
+     <url-pattern>/service/*</url-pattern>
+   </servlet-mapping>
 <!--  <listener>-->
 <!--    <listener-class>net.sf.regadb.system.Launcher</listener-class>-->
 <!--  </listener>-->
