@@ -1,4 +1,4 @@
-package be.kuleuven.rega.webapp;
+package be.kuleuven.rega.webapp.widgets;
 
 import java.util.EnumSet;
 import java.util.HashMap;

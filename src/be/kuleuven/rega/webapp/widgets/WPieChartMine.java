@@ -1,4 +1,4 @@
-package be.kuleuven.rega.webapp;
+package be.kuleuven.rega.webapp.widgets;
 
 import java.util.ArrayList;
 import java.util.Collections;

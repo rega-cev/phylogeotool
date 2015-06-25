@@ -12,6 +12,10 @@ import be.kuleuven.rega.phylogeotool.tree.Node;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
 import be.kuleuven.rega.phylogeotool.utils.Settings;
 import be.kuleuven.rega.prerendering.PreRendering;
+import be.kuleuven.rega.webapp.widgets.GoogleChartWidget;
+import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
+import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
+import be.kuleuven.rega.webapp.widgets.WPieChartMine;
 import eu.webtoolkit.jwt.SelectionMode;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
@@ -118,15 +122,16 @@ public class GraphWebApplication extends WApplication {
 			}
 		});
 		WHBoxLayout wHBoxLayout = new WHBoxLayout();
-		wPushButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(5));
+		wPushButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(25));
 		wHBoxLayout.addWidget(wPushButton);
-		exportSequencesButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(5));
+		exportSequencesButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(25));
 //		wHBoxLayout.addWidget(exportSequencesButton);
 		wContainerWidgetNorth = new WContainerWidget();
 		wContainerWidgetNorth.setMaximumSize(new WLength(1, Unit.Pixel), new WLength(1, Unit.Pixel));
 		wVBoxLayoutGraphWidget.addLayout(wHBoxLayout);
 		wVBoxLayoutGraphWidget.addWidget(wContainerWidgetNorth);
 		wVBoxLayoutGraphWidget.addWidget(graphWidget);
+		wVBoxLayoutGraphWidget.setSpacing(0);
 		layout.addWidget(wGroupBoxGraphWidget, WBorderLayout.Position.East);
 		
 		try {
@@ -174,7 +179,7 @@ public class GraphWebApplication extends WApplication {
 		double xValue = wCircleNode.getCenterDrawing().getX();
 		double yValue = wCircleNode.getCenterDrawing().getY();
 		
-		this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .div", "visibility: visible;position: absolute;z-index: 2;left: " + Double.toString(xValue - ((this.mapWidth * 0.25)/2) - 8) + "px; top: " + Double.toString(yValue - ((this.getEnvironment().getScreenHeight() * 0.25)/2) - 4) + "px;width: 100px; height: 80px"));
+		this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .div", "visibility: visible;position: absolute;z-index: 2;left: " + Double.toString(xValue - ((this.mapWidth * 0.25)/2) - 8) + "px; top: " + Double.toString(yValue - ((this.getEnvironment().getScreenHeight() * 0.25)/2) - 2) + "px;width: 100px; height: 80px"));
 		
 		wPieChartMineFloat = new WPieChartMine(null, wContainerWidgetNorth);
 		wPieChartMineFloat.getWPieChart().setStyleClass("div");
@@ -189,43 +194,9 @@ public class GraphWebApplication extends WApplication {
 		/**
 		 * We don't want to show all of the legend items if that is not necessary.
 		 */
-		if(wPieChartMineFloat.getLegend0() != null) {
-			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText0", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 10 + "px;width: 70px; height: 20px"));
-			wPieChartMineFloat.getLegend0().addStyleClass("wText0");
-			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend0());
-		}
-		if(wPieChartMineFloat.getLegend1() != null) {
-			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText1", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 30+ "px;width: 70px; height: 20px"));
-			wPieChartMineFloat.getLegend1().addStyleClass("wText1");
-			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend1());
-		}
-		if(wPieChartMineFloat.getLegend2() != null) {
-			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText2", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 50+ "px;width: 70px; height: 20px"));
-			wPieChartMineFloat.getLegend2().addStyleClass("wText2");
-			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend2());
-		}
-		if(wPieChartMineFloat.getLegend3() != null) {
-			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText3", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 70+ "px;width: 70px; height: 20px"));
-			wPieChartMineFloat.getLegend3().addStyleClass("wText3");
-			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend3());
-		}
-		if(wPieChartMineFloat.getLegend4() != null) {
-			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText4", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 90+ "px;width: 70px; height: 20px"));
-			wPieChartMineFloat.getLegend4().addStyleClass("wText4");
-			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend4());
-		}
-		if(wPieChartMineFloat.getLegend5() != null) {
-			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText5", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 110+ "px;width: 70px; height: 20px"));
-			wPieChartMineFloat.getLegend5().addStyleClass("wText5");
-			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend5());
-		}
-		if(wPieChartMineFloat.getLegend6() != null) {
-			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText6", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 130+ "px;width: 70px; height: 20px"));
-			wPieChartMineFloat.getLegend6().addStyleClass("wText6");
-			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend6());
-		}
+		this.setFloatingLegend();
 	}
-	
+
 	public void mouseWentOut(WMouseEvent wMouseEvent, WCircleNode wCircleNode) {
 		wContainerWidgetNorth.removeWidget(wPieChartMineFloat.getWPieChart());
 		if(wPieChartMineFloat.getLegend0() != null)
@@ -289,6 +260,44 @@ public class GraphWebApplication extends WApplication {
 	    dialog.show();
 	}
 	
+	private void setFloatingLegend() {
+		if(wPieChartMineFloat.getLegend0() != null) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText0", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 10 + "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend0().addStyleClass("wText0");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend0());
+		}
+		if(wPieChartMineFloat.getLegend1() != null) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText1", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 30+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend1().addStyleClass("wText1");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend1());
+		}
+		if(wPieChartMineFloat.getLegend2() != null) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText2", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 50+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend2().addStyleClass("wText2");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend2());
+		}
+		if(wPieChartMineFloat.getLegend3() != null) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText3", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 70+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend3().addStyleClass("wText3");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend3());
+		}
+		if(wPieChartMineFloat.getLegend4() != null) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText4", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 90+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend4().addStyleClass("wText4");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend4());
+		}
+		if(wPieChartMineFloat.getLegend5() != null) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText5", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 110+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend5().addStyleClass("wText5");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend5());
+		}
+		if(wPieChartMineFloat.getLegend6() != null) {
+			this.getStyleSheet().addRule(new WCssTextRule(".CSS-example .wText6", "background: white;visibility: visible;position: absolute;z-index: 2;left: " + 10 + "px; top: " + 130+ "px;width: 70px; height: 20px"));
+			wPieChartMineFloat.getLegend6().addStyleClass("wText6");
+			wContainerWidgetNorth.addWidget(wPieChartMineFloat.getLegend6());
+		}
+	}
+	
 	private final void showReport(List<String> ids, List<String> headersToShow) {
 		final WDialog dialog = new WDialog("Sequences");
 		WTableView tableView = new WTableView();
@@ -340,40 +349,13 @@ public class GraphWebApplication extends WApplication {
 	
 	private WGroupBox getGoogleChartWGroupBox(final HashMap<String, Integer> countries, String region, HashMap<String, Integer> hashMapTemp) throws IOException {
 		WGroupBox wGroupBoxGoogleMapWidget = new WGroupBox();
-		wComboBoxRegions = new WComboBox();
-		wComboBoxRegions.addItem("World");
-		wComboBoxRegions.addItem("Europe");
-		wComboBoxRegions.addItem("Africa");
-		wComboBoxRegions.addItem("Northern America");
-		wComboBoxRegions.addItem("South America");
-		wComboBoxRegions.addItem("Asia");
-		wComboBoxRegions.addItem("Oceania");
-		wComboBoxRegions.addItem("Northern Africa");
-		wComboBoxRegions.addItem("Western Africa");
-		wComboBoxRegions.addItem("Middle Africa");
-		wComboBoxRegions.addItem("Eastern Africa");
-		wComboBoxRegions.addItem("Southern Africa");
-		wComboBoxRegions.addItem("Central America");
-		wComboBoxRegions.addItem("Northern Europe");
-		wComboBoxRegions.addItem("Western Europe");
-		wComboBoxRegions.addItem("Eastern Europe");
-		wComboBoxRegions.addItem("Southern Europe");
-		wComboBoxRegions.addItem("Caribbean");
-		wComboBoxRegions.addItem("Central Asia");
-		wComboBoxRegions.addItem("Eastern Asia");
-		wComboBoxRegions.addItem("Southern Asia");
-		wComboBoxRegions.addItem("South-Eastern Asia");
-		wComboBoxRegions.addItem("Western Asia");
-		wComboBoxRegions.addItem("Australia and New Zealand");
-		wComboBoxRegions.addItem("Melanesia");
-		wComboBoxRegions.addItem("Micronesia");
-		wComboBoxRegions.addItem("Polynesia");
-		
+		final WComboBoxRegions wComboBoxRegions = new WComboBoxRegions();
 		wComboBoxRegions.changed().addListener(this, new Signal.Listener() {
 			public void trigger() {
 				GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
 			}
 		});
+		
 		WVBoxLayout wvBoxLayout = new WVBoxLayout(wGroupBoxGoogleMapWidget);
 		wvBoxLayout.addWidget(wComboBoxRegions);
 		googleChartWidget = new GoogleChartWidget(countries, region, settings.getDatalessRegionColor(), settings.getBackgroundcolor(), settings.getColorAxis());
