@@ -136,6 +136,7 @@ public class GraphWebApplication extends WApplication {
 		wVBoxLayoutGraphWidget.addWidget(wContainerWidgetNorth);
 		wVBoxLayoutGraphWidget.addWidget(graphWidget);
 		wVBoxLayoutGraphWidget.setSpacing(0);
+		
 		layout.addWidget(this.createHeader(), WBorderLayout.Position.North);
 		layout.addWidget(wGroupBoxGraphWidget, WBorderLayout.Position.East);
 		
@@ -252,7 +253,7 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	private void setStatisticGraph(WPieChartMine wPieChartMine, int id) {
-		wPieChartMine.setData(preRendering.readCsv(Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]), wComboBoxMetadata.getValueText(), settings.getShowNAData()));
+		wPieChartMine.setData(preRendering.readCsv(id, wComboBoxMetadata.getValueText(), settings.getShowNAData()));
 	}
 	
 	private final void showDialog() {
