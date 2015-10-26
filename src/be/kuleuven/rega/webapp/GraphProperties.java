@@ -45,11 +45,34 @@ public class GraphProperties {
 		
 		for(Node node:nodesList) {
 //			System.out.println(node.getId());
-			if(node.getChildren().size() == 0) {
+			if(node.getImmediateChildren().size() == 0) {
 //				System.out.println(Color.decode(indexcolors[i]));
-				node.setColor(Color.decode(indexcolors[i++]));
+				try {
+					node.setColor(Color.decode(indexcolors[i++]));
+				} catch(ArrayIndexOutOfBoundsException e) {
+					node.setColor(Color.WHITE);
+				}
 			}
 		}
+	}
+	
+	public Tree setNodeColor(Tree tree, List<Node> clusters) {
+		int i = 2;
+		Collections.sort(clusters, new ClusterIdComparator());
+		
+		for(Node node:clusters) {
+			try {
+				Color color = Color.decode(indexcolors[i++]);
+				Node tempNode = tree.getNodeById(node.getId());
+				tempNode.setColor(color);
+				for(Node child:tempNode.getAllChildren()) {
+					child.setColor(color);
+				}
+			} catch(ArrayIndexOutOfBoundsException e) {
+				node.setColor(Color.WHITE);
+			}
+		}
+		return tree;
 	}
 
 }

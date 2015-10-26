@@ -3,6 +3,7 @@ package be.kuleuven.rega.clustering;
 import java.io.File;
 import java.io.IOException;
 
+import be.kuleuven.rega.comparator.ClusterSizeComparator;
 import be.kuleuven.rega.phylogeotool.distance.MidRootCluster;
 import be.kuleuven.rega.phylogeotool.tree.Node;
 import be.kuleuven.rega.phylogeotool.tree.Tree;
@@ -29,9 +30,11 @@ public class ClusterAlgos {
 		//kMedoids = new KMedoids(this.getNrOfClusters(), 100, allData);
 		//Map<ICluster, List<ICluster>> associationMap = kMedoids.calculate(true);
 		if(startNode == null) {
-			return determineBestClusteringPieterIdea(tree.getRootNode(), nrClusters, tree);
+//			return determineBestClusteringPieterIdea(tree.getRootNode(), nrClusters, tree);
+			return determineBestClusteringGuyIdea(tree.getRootNode(), nrClusters, tree);
 		} else {
-			return determineBestClusteringPieterIdea(startNode, nrClusters, tree);
+//			return determineBestClusteringPieterIdea(startNode, nrClusters, tree);
+			return determineBestClusteringGuyIdea(startNode, nrClusters, tree);
 		}
 	}
 
@@ -41,7 +44,7 @@ public class ClusterAlgos {
 		midRootCluster = new MidRootCluster(nrClusters);
 //		for(int i = 1; i < nrClusters; i++) {
 //			midRootCluster.setNumberOfIClusters(i);
-		toReturn = midRootCluster.calculate(tree, startNode);
+		toReturn = midRootCluster.calculate(tree, startNode, new ClusterSizeComparator());
 			// TODO: Check if this part of the code is still necessary
 //			if(i >= 7 && midRootCluster.getNrBadClusters() >= ((1/6d)*i)) {
 //				midRootCluster.setNumberOfIClusters(i-1);
@@ -59,7 +62,7 @@ public class ClusterAlgos {
 			midRootCluster = new MidRootCluster(nrClusters);
 //			for(int i = 1; i < nrClusters; i++) {
 //				midRootCluster.setNumberOfIClusters(i);
-			toReturn = midRootCluster.calculate(tree, startNode);
+			toReturn = midRootCluster.calculate(tree, startNode, new ClusterSizeComparator());
 				//TODO: Figure out why it is slow and if we still need this
 //				// Sort the clusters to get the biggest ones in front
 //				for(V vertix:toReturn.getVertices()) {
@@ -77,6 +80,13 @@ public class ClusterAlgos {
 //				}
 //				
 //			}
+			return toReturn;
+		}
+		
+		private Tree determineBestClusteringGuyIdea(Node startNode, int nrClusters, Tree tree) {
+			Tree toReturn = null;
+			midRootCluster = new MidRootCluster(nrClusters);
+			toReturn = midRootCluster.calculate(tree, startNode, new ClusterSizeComparator());
 			return toReturn;
 		}
 }

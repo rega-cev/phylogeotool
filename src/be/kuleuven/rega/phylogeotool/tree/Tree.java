@@ -1,12 +1,14 @@
 package be.kuleuven.rega.phylogeotool.tree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.Map;
 import java.util.Set;
+
+import be.kuleuven.rega.phylogeotool.distance.DistanceCalculateFromTree;
+import be.kuleuven.rega.phylogeotool.distance.DistanceInterface;
 
 public class Tree {
 	private Set<Node> nodes = null;
@@ -14,10 +16,20 @@ public class Tree {
 	
 	private Node rootNode = null;
 	
+	private DistanceInterface distanceInterface = null;
+	
 	public Tree(Set<Node> nodes, Set<Edge> edges, Node rootNode) {
 		this.nodes = nodes;
 		this.edges = edges;
 		this.rootNode = rootNode;
+		this.distanceInterface = new DistanceCalculateFromTree(this);
+	}
+	
+	public Tree(Set<Node> nodes, Set<Edge> edges, Node rootNode, DistanceInterface distanceInterface) {
+		this.nodes = nodes;
+		this.edges = edges;
+		this.rootNode = rootNode;
+		this.distanceInterface = distanceInterface;
 	}
 
 	public Node getRootNode() {
@@ -36,7 +48,7 @@ public class Tree {
 		for(Edge edge:edges) {
 			if(edge.getNode1().equals(node1) && edge.getNode2().equals(node2)) {
 				return edge;
-			} else if(edge.getNode1().equals(node2) && edge.getNode2().equals(node2)) {
+			} else if(edge.getNode1().equals(node2) && edge.getNode2().equals(node1)) {
 				return edge;
 			}
 		}
@@ -63,14 +75,128 @@ public class Tree {
 		return null;
 	}
 	
+	public Node getLeafByLabel(String label) throws Exception {
+		for(Node node:nodes) {
+			if(node.getLabel().equals(label)) {
+				return node;
+			}
+		}
+		throw new Exception("String with label: " + label + " not found.");
+	}
+	
+	public double getDistance(Node node) {
+		double distance = 0.0;
+		
+		while(node.hasParent()) {
+			distance += this.getEdge(node, node.getParent()).getDistance();
+			node = node.getParent();
+		}
+		return distance;
+	}
+	
+	public double getDistance(Node node1, Node node2) {
+		return distanceInterface.getDistance(node1, node2);
+	}
+	
+	public void setDistanceInterface(DistanceInterface distanceInterface) {
+		this.distanceInterface = distanceInterface;
+	}
+	
+	public double getIntraPairwiseDistance(Node cluster) {
+		List<Node> children = cluster.getLeaves();
+		double sum = 0.0D;
+		int amountOfRuns = 0;
+		for(int i = 0; i < children.size(); i++) {
+			for(int j = i + 1; j < children.size(); j++) {
+				sum += this.getDistance(children.get(i), children.get(j));
+				amountOfRuns++;
+			}
+		}
+		return sum/amountOfRuns;
+	}
+	
+	public Map<Double, Integer> getIntraPairwiseDistancePieter(Node cluster) {
+		List<Node> children = cluster.getLeaves();
+		double sum = 0.0D;
+		int amountOfRuns = 0;
+		for(int i = 0; i < children.size(); i++) {
+			for(int j = i + 1; j < children.size(); j++) {
+				sum += this.getDistance(children.get(i), children.get(j));
+				amountOfRuns++;
+			}
+		}
+		Map<Double,Integer> toReturn = new HashMap<Double, Integer>();
+		toReturn.put(sum, amountOfRuns);
+		return toReturn;
+	}
+	
+	public double getInterClusterPairwiseDistance(List<Node> clusters) {
+		int minimumClusterSize = 1;
+		if(clusters != null && clusters.size() > 0) {
+			double d1 = 0.0D;
+			double d2 = 0.0D;
+			for (int i = 0; i < clusters.size(); i++) {
+				for (int j = i + 1; j < clusters.size(); j++) {
+					if ((clusters.get(i).getLeaves().size() >= minimumClusterSize) && (clusters.get(j).getLeaves().size() >= minimumClusterSize)) {
+						d2 += getInterClusterPairwiseDistance(clusters.get(i), clusters.get(j));
+						d1 += 1.0D;
+					}
+		        }
+		      }
+			return d2 / d1;
+			}
+		return 0.0D;
+		
+	}
+
+	private double getInterClusterPairwiseDistance(Node node1, Node node2) {
+		if((node1.getLeaves() != null && node1.getLeaves().size() > 0) && (node2.getLeaves() != null && node2.getLeaves().size() > 0)){
+			List<Node> list1 = node1.getLeaves();
+			List<Node> list2 = node2.getLeaves();
+			double d = 0.0D;
+			for (int i = 0; i < list1.size(); i++) {
+				for (int j = 0; j < list2.size(); j++) {
+					d += this.getDistance(list1.get(i), list2.get(j));
+				}
+			}
+			double toReturn = (d / (list1.size() * list2.size()));
+			return toReturn;
+		} else {
+			return 0.0D;
+		}
+	}
+	
+	public Node getLeastCommonAncestor(Node node1, Node node2) {
+		List<Node> parents1 = node1.getAllParents();
+		List<Node> parents2 = node2.getAllParents();
+		parents1.retainAll(parents2);
+		if(parents1.size() > 0) {
+			return parents1.iterator().next();
+		} else {
+			if(parents2.size() == 0) {
+				return node2;
+			} else {
+				return node1;
+			}
+		}
+	}
+	
 	public Set<Node> getLeaves() {
 		Set<Node> toReturn = new HashSet<Node>();
 		for(Node node:nodes) {
-			if(node.getChildren().size() == 0 && node.getId() != this.getRootNode().getId()) {
+			if(node.getImmediateChildren().size() == 0 && node.getId() != this.getRootNode().getId()) {
 				toReturn.add(node);
 			}
 		}
 		return toReturn;
+	}
+	
+	public HashMap<Integer, Node> getLeavesMap() {
+		HashMap<Integer, Node> leaves = new HashMap<Integer, Node>();
+		for(Node node:this.getLeaves()) {
+			leaves.put(node.getId(), node);
+		}
+		return leaves;
 	}
 	
 	public Tree clone() {
@@ -116,38 +242,38 @@ public class Tree {
 			rootNodeClone = tempStorage;
 		}
 		
-		if(root.getChildren().size() > 0) {
-			preOrder(root.getChildren().get(0), tempStorage);
-			preOrder(root.getChildren().get(1), tempStorage);
+		if(root.getImmediateChildren().size() > 0) {
+			preOrder(root.getImmediateChildren().get(0), tempStorage);
+			preOrder(root.getImmediateChildren().get(1), tempStorage);
 		} else {
 			preOrder(null, tempStorage);
 		}
 	}
 	
-	public void printTree(Node tmpRoot) {
-
-        Queue<Node> currentLevel = new LinkedList<Node>();
-        Queue<Node> nextLevel = new LinkedList<Node>();
-
-        currentLevel.add(tmpRoot);
-
-        while (!currentLevel.isEmpty()) {
-            Iterator<Node> iter = currentLevel.iterator();
-            while (iter.hasNext()) {
-                Node currentNode = iter.next();
-                if (currentNode.getChildren().get(0) != null) {
-                    nextLevel.add(currentNode.getChildren().get(0));
-                }
-                if (currentNode.getChildren().get(1) != null) {
-                    nextLevel.add(currentNode.getChildren().get(1));
-                }
-                System.out.print(currentNode.getId() + " ");
-            }
-            System.out.println();
-            currentLevel = nextLevel;
-            nextLevel = new LinkedList<Node>();
-
-        }
-
-    }
+//	public void printTree(Node tmpRoot) {
+//
+//        Queue<Node> currentLevel = new LinkedList<Node>();
+//        Queue<Node> nextLevel = new LinkedList<Node>();
+//
+//        currentLevel.add(tmpRoot);
+//
+//        while (!currentLevel.isEmpty()) {
+//            Iterator<Node> iter = currentLevel.iterator();
+//            while (iter.hasNext()) {
+//                Node currentNode = iter.next();
+//                if (currentNode.getChildren().get(0) != null) {
+//                    nextLevel.add(currentNode.getChildren().get(0));
+//                }
+//                if (currentNode.getChildren().get(1) != null) {
+//                    nextLevel.add(currentNode.getChildren().get(1));
+//                }
+//                System.out.print(currentNode.getId() + " ");
+//            }
+//            System.out.println();
+//            currentLevel = nextLevel;
+//            nextLevel = new LinkedList<Node>();
+//
+//        }
+//
+//    }
 }

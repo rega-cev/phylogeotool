@@ -1,11 +1,11 @@
 package be.kuleuven.rega.phylogeotool.distance;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import be.kuleuven.rega.comparator.ClusterSizeComparator;
 import be.kuleuven.rega.phylogeotool.tree.Edge;
 import be.kuleuven.rega.phylogeotool.tree.Node;
 import be.kuleuven.rega.phylogeotool.tree.Tree;
@@ -13,37 +13,64 @@ import be.kuleuven.rega.phylogeotool.tree.Tree;
 public class MidRootCluster {
 	
 	private int numberOfIClusters;
+	private Tree tree;
 	
 	public MidRootCluster(int numberOfIClusters) {
 		this.numberOfIClusters = numberOfIClusters;
 	}
 
-	public Tree calculate(Tree tree, Node startNode) {
+	public Tree calculate(Tree tree, Node startNode, Comparator<Node> comparator) {
+		this.tree = tree;
 		LinkedList<Node> tempQueue = new LinkedList<Node>();
-		ClusterSizeComparator clusterSizeComparator = new ClusterSizeComparator();
 		
 		Set<Node> clusteredNodes = new HashSet<Node>();
 		Set<Edge> clusteredEdges = new HashSet<Edge>();
 		
 		clusteredNodes.add(startNode);
 		
-		tempQueue.addAll(startNode.getChildren());
-		Collections.sort(tempQueue, clusterSizeComparator);
+		if(this.getNumberOfIClusters() <= 2) {
+			switch (this.getNumberOfIClusters()) {
+			case 1:
+				startNode.setSize(tree.getNodeById(startNode.getId()).getAllChildren().size());
+				break;
+			case 2:
+				Node tempNode1 = startNode.getImmediateChildren().get(0);
+				tempNode1.setSize(tempNode1.getLeaves().size());
+				Node tempNode2 = startNode.getImmediateChildren().get(1);
+				tempNode2.setSize(tempNode2.getLeaves().size());
+				clusteredNodes.add(tempNode1);
+				clusteredNodes.add(tempNode2);
+				
+				clusteredEdges.add(tree.getEdge(startNode, startNode.getImmediateChildren().get(0)));
+				clusteredEdges.add(tree.getEdge(startNode, startNode.getImmediateChildren().get(1)));
+				break;
+			}
+		} else {
+			tempQueue.addAll(startNode.getImmediateChildren());
+			Collections.sort(tempQueue, comparator);
+		}
 		Node node = null;
 		int nrNodesNoChildren = 0;
 		while(true) {
 			// Inner nodes
-			if(tempQueue.size() > 0 && (tempQueue.size() + nrNodesNoChildren) < getNumberOfIClusters()) {
+//			if(tempQueue.size() > 0 && (tempQueue.size() + nrNodesNoChildren) < getNumberOfIClusters()) {
+//			if(biggestClusters.size() < getNumberOfIClusters() && tempQueue.containsAll(biggestClusters)) {
+//				for(int i = 1; i < Math.min(numberOfIClusters, tempQueue.size()); i++) {
+//					biggestClusters.clear();
+//					biggestClusters.add(tempQueue.get(i));
+//				}
+			if(!acceptableClustersPieterIdea(tree, tempQueue) && !tempQueue.isEmpty()) {
 				node = tempQueue.pop();
 				clusteredNodes.add(node);
 				clusteredEdges.add(tree.getEdge(node.getParent(), node));
-				int nrChildren = node.getChildren().size();
+				int nrChildren = node.getImmediateChildren().size();
 				if(nrChildren == 0) {
 					nrNodesNoChildren += 1;
 				} else {
-					tempQueue.addAll(node.getChildren());
-					Collections.sort(tempQueue, clusterSizeComparator);
+					tempQueue.addAll(node.getImmediateChildren());
+					Collections.sort(tempQueue, comparator);
 				}
+				
 			// Leafs
 			} else {
 //				totalAmountOfSequences = tree.getRootNode().getLeaves().size();
@@ -55,19 +82,12 @@ public class MidRootCluster {
 					clusteredNodes.add(tempNode);
 					clusteredEdges.add(tree.getEdge(tempNode.getParent(), tempNode));
 				}
-				
-				// TODO: Look at this part of the code. Why is it still needed
-//				for(V vertix:jungTree.getVertices()) {
-//					if((jungTree.getChildren(vertix).size() == 0) && JeblTools.getLeaves(this.tree, ((Node)vertix)).size() < (totalAmountOfSequences*0.001)) {
-//						this.nrBadClusters++;
-//					}
-//				}
-				
 				break;
 			}
 		}
 		
 		Tree clonedTree = new Tree(clusteredNodes, clusteredEdges, startNode).clone();
+//		System.out.println(clonedTree.getLeaves().iterator().next().getLeaves().size());
 		for(Node tempNode:clonedTree.getNodes()) {
 			tempNode.setX(0.0);
 			tempNode.setY(0.0);
@@ -103,9 +123,35 @@ public class MidRootCluster {
 	
 	public int getNumberOfIClusters() {
 		return this.numberOfIClusters;
+//		return (int) Math.sqrt(tree.getLeaves().size() / 2);
 	}
 
 	public void setNumberOfIClusters(int numberOfIClusters) {
 		this.numberOfIClusters = numberOfIClusters;
+	}
+	
+	public boolean acceptableClustersPieterIdea(Tree tree, LinkedList<Node> tempQueue) {
+		if(tempQueue.size() >= getNumberOfIClusters()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean acceptableClustersGuyIdea(Tree tree, LinkedList<Node> tempQueue) {
+		double minClusterSize = tree.getLeaves().size() * 0.01;
+//		double minClusterSize = Math.floor(Math.sqrt(tree.getLeaves().size() / 2));
+//		System.out.println(minClusterSize);
+		int nrAcceptableClusters = 0;
+		for(Node node:tempQueue) {
+			if(node.getLeaves().size() > minClusterSize) {
+				nrAcceptableClusters++;
+			}
+		}
+		if(nrAcceptableClusters >= getNumberOfIClusters() || nrAcceptableClusters > 30) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
