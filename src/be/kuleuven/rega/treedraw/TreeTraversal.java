@@ -58,9 +58,9 @@ public class TreeTraversal {
 			}
 		}
 		
-		if(root.getChildren().size() > 0) {
-			preOrder(root.getChildren().get(0), edges, shape);
-			preOrder(root.getChildren().get(1), edges, shape);
+		if(root.getImmediateChildren().size() > 0) {
+			preOrder(root.getImmediateChildren().get(0), edges, shape);
+			preOrder(root.getImmediateChildren().get(1), edges, shape);
 		} else {
 			preOrder(null, edges, shape);
 		}
@@ -76,17 +76,17 @@ public class TreeTraversal {
 	public static void postOrder (Node root, Shape shape, int nrLeaves, int deepestLevel) {
 		if(root == null) return;
 		// Inner node
-		if(root.getChildren().size() > 0) {
-			postOrder(root.getChildren().get(0), shape, nrLeaves, deepestLevel);
-			postOrder(root.getChildren().get(1), shape, nrLeaves, deepestLevel);
+		if(root.getImmediateChildren().size() > 0) {
+			postOrder(root.getImmediateChildren().get(0), shape, nrLeaves, deepestLevel);
+			postOrder(root.getImmediateChildren().get(1), shape, nrLeaves, deepestLevel);
 			if(shape == Shape.RECTANGULAR_PHYLOGRAM || shape == Shape.RECTANGULAR_CLADOGRAM) {
-				root.setY((root.getChildren().get(0).getY() + root.getChildren().get(1).getY())/2);
+				root.setY((root.getImmediateChildren().get(0).getY() + root.getImmediateChildren().get(1).getY())/2);
 			} else if(shape == Shape.CIRCULAR_PHYLOGRAM) {
-				root.setTheta((root.getChildren().get(0).getTheta() + root.getChildren().get(1).getTheta())/2);
+				root.setTheta((root.getImmediateChildren().get(0).getTheta() + root.getImmediateChildren().get(1).getTheta())/2);
 			} else if(shape == Shape.CIRCULAR_CLADOGRAM || shape == Shape.RADIAL) {
 				if(root.getParent() != null) {
 					root.setX(nodeLevel(root, 0));
-					root.setTheta((root.getChildren().get(0).getTheta() + root.getChildren().get(1).getTheta())/2);
+					root.setTheta((root.getImmediateChildren().get(0).getTheta() + root.getImmediateChildren().get(1).getTheta())/2);
 				} else {
 					root.setX(0.0);
 					root.setY(0.0);
