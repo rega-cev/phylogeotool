@@ -39,8 +39,16 @@ public class ReadNewickTree {
 	public static int i = 1;
 	public static Node rootNode = null;
 	
-	public static be.kuleuven.rega.phylogeotool.tree.Tree jeblToTreeDraw(SimpleRootedTree tree) {
-		preOrder((SimpleRootedNode)tree.getRootNode(), null);
+	public static be.kuleuven.rega.phylogeotool.tree.Tree jeblToTreeDraw(SimpleRootedTree tree, List<String> pplacerSequences) {
+		nodes = new ArrayList<Node>();
+		edges = new ArrayList<Edge>();
+		i = 1;
+		rootNode = null;
+		preOrder((SimpleRootedNode)tree.getRootNode(), null, pplacerSequences);
+		
+		for(Node node:sequencesToBeEdited) {
+			node.setId(i++);
+		}
 		// TODO: Check why we need a set
 		return new be.kuleuven.rega.phylogeotool.tree.Tree(new HashSet<Node>(nodes), new HashSet<Edge>(edges), rootNode);
 	}
@@ -56,12 +64,28 @@ public class ReadNewickTree {
 	 * @param simpleRootedTree
 	 * @param root
 	 */
-	public static void preOrder (SimpleRootedNode root, Node parent) {
+	private static int nrNodes;
+	private static List<Node> sequencesToBeEdited = new ArrayList<Node>();
+	public static void preOrder (SimpleRootedNode root, Node parent, List<String> pplacerSequences) {
 		if(root == null) return;
 		
 		Node tempStorage = null;
 		if(root.getChildren().size() <= 0) {
-			tempStorage = new Node(root.getTaxon().getName(), i++);
+			/* Special pplacer situation */
+			if(pplacerSequences.contains(root.getTaxon().getName())) {
+				tempStorage = new Node(root.getTaxon().getName(), nrNodes);
+				sequencesToBeEdited.add(parent);
+				sequencesToBeEdited.add(tempStorage);
+				// Check if parent has other child. If yes, correct their id as they got a wrong one due to the introduced sequence.
+				if(parent.getImmediateChildren().size() == 1) {
+					fixIdPPlacerChildren(parent.getImmediateChildren().get(0));
+				}
+				// The parental sequence of the pplacer sequence was introduced in the new tree as well. Due to the nature of the algorithm,
+				// the parental node increased our counting while this shouldn't be the case. We correct this here.
+				i--;
+			} else {
+				tempStorage = new Node(root.getTaxon().getName(), i++);
+			}
 		} else {
 			tempStorage = new Node("", i++);
 		}
@@ -78,12 +102,27 @@ public class ReadNewickTree {
 		if(i == 2) {
 			rootNode = tempStorage;
 		}
+
 		
 		if(root.getChildren().size() > 0) {
-			preOrder((SimpleRootedNode)root.getChildren().get(0), tempStorage);
-			preOrder((SimpleRootedNode)root.getChildren().get(1), tempStorage);
+			preOrder((SimpleRootedNode)root.getChildren().get(0), tempStorage, pplacerSequences);
+			preOrder((SimpleRootedNode)root.getChildren().get(1), tempStorage, pplacerSequences);
 		} else {
-			preOrder(null, tempStorage);
+			preOrder(null, tempStorage, pplacerSequences);
 		}
 	}
+	
+	public static void fixIdPPlacerChildren (Node root) {
+		if(root == null) return;
+		
+		root.setId(root.getId() - 1);
+		
+		if(root.getImmediateChildren().size() > 0) {
+			fixIdPPlacerChildren(root.getImmediateChildren().get(0));
+			fixIdPPlacerChildren(root.getImmediateChildren().get(1));
+		} else {
+			fixIdPPlacerChildren(null);
+		}
+	}
+	
 }

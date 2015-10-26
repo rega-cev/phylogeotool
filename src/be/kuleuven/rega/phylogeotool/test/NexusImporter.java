@@ -23,7 +23,6 @@ import jebl.evolution.distances.DistanceMatrix;
 import jebl.evolution.graphs.Node;
 import jebl.evolution.io.AlignmentImporter;
 import jebl.evolution.io.DistanceMatrixImporter;
-import jebl.evolution.io.DistanceMatrixImporter.Triangle;
 import jebl.evolution.io.ImportException;
 import jebl.evolution.io.ImportHelper;
 import jebl.evolution.io.NexusExporter;

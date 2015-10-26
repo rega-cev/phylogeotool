@@ -8,13 +8,13 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import be.kuleuven.rega.comparator.ClusterSizeComparator;
+import be.kuleuven.rega.comparator.ClusterDistanceComparator;
 import be.kuleuven.rega.phylogeotool.distance.MidRootCluster;
 import be.kuleuven.rega.phylogeotool.tree.Edge;
 import be.kuleuven.rega.phylogeotool.tree.Node;
 import be.kuleuven.rega.phylogeotool.tree.Tree;
 
-public class MidRootClusterTest {
+public class ClusterDistanceTest {
 	
 	private Node t1 = new Node("t1", 1);
 	private Node t2 = new Node("t2", 2);
@@ -175,20 +175,20 @@ public class MidRootClusterTest {
 	@Test
 	public void testClusterSizes() {
 		MidRootCluster midRootCluster = new MidRootCluster(1);
-//		assertEquals("", 1, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getNodes().size(), 0.0);
-//		midRootCluster.setNumberOfIClusters(2);
-//		assertEquals("", 2, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 1, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterDistanceComparator(tree)).getNodes().size(), 0.0);
+		midRootCluster.setNumberOfIClusters(2);
+		assertEquals("", 2, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterDistanceComparator(tree)).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(3);
-		assertEquals("", 3, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 3, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterDistanceComparator(tree)).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(4);
-		assertEquals("", 4, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 4, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterDistanceComparator(tree)).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(5);
-		assertEquals("", 5, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 5, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterDistanceComparator(tree)).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(6);
-		assertEquals("", 6, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 6, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterDistanceComparator(tree)).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(7);
-		assertEquals("", 7, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 7, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterDistanceComparator(tree)).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(8);
-		assertEquals("", 8, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 8, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterDistanceComparator(tree)).getLeaves().size(), 0.0);
 	}
 }

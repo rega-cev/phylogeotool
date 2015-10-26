@@ -25,7 +25,7 @@ public class CsvUtils {
 	private final static String VIRAL_ISOLATE_ID = "viral_isolate_ii";
 	private final static String SAMPLE_DATE = "SAMPLE_DATE";
 	private final static String DATASET = "dataset";
-	private final static String NUCLEOTIDES = "nucleotides";
+	private final static String NUCLEOTIDES = "NUCLEOTIDES";
 	private final static String COUNTRY_OF_ORIGIN_ISO = "COUNTRY_OF_ORIGIN_ISO";
 	private final static String COUNTRY_OF_ORIGIN_EN = "COUNTRY_OF_ORIGIN_EN";
 	private final static String COUNTRY_OF_INFECTION_ISO = "COUNTRY_OF_INFECTION_ISO";
@@ -35,6 +35,7 @@ public class CsvUtils {
 	private final static String GENDER = "GENDER";
 	private final static String ETHNIC_GROUP = "ETHNIC_GROUP";
 	private final static String RISK_GROUP = "RISK_GROUP";
+	private final static String GENE_REGION = "GENE_REGION";
 	
 
 	public static List<Sequence> readCsv(File csv, char delimitor, String dateFormat) throws IOException {
@@ -72,7 +73,7 @@ public class CsvUtils {
 					Sequence s = new Sequence(row[indexOf(header, ID)], row[indexOf(header, PATIENT_ID)], d, row[indexOf(header, NUCLEOTIDES)], 
 							row[indexOf(header, COUNTRY_OF_ORIGIN_ISO)], row[indexOf(header, COUNTRY_OF_ORIGIN_EN)], row[indexOf(header, YEAR_OF_BIRTH)], 
 							row[indexOf(header, COUNTRY_OF_INFECTION_ISO)], row[indexOf(header, COUNTRY_OF_INFECTION_EN)], row[indexOf(header, GENDER)], 
-							row[indexOf(header, ETHNIC_GROUP)], row[indexOf(header, RISK_GROUP)]);
+							row[indexOf(header, ETHNIC_GROUP)], row[indexOf(header, RISK_GROUP)], row[indexOf(header, GENE_REGION)]);
 					
 					sequences.add(s);
 
@@ -103,7 +104,7 @@ public class CsvUtils {
 			line = br.readLine();
 			while (line != null) {
 				String[] row = parser.parseLine(line);
-				Sequence s = new Sequence(row[indexOf(header, ID)], null, null, null,"", row[indexOf(header, NUCLEOTIDES)], "");
+				Sequence s = new Sequence(row[indexOf(header, ID)], null, null, null,"", row[indexOf(header, NUCLEOTIDES)], "", "");
 					
 				sequences.add(s);
 
@@ -138,10 +139,11 @@ public class CsvUtils {
 //			fw.write(ID.toString() + ',' + PATIENT_ID.toString() + ',' + VIRAL_ISOLATE_ID.toString() + ',' + NUCLEOTIDES.toString()
 //					+ ',' + SAMPLE_DATE.toString());
 			
-			fw.write("ID" + delimitor + PATIENT_ID.toString() + delimitor + SAMPLE_DATE.toString() + delimitor + NUCLEOTIDES.toString() + delimitor +
-					COUNTRY_OF_ORIGIN_ISO.toString() + delimitor + COUNTRY_OF_ORIGIN_EN.toString() + delimitor + YEAR_OF_BIRTH.toString() + delimitor + 
-					COUNTRY_OF_INFECTION_ISO.toString() + delimitor + COUNTRY_OF_INFECTION_EN.toString() + delimitor + GENDER.toString()+ delimitor +
-					ETHNIC_GROUP.toString() + delimitor + RISK_GROUP);
+			fw.write("ID" + delimitor + PATIENT_ID.toString() + delimitor + YEAR_OF_BIRTH.toString() + delimitor + GENDER.toString() + delimitor + 
+					COUNTRY_OF_ORIGIN_ISO.toString() + delimitor + COUNTRY_OF_ORIGIN_EN.toString() + delimitor +
+					COUNTRY_OF_INFECTION_ISO.toString() + delimitor + COUNTRY_OF_INFECTION_EN.toString()  + delimitor +
+					ETHNIC_GROUP.toString() + delimitor + RISK_GROUP.toString() + delimitor + SAMPLE_DATE.toString() + delimitor + 
+					GENE_REGION.toString() + delimitor + NUCLEOTIDES.toString());
 			
 			fw.write('\n');
 			for (Sequence s : sequences) {

@@ -102,6 +102,6 @@ public class SequenceMerger {
 		}
 		
 		return new Sequence(group.get(0).getId(), group.get(0).getPatientId(), group.get(0).getViralIsolateId(), group.get(0).getSampleDate(), group.get(0)
-				.getDataset(), new String(merged), group.get(0).getCountryOfOriginEn());
+				.getDataset(), new String(merged), group.get(0).getCountryOfOriginEn(), group.get(0).getGene_region());
 	}
 }

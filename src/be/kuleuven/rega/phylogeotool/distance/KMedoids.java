@@ -9,6 +9,8 @@ import java.util.Random;
 import java.util.Set;
 
 import be.kuleuven.rega.phylogeotool.interfaces.ICluster;
+import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.tree.Tree;
 
 public class KMedoids {
 	/* Distance measure to measure the distance between instances */
@@ -38,12 +40,14 @@ public class KMedoids {
 	 *            the maximum number of iteration the algorithm is allowed to
 	 *            run
 	 */
-	public KMedoids(int numberOfIClusters, int maxIterations, List<ICluster> data) {
+	public KMedoids(int numberOfIClusters, int maxIterations, Tree tree) {
 		this.maxIterations = maxIterations;
-		this.simpleLinkage = new SimpleLinkage();
+		this.simpleLinkage = new SimpleLinkage(tree);
 		
-		if(data.size() >= numberOfIClusters) {
-			datapoints = data;
+		if(tree.getLeaves().size() >= numberOfIClusters) {
+			for(Node node:tree.getNodes()) {
+				datapoints.add(node);
+			}
 			this.numberOfIClusters = numberOfIClusters;
 		} else {
 			throw new RuntimeException("The number of IClusters cannot be bigger than the amount of datapoints.");

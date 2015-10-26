@@ -26,4 +26,8 @@ public class TreeTools {
 		}
 		return null;
 	}
+	
+//	public Node getLeastCommonAncestor(Tree tree, Node node1, Node node2) {
+//		
+//	}
 }

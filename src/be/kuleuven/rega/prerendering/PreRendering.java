@@ -62,9 +62,13 @@ public class PreRendering {
 	private String folderLocationCsvs;
 	private String folderLocationTreeView;
 	private String folderLocationLeafIds;
+	private String folderLocationNodeIds;
 	public final static int CONTROL_PALETTE_WIDTH = 200;
+	public static enum ID {
+		LEAFID, NODEID
+	}
 	
-	public PreRendering(String folderLocationClusters, String folderLocationCsvs, String folderLocationTreeView, String folderLocationLeafIds) {
+	public PreRendering(String folderLocationClusters, String folderLocationCsvs, String folderLocationTreeView, String folderLocationLeafIds, String folderLocationNodeIds) {
 		this.xStream = new XStream();
 		this.xStream.alias("tree", Tree.class);
 		this.xStream.alias("node", Node.class);
@@ -74,6 +78,7 @@ public class PreRendering {
 		this.folderLocationCsvs = folderLocationCsvs;
 		this.folderLocationTreeView = folderLocationTreeView;
 		this.folderLocationLeafIds = folderLocationLeafIds;
+		this.folderLocationNodeIds = folderLocationNodeIds;
 	}
 	
 	public void writeTreeToXML(Tree tree) {
@@ -84,24 +89,44 @@ public class PreRendering {
 			fileWriter.write(xml);
 			fileWriter.close();
 		} catch (IOException e) {
-			System.err.println(PreRendering.class + " : Error with writing the tree to an xml file.");
+			System.err.println(PreRendering.class + " : Error with writing the tree " + tree.getRootNode().getId() + " to an xml file.");
 		}
 	}
 	
-	public void writeLeafIdsToXML(Tree tree, Tree tempTree) {
+	public void writeNodeIdsToXML(Tree tree, Tree tempTree, ID id) {
 		FileWriter fileWriter = null;
+		List<Node> ids = null;
 		try {
-			fileWriter = new FileWriter(new File(this.folderLocationLeafIds + File.separator + tempTree.getRootNode().getId() + ".xml"));
+			switch(id) {
+				case LEAFID:
+					fileWriter = new FileWriter(new File(this.folderLocationLeafIds + File.separator + tempTree.getRootNode().getId() + ".xml"));
+					ids = tree.getNodeById(tempTree.getRootNode().getId()).getLeaves();
+					break;
+				case NODEID:
+					fileWriter = new FileWriter(new File(this.folderLocationNodeIds + File.separator + tempTree.getRootNode().getId() + ".xml"));
+					ids = tree.getNodeById(tempTree.getRootNode().getId()).getAllChildren();
+					break;
+			}
 			fileWriter.write("<xml>" + "\n");
 			
-			List<Node> leafs = tree.getNodeById(tempTree.getRootNode().getId()).getLeaves();
-			
 			StringBuffer stringBuffer = new StringBuffer();
-			for(Node leaf:leafs) {
-				stringBuffer.append(leaf.getLabel() + ",");
+			for(Node node:ids) {
+				switch(id) {
+					case LEAFID:
+						stringBuffer.append(node.getLabel() + ",");
+						break;
+					case NODEID:
+						stringBuffer.append(node.getId() + ",");
+						break;
+				}
 			}
-			String leafIds = stringBuffer.toString();
-			fileWriter.write("\t<tree id=\"leaveIds\">" + leafIds.substring(0, leafIds.length()-1) + "</tree>" + "\n");
+			
+			String nodeIds = stringBuffer.toString();
+			if(nodeIds.length() > 0) {
+				fileWriter.write("\t<tree id=\"nodeIds\">" + nodeIds.substring(0, nodeIds.length()-1) + "</tree>" + "\n");
+			} else {
+				fileWriter.write("\t<tree id=\"nodeIds\"></tree>" + "\n");
+			}
 			fileWriter.write("</xml>");
 			fileWriter.close();
 		} catch (IOException e) {
@@ -109,13 +134,22 @@ public class PreRendering {
 		}
 	}
 	
-	public List<String> getLeafIdFromXML(String clusterId) {
+	public static List<String> getNodeIdFromXML(String folderLocationLeafIds, String folderLocationNodeIds, String clusterId, ID id) {
 		List<String> idsList = new ArrayList<String>();
 		String[] ids = null;
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(new File(folderLocationLeafIds + File.separator + clusterId + ".xml"));
+			Document doc = null;
+			switch(id) {
+				case LEAFID:
+					doc = dBuilder.parse(new File(folderLocationLeafIds + File.separator + clusterId + ".xml"));
+					break;
+				case NODEID:
+					doc = dBuilder.parse(new File(folderLocationNodeIds + File.separator + clusterId + ".xml"));
+					break;
+			}
+			
 			NodeList nList = doc.getElementsByTagName("tree");
 		
 			for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -123,7 +157,7 @@ public class PreRendering {
 				if (nNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
 					
-					if(eElement.getAttribute("id").equals("leaveIds")) {
+					if(eElement.getAttribute("id").equals("nodeIds")) {
 						ids = eElement.getTextContent().split(",");
 					}
 				}
@@ -151,7 +185,8 @@ public class PreRendering {
 //		if(checkFoldersEmpty()) {
 			try {
 				jebl.evolution.trees.Tree jeblTree = ReadNewickTree.readNewickTree(new FileReader(treeLocation));
-				Tree tree = ReadNewickTree.jeblToTreeDraw((SimpleRootedTree)jeblTree);
+				// TODO: Check if the arrayList is still necessary
+				Tree tree = ReadNewickTree.jeblToTreeDraw((SimpleRootedTree)jeblTree, new ArrayList<String>());
 				ClusterAlgos clusterAlgos = new ClusterAlgos();
 				GraphProperties graphProperties = new GraphProperties();
 				// TODO: Dynamically set the number of clusters
@@ -161,16 +196,57 @@ public class PreRendering {
 				while(toDo.peek() != null) {
 					currentNode = toDo.pop();
 					Tree tempTree = clusterAlgos.getCluster(tree,tree.getNodeById(currentNode.getId()), 12);
-//					this.writeTreeToXML(tempTree);
+					this.writeTreeToXML(tempTree);
 					this.prepareCSV(currentNode.getId(), tree.getNodeById(currentNode.getId()).getLeavesAsString(), csvLocation);
-//					if(tempTree.getNodes().size() > 1) {
-//						graphProperties.setNodeColor(tempTree);
-//						this.prepareFullTreeView(currentNode.getId(), tree, tempTree, jeblTree);
-//					}
-//					this.writeLeafIdsToXML(tree, tempTree);
-//					System.out.println(tempTree.getRootNode().getId());
+					if(tempTree.getNodes().size() > 1) {
+						graphProperties.setNodeColor(tempTree);
+						this.prepareFullTreeView(currentNode.getId(), tree, tempTree, jeblTree);
+					}
+					this.writeNodeIdsToXML(tree, tempTree, ID.LEAFID);
+					this.writeNodeIdsToXML(tree, tempTree, ID.NODEID);
 					toDo.addAll(tempTree.getLeaves());
-
+				}
+			} catch (FileNotFoundException e) {
+				System.err.println(PreRendering.class + ": " + "The tree file cannot be found in the given location.");
+			}
+//		} else {
+//			System.err.println("The folders seems to have files in them. Maybe they are hidden? Please empty the folders first.");
+//			System.err.println("Check paths: ");
+//			System.err.println(folderLocationClusters);
+//			System.err.println(folderLocationCsvs);
+//			System.exit(0);
+//		}
+	}
+	
+	public void preRenderTempTest(String treeLocation, String csvLocation) {
+//		if(checkFoldersEmpty()) {
+			try {
+				jebl.evolution.trees.Tree jeblTree = ReadNewickTree.readNewickTree(new FileReader(treeLocation));
+				// TODO: Check if the arrayList is still necessary
+				Tree tree = ReadNewickTree.jeblToTreeDraw((SimpleRootedTree)jeblTree, new ArrayList<String>());
+				ClusterAlgos clusterAlgos = new ClusterAlgos();
+				GraphProperties graphProperties = new GraphProperties();
+				// TODO: Dynamically set the number of clusters
+				LinkedList<Node> toDo = new LinkedList<Node>();
+				toDo.add(tree.getRootNode());
+				Node currentNode;
+				while(toDo.peek() != null) {
+					currentNode = toDo.pop();
+					Tree tempTree = null;
+					
+					for(int i = 2; i < 50; i++) {
+						tempTree = clusterAlgos.getCluster(tree,tree.getNodeById(currentNode.getId()), i);
+						this.writeTreeToXML(tempTree);
+						this.prepareCSV(currentNode.getId(), tree.getNodeById(currentNode.getId()).getLeavesAsString(), csvLocation);
+						if(tempTree.getNodes().size() > 1) {
+							graphProperties.setNodeColor(tempTree);
+							this.prepareFullTreeView(currentNode.getId(), tree, tempTree, jeblTree);
+						}
+						this.writeNodeIdsToXML(tree, tempTree, ID.LEAFID);
+						this.writeNodeIdsToXML(tree, tempTree, ID.NODEID);
+						toDo.addAll(tempTree.getLeaves());
+					}
+					
 				}
 			} catch (FileNotFoundException e) {
 				System.err.println(PreRendering.class + ": " + "The tree file cannot be found in the given location.");
@@ -189,9 +265,10 @@ public class PreRendering {
 		File folderCsvs = new File(folderLocationCsvs);
 		File folderTreeView = new File(folderLocationTreeView);
 		File folderLeafIds = new File(folderLocationLeafIds);
+		File folderNodeIds = new File(folderLocationNodeIds);
 		
-		if(folder.isDirectory() && folderCsvs.isDirectory() && folderTreeView.isDirectory() && folderLeafIds.isDirectory()){
-			if(folder.list().length>0 || folderCsvs.list().length>0 || folderTreeView.list().length>0 || folderLeafIds.list().length>0){
+		if(folder.isDirectory() && folderCsvs.isDirectory() && folderTreeView.isDirectory() && folderLeafIds.isDirectory() && folderNodeIds.isDirectory()){
+			if(folder.list().length>0 || folderCsvs.list().length>0 || folderTreeView.list().length>0 || folderLeafIds.list().length>0 || folderNodeIds.list().length>0){
 				return false;
 			} else {
 				return true;
@@ -208,11 +285,15 @@ public class PreRendering {
 		} else if(folderLeafIds.isFile()) {
 			System.out.println(PreRendering.class + ": The path " + folderLocationLeafIds + " to the folder seems to direct to a file.");
 			return false;
+		} else if(folderNodeIds.isFile()) {
+			System.out.println(PreRendering.class + ": The path " + folderLocationNodeIds + " to the folder seems to direct to a file.");
+			return false;
 		} else {
 			folder.mkdirs();
 			folderCsvs.mkdirs();
 			folderTreeView.mkdirs();
 			folderLeafIds.mkdirs();
+			folderNodeIds.mkdirs();
 			return true;
 		}
 	}
@@ -344,10 +425,13 @@ public class PreRendering {
 	}
 	
 	public static void main(String[] args) {
-//		preRendering.preRender("/Users/ewout/Documents/phylogeo/EUResist_New/tree/besttree.midpoint.newick", "/Users/ewout/Documents/phylogeo/EUResist_New/EUResist.metadata.csv");		//		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/EUResist_New/clusters", "/Users/ewout/Documents/phylogeo/EUResist_New/xml", "/Users/ewout/Documents/phylogeo/EUResist_New/treeview");
-//		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/portugal/clusters", "/Users/ewout/Documents/phylogeo/portugal/xml", "/Users/ewout/Documents/phylogeo/portugal/treeview");
-		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/EUResist/clusters", "/Users/ewout/Documents/phylogeo/EUResist/xml", "/Users/ewout/Documents/phylogeo/EUResist/treeview", "/Users/ewout/Documents/phylogeo/EUResist/leafIds");
-		preRendering.preRender("/Users/ewout/Documents/phylogeo/EUResist_New/tree/besttree.midpoint.newick", "/Users/ewout/Documents/phylogeo/EUResist/EUResist.metadata.cleaned.csv");
+//		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/portugal/clusters", "/Users/ewout/Documents/phylogeo/portugal/xml", "/Users/ewout/Documents/phylogeo/portugal/treeview", "/Users/ewout/Documents/phylogeo/portugal/leafIds", "/Users/ewout/Documents/phylogeo/portugal/nodeIds");
+		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/portugal/Test/clusters", "/Users/ewout/Documents/phylogeo/portugal/Test/xml", "/Users/ewout/Documents/phylogeo/portugal/Test/treeview", "/Users/ewout/Documents/phylogeo/portugal/Test/leafIds", "/Users/ewout/Documents/phylogeo/portugal/Test/nodeIds");
+//		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/EUResist_New/clusters", "/Users/ewout/Documents/phylogeo/EUResist_New/xml", "/Users/ewout/Documents/phylogeo/EUResist_New/treeview");
+//		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/Test/clusters", "/Users/ewout/Documents/phylogeo/Test/xml", "/Users/ewout/Documents/phylogeo/Test/treeview", "/Users/ewout/Documents/phylogeo/Test/leafIds");
+//		preRendering.preRender("/Users/ewout/Documents/phylogeo/EUResist_New/tree/besttree.midpoint.newick", "/Users/ewout/Documents/phylogeo/EUResist_New/EUResist.metadata.csv");
+//		preRendering.preRender("/Users/ewout/Documents/phylogeo/EUResist_New/tree/besttree.midpoint.newick", "/Users/ewout/Documents/phylogeo/EUResist/EUResist.metadata.cleaned.csv");
+		preRendering.preRender("/Users/ewout/Documents/phylogeo/portugal/RAxML_bipartitions.final_tree", "/Users/ewout/Documents/phylogeo/portugal/final.csv");
 //		preRendering.preRender("/Users/ewout/git/phylogeotool/lib/EwoutTrees/test.tree", "/Users/ewout/git/phylogeotool/lib/EwoutTrees/temp.csv");
 //		preRendering.getLeafIdFromXML("1");
 	}

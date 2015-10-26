@@ -1,6 +1,6 @@
 package be.kuleuven.rega.phylogeotool.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,8 +16,8 @@ public class SequenceMergerTest {
 	@Test
 	public void testMergeSimple() {
 		List<Sequence> sequences = new ArrayList<Sequence>();
-		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---CGA",""));
-		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---",""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---CGA","", ""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---","", ""));
 		Sequence result = SequenceMerger.mergeSequence(sequences);
 		assertEquals("ATGCGTCGA", result.getNucleotides());
 	}
@@ -25,9 +25,9 @@ public class SequenceMergerTest {
 	@Test
 	public void testMergeGeneralNucleotides() {
 		List<Sequence> sequences = new ArrayList<Sequence>();
-		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---CVA",""));
-		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---",""));
-		sequences.add(new Sequence("1","1","1",new Date(),"1","W------G-",""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---CVA","", ""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---","", ""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","W------G-","", ""));
 		Sequence result = SequenceMerger.mergeSequence(sequences);
 		assertEquals("WTGCGTCVA", result.getNucleotides());
 	}
@@ -35,9 +35,9 @@ public class SequenceMergerTest {
 	@Test
 	public void testMergeGeneralNucleotides2() {
 		List<Sequence> sequences = new ArrayList<Sequence>();
-		sequences.add(new Sequence("1","1","1",new Date(),"1","W------G-",""));
-		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---",""));
-		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---CVA",""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","W------G-","", ""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---","", ""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---CVA","", ""));
 		Sequence result = SequenceMerger.mergeSequence(sequences);
 		assertEquals("WTGCGTCVA", result.getNucleotides());
 	}
@@ -45,9 +45,9 @@ public class SequenceMergerTest {
 	@Test(expected = RuntimeException.class)
 	public void testMergeIncorrectNucleotides() {
 		List<Sequence> sequences = new ArrayList<Sequence>();
-		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---CVA",""));
-		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---",""));
-		sequences.add(new Sequence("1","1","1",new Date(),"1","S------G-",""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---CVA","", ""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---","", ""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","S------G-","", ""));
 		Sequence result = SequenceMerger.mergeSequence(sequences);
 		assertEquals("WTGCGTCVA", result.getNucleotides());
 	}
@@ -55,9 +55,9 @@ public class SequenceMergerTest {
 	@Test(expected = ArrayIndexOutOfBoundsException.class)
 	public void testMergeDifferentSequenceLength() {
 		List<Sequence> sequences = new ArrayList<Sequence>();
-		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---",""));
-		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---",""));
-		sequences.add(new Sequence("1","1","1",new Date(),"1","W------G-",""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","ATG---","", ""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","---CGT---","", ""));
+		sequences.add(new Sequence("1","1","1",new Date(),"1","W------G-","", ""));
 		Sequence result = SequenceMerger.mergeSequence(sequences);
 		assertEquals("WTGCGTCVA", result.getNucleotides());
 	}

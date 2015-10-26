@@ -21,8 +21,9 @@ public class Sequence {
 	String risk_group;
 	Date sampleDate;
 	String nucleotides;
+	String gene_region;
 
-	public Sequence(String id, String patientId, String viralIsolateId, Date sampleDate, String dataset, String nucleotides, String countryOfOriginEn) {
+	public Sequence(String id, String patientId, String viralIsolateId, Date sampleDate, String dataset, String nucleotides, String countryOfOriginEn, String gene_region) {
 		this.id = id;
 		this.patientId = patientId;
 		this.viralIsolateId = viralIsolateId;
@@ -30,13 +31,14 @@ public class Sequence {
 		this.dataset = dataset;
 		this.nucleotides = nucleotides;
 		this.countryOfOriginEn = countryOfOriginEn;
+		this.gene_region = gene_region;
 	}
 
 	// EUResist
 	public Sequence(String id, String patientId, Date sampleDate, String nucleotides, 
 			String countryOfOriginIso, String countryOfOriginEn, String yearOfBirth, 
 			String countryOfSamplingIso, String countryOfSamplingEn, String gender, 
-			String ethnic_group, String risk_group) {
+			String ethnic_group, String risk_group, String gene_region) {
 		this.id = id;
 		this.patientId = patientId;
 		this.sampleDate = sampleDate;
@@ -49,6 +51,7 @@ public class Sequence {
 		this.gender = gender;
 		this.ethnic_group = ethnic_group;
 		this.risk_group = risk_group;
+		this.gene_region = gene_region;
 	}
 	
 	public String getId() {
@@ -112,30 +115,36 @@ public class Sequence {
 	public String getRisk_group() {
 		return risk_group;
 	}
+	
+	public String getGene_region() {
+		return gene_region;
+	}
 
 	public String asCsv() {
 		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+		String toReturn = "";
+		toReturn += this.getId() + "," + this.getPatientId() + "," + this.getViralIsolateId() + "," + this.getNucleotides() + ",";
 		if(this.getSampleDate() != null) {
-			return this.getId() + "," + this.getPatientId() + "," + this.getViralIsolateId() + "," + this.getNucleotides() + ","
-					+ format1.format(this.getSampleDate());
+			toReturn += format1.format(this.getSampleDate());
 		} else {
-			return this.getId() + "," + this.getPatientId() + "," + this.getViralIsolateId() + "," + this.getNucleotides() + ","
-					+ "";
+			toReturn += "";
 		}
+		return toReturn;
 	}
 	
 	public String asCsvEUResist() {
 		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+		String toReturn = "";
+		toReturn += this.getPatientId() + ";" + this.getYearOfBirth() + ";" + this.getGender() + ";"
+				+ this.getCountryOfOriginIso() + ";" + this.getCountryOfOriginEn() +";" + this.getCountryOfInfectionIso() + ";"
+				+ this.getCountryOfInfectionEn() + ";" +this.getEthnic_group() + ";"
+				+ this.getRisk_group() + ";";
 		if(this.getSampleDate() != null) {
-			return this.getPatientId() + ";" + this.getYearOfBirth() + ";" + this.getGender() + ";"
-					+ this.getCountryOfOriginIso() + ";" + this.getCountryOfOriginIso() +";" + this.getCountryOfInfectionIso() + ";"
-					+ this.getCountryOfInfectionEn() + ";" +this.getEthnic_group() + ";"
-					+ this.getRisk_group() + ";" + format1.format(this.getSampleDate()) + ";" + this.getNucleotides();
+			toReturn += format1.format(this.getSampleDate());
 		} else {
-			return this.getPatientId() + ";" + this.getYearOfBirth() + ";" + this.getGender() + ";"
-					+ this.getCountryOfOriginIso() + ";" + this.getCountryOfOriginIso() +";" + this.getCountryOfInfectionIso() + ";"
-					+ this.getCountryOfInfectionEn() + ";" +this.getEthnic_group() + ";"
-					+ this.getRisk_group() + ";" + "" + ";" + this.getNucleotides();
+			toReturn += "";
 		}
+		toReturn += ";" + this.getGene_region() + ";" + this.getNucleotides();
+		return toReturn;
 	}
 }

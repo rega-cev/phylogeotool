@@ -4,11 +4,14 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node {
+import be.kuleuven.rega.phylogeotool.interfaces.ICluster;
+
+public class Node implements ICluster {
 	private int id;
 	private String label;
 	private Node parent;
 	private List<Node> children;
+	private List<Node> allChildren;
 	private List<Node> leafs;
 	private List<String> leafsAsString;
 	private double x = 0.0;
@@ -29,8 +32,8 @@ public class Node {
 
 	public Node(String label, int id) {
 		this.children = new ArrayList<Node>();
-		this.label = label;
-		this.id = id;
+		this.setLabel(label);
+		this.setId(id);
 	}
 
 	public int getId() {
@@ -44,13 +47,33 @@ public class Node {
 	public Node getParent() {
 		return parent;
 	}
+	
+	public List<Node> getAllParents() {
+		Node node = this;
+		List<Node> parents = new ArrayList<Node>();
+		while(node.getParent() != null) {
+			parents.add(node.getParent());
+			node = node.getParent();
+		}
+		return parents;
+	}
 
 	public void setParent(Node parent) {
 		this.parent = parent;
 	}
 
-	public List<Node> getChildren() {
+	public List<Node> getImmediateChildren() {
 		return children;
+	}
+	
+	public List<Node> getAllChildren() {
+		if (allChildren == null || leafs == null || allChildren.size() == 0 || leafs.size() == 0) {
+			this.getLeaves();
+		}
+//		List<Node> full = new ArrayList<Node>();
+//		full.addAll(allChildren);
+//		full.addAll(leafs);
+		return allChildren;
 	}
 
 	// Note that the biggest element has to be in the beginning and the lowest
@@ -107,7 +130,14 @@ public class Node {
 		this.theta = theta;
 	}
 
+	public void setLeaves(List<Node> leafs) {
+		this.leafs = leafs;
+	}
+	
 	public List<Node> getLeaves() {
+		if(allChildren == null) {
+			allChildren = new ArrayList<Node>();
+		}
 		if (leafs == null) {
 			this.leafs = new ArrayList<Node>();
 		} else if (leafs.size() > 0) {
@@ -133,11 +163,13 @@ public class Node {
 	}
 
 	public void visitNode(Node node) {
-		if (node.hasChildren() && node.getChildren().get(0) != null) {
-			visitNode(node.getChildren().get(0));
+		if (node.hasChildren() && node.getImmediateChildren().get(0) != null) {
+			allChildren.add(node.getImmediateChildren().get(0));
+			visitNode(node.getImmediateChildren().get(0));
 		}
-		if (node.hasChildren() && node.getChildren().get(1) != null) {
-			visitNode(node.getChildren().get(1));
+		if (node.hasChildren() && node.getImmediateChildren().get(1) != null) {
+			allChildren.add(node.getImmediateChildren().get(1));
+			visitNode(node.getImmediateChildren().get(1));
 		}
 		if (!node.hasChildren()) {
 			leafs.add(node);
@@ -177,13 +209,14 @@ public class Node {
 		Node node = new Node(this.getLabel(), this.getId());
 		node.setColor(this.getColor());
 		node.setParent(this.getParent());
-		for(Node tempNode:this.getChildren()) {
+		for(Node tempNode:this.getImmediateChildren()) {
 			node.addChild(tempNode);
 		}
 		node.setSize(this.getSize());
 		node.setTheta(this.getTheta());
 		node.setX(this.getX());
 		node.setY(this.getY());
+		node.setLeaves(this.getLeaves());
 		return node;
 	}
 }

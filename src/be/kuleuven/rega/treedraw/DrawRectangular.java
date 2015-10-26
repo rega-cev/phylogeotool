@@ -4,22 +4,15 @@ import java.awt.Color;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.List;
 import java.util.Set;
 
 import be.kuleuven.rega.phylogeotool.tree.Edge;
 import be.kuleuven.rega.phylogeotool.tree.Node;
 import be.kuleuven.rega.phylogeotool.tree.Shape;
 import be.kuleuven.rega.phylogeotool.tree.Tree;
-import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
 import be.kuleuven.rega.webapp.GraphWebApplication;
 import be.kuleuven.rega.webapp.WebGraphics2DMine;
-import eu.webtoolkit.jwt.Cursor;
-import eu.webtoolkit.jwt.WContainerWidget;
-import eu.webtoolkit.jwt.WLength;
-import eu.webtoolkit.jwt.WPaintDevice;
 import eu.webtoolkit.jwt.WPaintedWidget;
-import eu.webtoolkit.jwt.WPainter;
 
 public class DrawRectangular implements Draw {
 

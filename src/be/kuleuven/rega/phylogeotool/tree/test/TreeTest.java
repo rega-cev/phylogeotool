@@ -2,40 +2,35 @@ package be.kuleuven.rega.phylogeotool.tree.test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import be.kuleuven.rega.phylogeotool.tree.Edge;
 import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.tree.Tree;
 
-//import java.util.List;
-//
-//import org.junit.Assert;
-//import org.junit.Before;
-//import org.junit.Test;
-//
-public class NodeTest {
+public class TreeTest {
 
-	private Node node1 = new Node("Node1", 1);
-	private Node node2 = new Node("Node2", 2);
-	private Node node3 = new Node("Node3", 3);
-	private Node node4 = new Node("Node4", 4);
-	private Node node5 = new Node("Node5", 5);
-	private Node node6 = new Node("Node6", 6);
-	private Node node7 = new Node("Node7", 7);
-	private Node node8 = new Node("Node8", 8);
-	private Node node9 = new Node("Node9", 9);
-	private Node node10 = new Node("Node10", 10);
-	private Node node11 = new Node("Node11", 11);
-	private Node node12 = new Node("Node12", 12);
-	private Node node13 = new Node("Node13", 13);
-	private Node node14 = new Node("Node14", 14);
-	private Node node15 = new Node("Node15", 15);
+	private Node node1 = new Node();
+	private Node node2 = new Node();
+	private Node node3 = new Node();
+	private Node node4 = new Node();
+	private Node node5 = new Node();
+	private Node node6 = new Node();
+	private Node node7 = new Node();
+	private Node node8 = new Node();
+	private Node node9 = new Node();
+	private Node node10 = new Node();
+	private Node node11 = new Node();
+	private Node node12 = new Node();
+	private Node node13 = new Node();
+	private Node node14 = new Node();
+	private Node node15 = new Node();
 	
-	private List<Node> nodes = new ArrayList<Node>();
+	private Set<Node> nodes = new HashSet<Node>();
 	
 	private Edge edge1;
 	private Edge edge2;
@@ -52,10 +47,28 @@ public class NodeTest {
 	private Edge edge13;
 	private Edge edge14;
 	
-	private List<Edge> edges = new ArrayList<Edge>();
+	private Set<Edge> edges = new HashSet<Edge>();
 
+	private Tree tree;
+	
 	@Before
 	public void init() {
+		node1.setLabel("Node1");
+		node2.setLabel("Node2");
+		node3.setLabel("Node3");
+		node4.setLabel("Node4");
+		node5.setLabel("Node5");
+		node6.setLabel("Node6");
+		node7.setLabel("Node7");
+		node8.setLabel("Node8");
+		node9.setLabel("Node9");
+		node10.setLabel("Node10");
+		node11.setLabel("Node11");
+		node12.setLabel("Node12");
+		node13.setLabel("Node13");
+		node14.setLabel("Node14");
+		node15.setLabel("Node15");
+		
 		node1.addChild(node2);
 		node2.setParent(node1);
 		node1.addChild(node3);
@@ -141,44 +154,26 @@ public class NodeTest {
 		edges.add(edge12);
 		edges.add(edge13);
 		edges.add(edge14);
+		
+		tree = new Tree(nodes,edges,node1);
 	}
 	
 	@Test
-	public void testGetParents() {
-		assertEquals("", 0, node1.getAllParents().size(), 0.0);
-		assertEquals("", 1, node2.getAllParents().size(), 0.0);
-		assertEquals("", 1, node3.getAllParents().size(), 0.0);
-		assertEquals("", 2, node4.getAllParents().size(), 0.0);
-		assertEquals("", 2, node5.getAllParents().size(), 0.0);
-		assertEquals("", 3, node8.getAllParents().size(), 0.0);
-		assertEquals("", 3, node9.getAllParents().size(), 0.0);
-		assertEquals("", 4, node14.getAllParents().size(), 0.0);
-		assertEquals("", 4, node15.getAllParents().size(), 0.0);
+	public void testGetNodeDistance() {
+		assertEquals("", 0, tree.getDistance(node1), 0.0);
+		assertEquals("", 1, tree.getDistance(node2), 0.0);
+		assertEquals("", 2, tree.getDistance(node4), 0.0);
+		assertEquals("", 3, tree.getDistance(node8), 0.0);
+		assertEquals("", 4, tree.getDistance(node15), 0.0);
 	}
 	
 	@Test
-	public void testGetAllChildren() {
-		assertEquals("", 14, node1.getAllChildren().size(), 0.0);
-		assertEquals("", 2, node3.getAllChildren().size(), 0.0);
-		assertEquals("", 0, node10.getAllChildren().size(), 0.0);
-		assertEquals("", 10, node2.getAllChildren().size(), 0.0);
+	public void testGetLeastCommonAncestor() {
+		assertEquals("", node1, tree.getLeastCommonAncestor(node2, node15));
+		assertEquals("", node1, tree.getLeastCommonAncestor(node7, node15));
+		assertEquals("", node4, tree.getLeastCommonAncestor(node13, node9));
+		assertEquals("", node1, tree.getLeastCommonAncestor(node1, node3));
+		assertEquals("", node1, tree.getLeastCommonAncestor(node3, node1));
 	}
-//
-//	@Test
-//	public void testgetLeaves() {
-//		Assert.assertEquals(8, node1.getLeaves().size());
-//	}
-//
-//	@Test
-//	public void testNodeBiggestCluster() {
-//		List<Node> temp = node1.getChildrenBiggestFirst();
-//		Assert.assertEquals(node2, temp.get(0));
-//		Assert.assertEquals(node3, temp.get(1));
-//
-//		temp = node2.getChildrenBiggestFirst();
-//		Assert.assertEquals(node4, temp.get(0));
-//		Assert.assertEquals(node5, temp.get(1));
-//
-//	}
-
+	
 }
