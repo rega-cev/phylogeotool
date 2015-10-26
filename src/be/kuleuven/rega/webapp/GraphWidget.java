@@ -13,6 +13,7 @@ import be.kuleuven.rega.treedraw.Draw;
 import be.kuleuven.rega.treedraw.DrawCircular;
 import be.kuleuven.rega.treedraw.DrawRectangular;
 import be.kuleuven.rega.treedraw.TreeTraversal;
+import be.kuleuven.rega.url.UrlManipulator;
 import eu.webtoolkit.jwt.WAbstractArea;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WPaintDevice;
@@ -53,14 +54,7 @@ public class GraphWidget extends WPaintedWidget {
 	public void loadGraph(File nodeIndexProvider, File locationDistances) throws IOException {
 //		kMedoidsToPhylo = new ClusterAlgos(nodeIndexProvider, locationDistances);
 //		fullTree = ReadNewickTree.jeblToTreeDraw((SimpleRootedTree)ReadNewickTree.readNewickTree(new FileReader(treeLocation)));
-		String rootNodeId;
-		if (WApplication.getInstance().getInternalPath().contains("/root")) {
-			rootNodeId = WApplication.getInstance().getInternalPath().split("/")[2];
-		} else {
-			// TODO: Change this
-//			rootNode = fullTree.getRootNode();
-			rootNodeId = "1";
-		}
+		String rootNodeId = UrlManipulator.getId(WApplication.getInstance().getInternalPath());
 		this.addPreviousRootId(Integer.parseInt(rootNodeId));
 //		this.setTreeClustered(kMedoidsToPhylo.getGraph(fullTree, rootNode, nrClusters));
 		this.setTreeClustered(preRendering.getTreeFromXML(rootNodeId));
@@ -163,7 +157,9 @@ public class GraphWidget extends WPaintedWidget {
 		String nodeId = Integer.toString(id);
 		Tree tempTree = preRendering.getTreeFromXML(nodeId);
 		this.setTreeClustered(tempTree);
-		WApplication.getInstance().setInternalPath("/root/" + nodeId);
+		//TODO: check if pplacer is part of link
+		WApplication.getInstance().setInternalPath("/root_" + nodeId);
+//		WApplication.getInstance().getInternalPath();
 		update();
 	}
 }

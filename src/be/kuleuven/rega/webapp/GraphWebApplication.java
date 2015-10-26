@@ -2,24 +2,23 @@ package be.kuleuven.rega.webapp;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.EnumSet;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import be.kuleuven.rega.form.MyComboBox;
-import be.kuleuven.rega.phylogeotool.data.csv.CsvUtilsMetadata;
+import be.kuleuven.rega.phylogeotool.pplacer.PPlacer;
 import be.kuleuven.rega.phylogeotool.tree.Node;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
 import be.kuleuven.rega.phylogeotool.utils.Settings;
 import be.kuleuven.rega.prerendering.PreRendering;
+import be.kuleuven.rega.url.UrlManipulator;
 import be.kuleuven.rega.webapp.widgets.GoogleChartWidget;
 import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
 import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
 import be.kuleuven.rega.webapp.widgets.WPieChartMine;
-import eu.webtoolkit.jwt.SelectionMode;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
-import eu.webtoolkit.jwt.WAbstractItemView;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WBorderLayout;
 import eu.webtoolkit.jwt.WComboBox;
@@ -34,10 +33,7 @@ import eu.webtoolkit.jwt.WLength.Unit;
 import eu.webtoolkit.jwt.WLink;
 import eu.webtoolkit.jwt.WMouseEvent;
 import eu.webtoolkit.jwt.WPushButton;
-import eu.webtoolkit.jwt.WStandardItem;
-import eu.webtoolkit.jwt.WStandardItemModel;
 import eu.webtoolkit.jwt.WString;
-import eu.webtoolkit.jwt.WTableView;
 import eu.webtoolkit.jwt.WTemplate;
 import eu.webtoolkit.jwt.WVBoxLayout;
 import eu.webtoolkit.jwt.WXmlLocalizedStrings;
@@ -54,6 +50,7 @@ public class GraphWebApplication extends WApplication {
 	private WComboBox wComboBoxRegions;
 	private char csvDelimitor = ';';
 	private PreRendering preRendering;
+	private PPlacer pplacer;
 //	private String treeLocation = "/Users/ewout/Documents/phylogeo/EUResist/besttree.midpoint.tree";
 //	private String treeLocation = "/Users/ewout/Documents/phylogeo/EUResist_New/tree/besttree.midpoint.newick";
 //	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/EwoutTrees/test.tree";
@@ -67,11 +64,14 @@ public class GraphWebApplication extends WApplication {
 	private String csvRenderLocation = "";
 	private String treeRenderLocation = "";
 	private String leafIdsLocation = "";
+	private String nodeIdsLocation = "";
+	private String pplacerIdsLocation = "";
 
 	private double mapWidth = this.getEnvironment().getScreenWidth() * 0.45;
 	private double mapHeigth = this.getEnvironment().getScreenHeight() * 0.60;
 	private double graphWidth = this.getEnvironment().getScreenWidth() * 0.55;
 	private double graphHeigth = this.getEnvironment().getScreenHeight() * 0.95;
+	
 	
 	private Settings settings;
 	
@@ -82,13 +82,14 @@ public class GraphWebApplication extends WApplication {
 	public GraphWebApplication(WEnvironment env) {
 		super(env);
 		setTitle("PhyloGeoTool");
-
 		this.settings = Settings.getInstance(null);
 		this.clusterRenderLocation = settings.getClusterPath();
 		this.csvRenderLocation = settings.getXmlPath();
 		this.treeRenderLocation = settings.getTreeviewPath();
 		this.leafIdsLocation = settings.getLeafsIdsPath();
+		this.nodeIdsLocation = settings.getNodeIdsPath();
 		this.metaDataFile = new File(settings.getMetaDataFile());
+		this.pplacerIdsLocation = settings.getPPlacerIdsPath();
 		
 		try {
 //			metaDataFile = new File("/Users/ewout/git/phylogeotool/lib/EwoutTrees/temp.csv");
@@ -98,7 +99,7 @@ public class GraphWebApplication extends WApplication {
 //			WGroupBox wGroupBoxNorth = getNavigationWGroupBox();
 			
 //			layout.addWidget(wGroupBoxNorth, WBorderLayout.Position.North);
-			preRendering = new PreRendering(clusterRenderLocation, csvRenderLocation, treeRenderLocation, leafIdsLocation);
+			preRendering = new PreRendering(clusterRenderLocation, csvRenderLocation, treeRenderLocation, leafIdsLocation, nodeIdsLocation);
 //			preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/portugal/clusters", "/Users/ewout/Documents/phylogeo/portugal/xml", "/Users/ewout/Documents/phylogeo/portugal/treeview");
 			graphWidget = new GraphWidget(this, null, null, preRendering);
 //			graphWidget = new GraphWidget(this, null, null, new File("/Users/ewout/example.tree"));
@@ -114,21 +115,21 @@ public class GraphWebApplication extends WApplication {
 		    }
 		});
 		//TODO: Implement the way how the report should be written. Currently disabled, should be updated later on.
-		WPushButton exportSequencesButton = new WPushButton("Report");
-		exportSequencesButton.clicked().addListener(this, new Signal.Listener() {
-			public void trigger() {
-				if (WApplication.getInstance().getInternalPath().contains("/root")) {
-					showReport(preRendering.getLeafIdFromXML(WApplication.getInstance().getInternalPath().split("/")[2]), settings.getColumnsToExport());
-				} else {
-					// TODO: Change value of clusterId 
-					showReport(preRendering.getLeafIdFromXML("1"), settings.getColumnsToExport());
-				}
-			}
-		});
+//		WPushButton exportSequencesButton = new WPushButton("Report");
+//		exportSequencesButton.clicked().addListener(this, new Signal.Listener() {
+//			public void trigger() {
+//				if (WApplication.getInstance().getInternalPath().contains("/root")) {
+//					showReport(PreRendering.getLeafIdFromXML(leafIdsLocation, WApplication.getInstance().getInternalPath().split("/")[2]), settings.getColumnsToExport());
+//				} else {
+//					// TODO: Change value of clusterId 
+//					showReport(PreRendering.getLeafIdFromXML(leafIdsLocation, "1"), settings.getColumnsToExport());
+//				}
+//			}
+//		});
 		WHBoxLayout wHBoxLayout = new WHBoxLayout();
 		wPushButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(25));
 		wHBoxLayout.addWidget(wPushButton);
-		exportSequencesButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(25));
+//		exportSequencesButton.setMaximumSize(new WLength(graphWidth / 2), new WLength(25));
 //		wHBoxLayout.addWidget(exportSequencesButton);
 		wContainerWidgetNorth = new WContainerWidget();
 		wContainerWidgetNorth.setMaximumSize(new WLength(1, Unit.Pixel), new WLength(1, Unit.Pixel));
@@ -142,13 +143,7 @@ public class GraphWebApplication extends WApplication {
 		
 		try {
 			HashMap<String, Integer> countries = null;
-			if (WApplication.getInstance().getInternalPath().contains("/root")) {
-		    	countries = preRendering.readCsv(Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
-			} else {
-				// TODO: Change value of clusterId 
-				countries = preRendering.readCsv(1, "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
-			}
-			
+		    countries = preRendering.readCsv(Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), "COUNTRY_OF_ORIGIN_ISO", settings.getShowNAData());
 			wGroupBoxGoogleMapWidget = getGoogleChartWGroupBox(countries,null,null);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -167,6 +162,19 @@ public class GraphWebApplication extends WApplication {
 		wGroupBoxGoogleMapWidget.resize((int)mapWidth, 450);
 		this.getStyleSheet().addRule(new WCssTextRule(".CSS-example", "background: blue;position: fixed; width: 100%;top: 0px; left: 0px;z-index: 1"));
 		wContainerWidgetNorth.setStyleClass("CSS-example");
+		
+		// TODO: Move this from here after testing
+//		try {
+//			PPlacer pplacer = new PPlacer("/Users/ewout/Documents/phylogeo/EUResist/", "1");
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	}
+	
+	public GraphWebApplication(WEnvironment wEnvironment, String pplacerId) {
+		this(wEnvironment);
+		this.pplacer = new PPlacer(this.nodeIdsLocation, this.pplacerIdsLocation, pplacerId);
 	}
 	
 	private WTemplate createHeader() {
@@ -233,13 +241,7 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	public void pathChanged() {
-		int id;
-		if (WApplication.getInstance().getInternalPath().contains("/root")) {
-			id = Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]);
-		} else {
-			// TODO: Change value of clusterId 
-			id = 1;
-		}
+		int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 		graphWidget.setTree(id);
 		setGoogleChart(id);
 		setStatisticGraph(this.wPieChartMine, id);
@@ -258,13 +260,7 @@ public class GraphWebApplication extends WApplication {
 	
 	private final void showDialog() {
 	    final WDialog dialog = new WDialog("Tree");
-	    WImageTreeMine wImageTreeMine = null;
-	    if (WApplication.getInstance().getInternalPath().contains("/root")) {
-	    	wImageTreeMine = new WImageTreeMine(treeRenderLocation, WApplication.getInstance().getInternalPath().split("/")[2]);
-		} else {
-			// TODO: Change value of clusterId 
-			wImageTreeMine = new WImageTreeMine(treeRenderLocation, "1");
-		}
+	    WImageTreeMine wImageTreeMine = new WImageTreeMine(treeRenderLocation, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
 	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
 	    dialog.rejectWhenEscapePressed();
@@ -315,58 +311,58 @@ public class GraphWebApplication extends WApplication {
 		}
 	}
 	
-	private final void showReport(List<String> ids, List<String> headersToShow) {
-		final WDialog dialog = new WDialog("Sequences");
-		WTableView tableView = new WTableView();
-		List<String> metaDatas = null;
-		try {
-			metaDatas = CsvUtilsMetadata.getDataFromIds(ids, headersToShow, this.metaDataFile, ';');
-		} catch(IOException e) {
-			System.err.println(CsvUtilsMetadata.class + " Couldn't create fileReader on " + this.metaDataFile.getPath());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		WStandardItemModel wStandardItemModel = new WStandardItemModel(metaDatas.size(),10);
-
-		int i = 0;
-		int j = 0;
-		for(String line:metaDatas) {
-			j = 0;
-			String [] data = line.split(";");
-			for(String dataItem:data) {
-				wStandardItemModel.setItem(i, j++, new WStandardItem(dataItem));
-			}
-			i++;
-		}
-		
-		int k = 0;
-		for(String header:headersToShow) {
-			wStandardItemModel.setHeaderData(k++, header);
-		}
-		tableView.setModel(wStandardItemModel);
-		tableView.setRowHeaderCount(1);
-		tableView.setSortingEnabled(false);
-		tableView.setAlternatingRowColors(true);
-		tableView.setRowHeight(new WLength(28));
-		tableView.setHeaderHeight(new WLength(28));
-		tableView.setSelectionMode(SelectionMode.ExtendedSelection);
-		tableView.setEditTriggers(EnumSet.of(WAbstractItemView.EditTrigger.NoEditTrigger));
-		tableView.resize(new WLength(650), new WLength(400));
-	    dialog.getContents().addWidget(tableView);
-	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
-	    dialog.rejectWhenEscapePressed();
-	    cancel.clicked().addListener(dialog,
-	            new Signal1.Listener<WMouseEvent>() {
-	                public void trigger(WMouseEvent e1) {
-	                    dialog.reject();
-	                }
-	            });
-	    dialog.show();
-	}
+//	private final void showReport(List<String> ids, List<String> headersToShow) {
+//		final WDialog dialog = new WDialog("Sequences");
+//		WTableView tableView = new WTableView();
+//		List<String> metaDatas = null;
+//		try {
+//			metaDatas = CsvUtilsMetadata.getDataFromIds(ids, headersToShow, this.metaDataFile, ';');
+//		} catch(IOException e) {
+//			System.err.println(CsvUtilsMetadata.class + " Couldn't create fileReader on " + this.metaDataFile.getPath());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		WStandardItemModel wStandardItemModel = new WStandardItemModel(metaDatas.size(),10);
+//
+//		int i = 0;
+//		int j = 0;
+//		for(String line:metaDatas) {
+//			j = 0;
+//			String [] data = line.split(";");
+//			for(String dataItem:data) {
+//				wStandardItemModel.setItem(i, j++, new WStandardItem(dataItem));
+//			}
+//			i++;
+//		}
+//		
+//		int k = 0;
+//		for(String header:headersToShow) {
+//			wStandardItemModel.setHeaderData(k++, header);
+//		}
+//		tableView.setModel(wStandardItemModel);
+//		tableView.setRowHeaderCount(1);
+//		tableView.setSortingEnabled(false);
+//		tableView.setAlternatingRowColors(true);
+//		tableView.setRowHeight(new WLength(28));
+//		tableView.setHeaderHeight(new WLength(28));
+//		tableView.setSelectionMode(SelectionMode.ExtendedSelection);
+//		tableView.setEditTriggers(EnumSet.of(WAbstractItemView.EditTrigger.NoEditTrigger));
+//		tableView.resize(new WLength(650), new WLength(400));
+//	    dialog.getContents().addWidget(tableView);
+//	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
+//	    dialog.rejectWhenEscapePressed();
+//	    cancel.clicked().addListener(dialog,
+//	            new Signal1.Listener<WMouseEvent>() {
+//	                public void trigger(WMouseEvent e1) {
+//	                    dialog.reject();
+//	                }
+//	            });
+//	    dialog.show();
+//	}
 	
 	private WGroupBox getGoogleChartWGroupBox(final HashMap<String, Integer> countries, String region, HashMap<String, Integer> hashMapTemp) throws IOException {
 		WGroupBox wGroupBoxGoogleMapWidget = new WGroupBox();
-		final WComboBoxRegions wComboBoxRegions = new WComboBoxRegions();
+		wComboBoxRegions = new WComboBoxRegions();
 		wComboBoxRegions.changed().addListener(this, new Signal.Listener() {
 			public void trigger() {
 				GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
@@ -385,13 +381,7 @@ public class GraphWebApplication extends WApplication {
 		wComboBoxMetadata = new MyComboBox(metaDataFile, csvDelimitor);
 		wComboBoxMetadata.changed().addListener(this, new Signal.Listener() {
 			public void trigger() {
-				int id;
-				if (WApplication.getInstance().getInternalPath().contains("/root")) {
-					id = Integer.parseInt(WApplication.getInstance().getInternalPath().split("/")[2]);
-				} else {
-					// TODO: Change value of clusterId
-					id = 1;
-				}
+				int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 				setStatisticGraph(wPieChartMine, id);
 			}
 		});
@@ -411,5 +401,9 @@ public class GraphWebApplication extends WApplication {
 	
 	public Settings getSettings() {
 		return settings;
+	}
+	
+	public PPlacer getPPlacer() {
+		return this.pplacer;
 	}
 }

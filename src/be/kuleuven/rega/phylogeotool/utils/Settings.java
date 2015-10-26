@@ -52,6 +52,10 @@ public class Settings {
 		return leafIdsPath;
 	}
 	
+	public String getNodeIdsPath() {
+		return nodeIdsPath;
+	}
+	
 	public String getMetaDataFile() {
 		return metaDataFile;
 	}
@@ -75,11 +79,17 @@ public class Settings {
 	public List<String> getColumnsToExport() {
 		return this.columnsToExport;
 	}
+	
+	public String getPPlacerIdsPath() {
+		return pplacerIdsPath;
+	}
 
 	private String xmlPath;
 	private String clusterPath;
 	private String treeviewPath;
 	private String leafIdsPath;
+	private String nodeIdsPath;
+	private String pplacerIdsPath;
 	private String metaDataFile;
 	private boolean showNAData;
 	private String datalessRegionColor;
@@ -113,6 +123,10 @@ public class Settings {
             	treeviewPath = e.getValue().trim();
             } else if(name.equals("leafIdsPath")) {
             	leafIdsPath = e.getValue().trim();
+            } else if(name.equals("nodeIdsPath")) {
+            	nodeIdsPath = e.getValue().trim();
+            } else if (name.equals("pplacerIdsPath")) {
+            	pplacerIdsPath = e.getValue().trim();
             } else if(name.equals("metadataFile")) {
             	metaDataFile = e.getValue().trim();
             } else if(name.equals("showNAData")) {

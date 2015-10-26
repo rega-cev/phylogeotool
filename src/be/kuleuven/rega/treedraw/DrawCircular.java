@@ -21,6 +21,9 @@ import be.kuleuven.rega.phylogeotool.tree.Tree;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
 import be.kuleuven.rega.webapp.GraphWebApplication;
 import be.kuleuven.rega.webapp.WebGraphics2DMine;
+
+import com.itextpdf.text.Font;
+
 import eu.webtoolkit.jwt.Cursor;
 import eu.webtoolkit.jwt.WPaintedWidget;
 
@@ -53,22 +56,31 @@ public class DrawCircular implements Draw {
 //		double factor = (height*2)/(nodes.size()*1.5);
 
 		// TODO: Make this dynamic
-		double factor = 20;
-		if(paintAreaWidth < 500 && paintAreaHeight < 500) {
-			factor = 12;
-		} else if(paintAreaWidth < 600 && paintAreaHeight < 600) {
-			factor = 14;
-		} else if(paintAreaWidth < 700 && paintAreaHeight < 700) {
-			factor = 17;
-		} else if(paintAreaWidth < 800 && paintAreaHeight < 800) {
-			factor = 20;
-		} else if(paintAreaWidth < 900 && paintAreaHeight < 900) {
-			factor = 23;
-		} else if(paintAreaWidth < 1000 && paintAreaHeight < 1000) {
-			factor = 26;
-		} else if(paintAreaWidth > 1000 && paintAreaHeight > 800) {
-			factor = 29;
-		}
+		double factor = 15;
+//		double factor = 9;
+//		System.out.println("Here1");
+//		if(paintAreaWidth < 500 && paintAreaHeight < 500) {
+//			factor = 12;
+//			System.out.println("Here2");
+//		} else if(paintAreaWidth < 600 && paintAreaHeight < 600) {
+//			factor = 14;
+//			System.out.println("Here3");
+//		} else if(paintAreaWidth < 700 && paintAreaHeight < 700) {
+//			factor = 17;
+//			System.out.println("Here4");
+//		} else if(paintAreaWidth < 800 && paintAreaHeight < 800) {
+//			factor = 20;
+//			System.out.println("Here5");
+//		} else if(paintAreaWidth < 900 && paintAreaHeight < 900) {
+//			factor = 23;
+//			System.out.println("Here6");
+//		} else if(paintAreaWidth < 1000 && paintAreaHeight < 1000) {
+//			factor = 26;
+//			System.out.println("Here7");
+//		} else if(paintAreaWidth > 1000 && paintAreaHeight > 800) {
+//			factor = 29;
+//			System.out.println("Here8");
+//		}
 		
 		double maxRadius = 80;
 		// TODO: Change the node sizes
@@ -115,7 +127,7 @@ public class DrawCircular implements Draw {
 				Rectangle boundingBox = new Rectangle((int) (Node.polarToEucledianX(tree.getRootNode()) * factor + moveRight - circleWidth / 2), (int) (Node.polarToEucledianY(tree.getRootNode()) * factor + moveDown - circleWidth / 2), circleWidth, circleWidth);
 				graphics.draw(new Arc2D.Double(boundingBox, 360 - Math.toDegrees(edge.getNode1().getTheta()), Math.toDegrees(edge.getNode1().getTheta()) - Math.toDegrees(edge.getNode2().getTheta()), Arc2D.Double.OPEN));
 				graphics.draw(new Line2D.Double(corner, end));
-				graphics.drawString(Integer.toString(edge.getNode2().getId()), (int)edge.getNode2().getX(), (int)edge.getNode2().getY());
+//				graphics.drawString(Integer.toString(edge.getNode2().getId()), (int)edge.getNode2().getX(), (int)edge.getNode2().getY());
 			} else if (shape == Shape.RADIAL) {
 				graphics.draw(new Line2D.Double(edge.getNode1().getX() * factor + moveRight, edge.getNode1().getY() * factor + moveDown, edge.getNode2().getX() * factor + moveRight, edge.getNode2().getY() * factor + moveDown));
 			}
@@ -152,7 +164,15 @@ public class DrawCircular implements Draw {
 				
 				wPaintedWidget.addArea(wCircle);
 				
-				graphics.drawString(Integer.toString(edge.getNode2().getSize()), (int)(x - 20), (int)(y + r/2 + 20));
+				//TODO: Simplify this method (create one big arraylist)
+				if(graphWebApplication.getPPlacer().clusterContainsPPlacerSequence(Integer.toString(edge.getNode2().getId()))) {
+					graphics.setFont(graphics.getFont().deriveFont(Font.BOLDITALIC, 11.0f));
+					graphics.drawString(new String(Integer.toString(edge.getNode2().getSize()) + "*"), (int)(x - 20), (int)(y + r/2 + 20));
+				} else {
+					graphics.setFont(graphics.getFont().deriveFont(Font.NORMAL, 11.0f));
+					graphics.drawString(Integer.toString(edge.getNode2().getSize()), (int)(x - 20), (int)(y + r/2 + 20));
+				}
+				
 			}
 			if(!edge.getNode1().hasParent()) {
 				int r = 5;
