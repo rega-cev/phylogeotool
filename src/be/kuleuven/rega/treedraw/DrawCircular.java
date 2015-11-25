@@ -157,7 +157,9 @@ public class DrawCircular implements Draw {
 				wCircle.setCursor(Cursor.CrossCursor);
 				
 				// TODO: Handle the clicks. How to?
-				wCircle.clicked().addListener(wPaintedWidget, new WCircleNodeClickListener(wCircle, graphWebApplication));
+				if(wCircle.getNode().getSize() > 1) {
+					wCircle.clicked().addListener(wPaintedWidget, new WCircleNodeClickListener(wCircle, graphWebApplication));
+				}
 //				wCircle.doubleClicked().addListener(wPaintedWidget, new WCircleNodeDoubleClickListener(wCircle, graphWebApplication));
 				wCircle.mouseWentOver().addListener(wPaintedWidget, new WCircleMouseWentOverListener(wCircle, graphWebApplication));
 				wCircle.mouseWentOut().addListener(wPaintedWidget, new WCircleMouseWentOutListener(wCircle, graphWebApplication));
