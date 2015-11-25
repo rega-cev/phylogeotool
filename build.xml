@@ -65,10 +65,17 @@
 		</manifest>
 		<zipgroupfileset dir="${lib}" includes="commons-lang3-3.3.2.jar, figtree.jar" />
    	</jar>
-  	
-    <delete dir="${dist}/deps/"/>
+	
+	<jar jarfile="${build}/CalculateClusterSDRSDV.jar" basedir="${build}">
+		<manifest>
+			<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.CalculateClusterSDRSDV"/>
+		</manifest>
+		<zipgroupfileset dir="${lib}" includes="commons-lang3-3.3.2.jar, figtree.jar" />
+	</jar>
+    
+  	<delete dir="${dist}/deps/"/>
   </target>
-  
+	
   <target name="clean">
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
