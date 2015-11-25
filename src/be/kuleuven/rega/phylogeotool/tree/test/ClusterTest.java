@@ -25,11 +25,15 @@ public class ClusterTest {
 //	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/Test/tree.phylo";
 //	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/Test/middle_tree.phylo";
 //	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/Test/testTree.phylo";
-	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/Test/Portugal/besttree.500.midpoint.solved.newick";
+//	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/Test/Portugal/besttree.1000.midpoint.solved.newick";
+//	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/Test/Portugal/besttree.997.midpoint.solved.newick";
+//	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/Test/Portugal/besttree.500.midpoint.solved.newick";
 //	private String treeLocation = "/Users/ewout/Documents/TDRDetector/temp/test/phylo.tree";
 //	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/Test/test/RAxML_bestTree.solved.newick";
 //	private String treeLocation = "/Users/ewout/git/phylogeotool/lib/Test/test/midpoint.newick";
-	private String raxmlDistanceFile = "/Users/ewout/git/phylogeotool/lib/Test/test/RAxML_distances.midpoint.newick";
+//	private String raxmlDistanceFile = "/Users/ewout/git/phylogeotool/lib/Test/test/RAxML_distances.midpoint.newick";
+	private String treeLocation = "/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree";
+//	private String treeLocation = "/Users/ewout/Documents/phylogeo/EUResist/data/temp/phylo.tree";
 	
 	private Tree tree = null;
 	private ClusterAlgos clusterAlgos = new ClusterAlgos();
@@ -173,28 +177,29 @@ public class ClusterTest {
 	@Test
 	public void drawClusters() throws IOException {
 		GraphProperties graphProperties = new GraphProperties();
-		for(int i = 32; i < 33; i++) {
+		for(int i = 3; i < 4; i++) {
 //			System.out.println("*** " + i + " Clusters ***");
-			Tree clusteredTree = clusterAlgos.getCluster(tree, tree.getRootNode(), i);
+			Tree clusteredTree = clusterAlgos.getCluster(tree, tree.getRootNode(), i, 2);
 //			System.out.println(clusteredTree.getRootNode().getImmediateChildren().get(1).getLeavesAsString().get(0));
 //			if(clusteredTree.getNodes().size() > 1) {
 			
-			List<Node> clusters = new ArrayList<Node>();
-			for (Node leaf : clusteredTree.getLeaves()) {
-				// If less than 2 leaves we don't consider this as a cluster
-//				if(leaf.getLeaves().size() > 1)
-					clusters.add(leaf);
-			}
+//			List<Node> clusters = new ArrayList<Node>();
+			List<Node> clusters = clusteredTree.getAcceptableClusters(2);
+//			for (Node leaf : clusteredTree.getLeaves()) {
+//				// If less than 2 leaves we don't consider this as a cluster
+////				if(leaf.getLeaves().size() > 1)
+//					clusters.add(leaf);
+//			}
 			tree = graphProperties.setNodeColor(tree, clusters);
 			
-			for (Node leaf : clusters) {
-				// If less than 2 leaves we don't consider this as a cluster
-				if(leaf.getLeaves().size() < 1)
-					clusters.remove(leaf);
-			}
+//			for (Node leaf : clusters) {
+//				// If less than 2 leaves we don't consider this as a cluster
+//				if(leaf.getLeaves().size() < 1)
+//					clusters.remove(leaf);
+//			}
 			
 //			}
-			FileWriter fileWriter = new FileWriter("/Users/ewout/git/phylogeotool/lib/Test/Portugal/" + i + ".nxs");
+			FileWriter fileWriter = new FileWriter("/Users/ewout/Documents/phylogeo/TestCases/Portugal/" + i + ".nxs");
 			NexusExporter.export(tree, clusters, jeblTree, fileWriter);
 //			calculateStatisticsPieter(clusteredTree);
 //			calculateStatistics(clusterAlgos.getCluster(tree, tree.getRootNode(), i));
