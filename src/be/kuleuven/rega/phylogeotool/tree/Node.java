@@ -21,6 +21,8 @@ public class Node implements ICluster {
 	private double theta = 0.0;
 	private int size = 0;
 	private Color nodeColor;
+	private Edge edgeToParent = null;
+	private String attribute = null;
 
 	public Node() {
 		this.children = new ArrayList<Node>();
@@ -131,6 +133,14 @@ public class Node implements ICluster {
 	public void setTheta(double theta) {
 		this.theta = theta;
 	}
+	
+	public void setAttribute(String attribute) {
+		this.attribute = attribute;
+	}
+	
+	public String getAttribute() {
+		return this.attribute;
+	}
 
 	public void setLeaves(List<Node> leafs) {
 		this.leafs = leafs;
@@ -193,6 +203,14 @@ public class Node implements ICluster {
 	public Color getColor() {
 		return nodeColor;
 	}
+	
+	public void setEdgeToParent(Edge edgeToParent) {
+		this.edgeToParent = edgeToParent;
+	}
+	
+	public Edge getEdgeToParent() {
+		return this.edgeToParent;
+	}
 
 	public static double polarToEucledianX(Node node) {
 		return node.getX() * Math.cos(node.getTheta());
@@ -218,7 +236,7 @@ public class Node implements ICluster {
 		node.setTheta(this.getTheta());
 		node.setX(this.getX());
 		node.setY(this.getY());
-		node.setLeaves(this.getLeaves());
+//		node.setLeaves(this.getLeaves());
 		return node;
 	}
 	

@@ -2,6 +2,8 @@ package be.kuleuven.rega.phylogeotool.tools;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.kuleuven.rega.comparator.ClusterIdComparator;
 import be.kuleuven.rega.phylogeotool.tree.Node;
 import be.kuleuven.rega.phylogeotool.tree.Tree;
 import be.kuleuven.rega.treeFormatTransformer.NexusExporterFigTree;
@@ -21,14 +24,18 @@ public class NexusExporter {
 		// To print nxs file
 		Map<String, String> taxonNameToColor = new HashMap<String,String>();
 		LOGGER.info("Sequences exported to file.");
-		for(Node node:clusteredTree.getRootNode().getLeaves()) {
-			Node tempNode = fullTree.getNodeById(node.getId());
-			for(String leaf:tempNode.getLeavesAsString()) {
-//				System.out.println("Leaf: " + leaf);
-//				System.out.println(node.getColor());
-				taxonNameToColor.put(leaf, "#" + String.format("%06x", node.getColor().getRGB() & 0x00FFFFFF));
-//				System.out.println(leaf + "#" + String.format("%06x", node.getColor().getRGB() & 0x00FFFFFF));
-			}
+		
+		List<Node> nodesList = new ArrayList<Node>(clusteredTree.getAcceptableClusters(2));
+		for(Node node:nodesList) {
+//			if(node.getImmediateChildren().size() == 0) {
+		
+//		for(Node node:clusteredTree.getRootNode().getLeaves()) {
+				Node tempNode = fullTree.getNodeById(node.getId());
+				for(String leaf:tempNode.getLeavesAsString()) {
+					taxonNameToColor.put(leaf, "#" + String.format("%06x", node.getColor().getRGB() & 0x00FFFFFF));
+	//				System.out.println(leaf + "#" + String.format("%06x", node.getColor().getRGB() & 0x00FFFFFF));
+				}
+//			}
 		}
 	
 		NexusExporterFigTree nexusExporterFigTree = null;

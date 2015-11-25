@@ -59,6 +59,13 @@
 	 <classes dir="${build}"/>
     </war>
 
+  	<jar jarfile="${build}/CalculateSDRSDV.jar" basedir="${build}">
+		<manifest>
+			<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.CalculateSDRSDV"/>
+		</manifest>
+		<zipgroupfileset dir="${lib}" includes="commons-lang3-3.3.2.jar, figtree.jar" />
+   	</jar>
+  	
     <delete dir="${dist}/deps/"/>
   </target>
   
