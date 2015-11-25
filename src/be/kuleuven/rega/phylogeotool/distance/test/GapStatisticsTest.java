@@ -30,7 +30,7 @@ public class GapStatisticsTest {
 	@Before
 	public void init() {
 		try {
-			tree = ReadNewickTree.jeblToTreeDraw((SimpleRootedTree)ReadNewickTree.readNewickTree(new FileReader("/Users/ewout/Documents/phylogeo/EUResist_New/tree/besttree.midpoint.newick")));
+			tree = ReadNewickTree.jeblToTreeDraw((SimpleRootedTree)ReadNewickTree.readNewickTree(new FileReader("/Users/ewout/Documents/phylogeo/EUResist_New/tree/besttree.midpoint.newick")), new ArrayList<String>());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} 
