@@ -25,26 +25,26 @@ public class ClusterAlgos {
 //		}
 	}
 
-	public Tree getCluster(Tree tree, Node startNode, int nrClusters) {
+	public Tree getCluster(Tree tree, Node startNode, int nrClusters, int minimumClusterSize) {
 		
 		//kMedoids = new KMedoids(this.getNrOfClusters(), 100, allData);
 		//Map<ICluster, List<ICluster>> associationMap = kMedoids.calculate(true);
 		if(startNode == null) {
 //			return determineBestClusteringPieterIdea(tree.getRootNode(), nrClusters, tree);
-			return determineBestClusteringGuyIdea(tree.getRootNode(), nrClusters, tree);
+			return determineBestClusteringGuyIdea(tree.getRootNode(), nrClusters, tree, minimumClusterSize);
 		} else {
 //			return determineBestClusteringPieterIdea(startNode, nrClusters, tree);
-			return determineBestClusteringGuyIdea(startNode, nrClusters, tree);
+			return determineBestClusteringGuyIdea(startNode, nrClusters, tree, minimumClusterSize);
 		}
 	}
 
 	// TODO: Rework determination of best clusters
-	private Tree determineBestClustering(Node startNode, int nrClusters, Tree tree) {
+	private Tree determineBestClustering(Node startNode, int nrClusters, Tree tree, int minimumClusterSize) {
 		Tree toReturn = null;
 		midRootCluster = new MidRootCluster(nrClusters);
 //		for(int i = 1; i < nrClusters; i++) {
 //			midRootCluster.setNumberOfIClusters(i);
-		toReturn = midRootCluster.calculate(tree, startNode, new ClusterSizeComparator());
+		toReturn = midRootCluster.calculate(tree, startNode, new ClusterSizeComparator(), minimumClusterSize);
 			// TODO: Check if this part of the code is still necessary
 //			if(i >= 7 && midRootCluster.getNrBadClusters() >= ((1/6d)*i)) {
 //				midRootCluster.setNumberOfIClusters(i-1);
@@ -56,13 +56,13 @@ public class ClusterAlgos {
 	}
 	
 	// TODO: Rework determination of best clusters
-		private Tree determineBestClusteringPieterIdea(Node startNode, int nrClusters, Tree tree) {
+		private Tree determineBestClusteringPieterIdea(Node startNode, int nrClusters, Tree tree, int minimumClusterSize) {
 			Tree toReturn = null;
 //			LinkedList<V> sortedClusters = new LinkedList<V>();
 			midRootCluster = new MidRootCluster(nrClusters);
 //			for(int i = 1; i < nrClusters; i++) {
 //				midRootCluster.setNumberOfIClusters(i);
-			toReturn = midRootCluster.calculate(tree, startNode, new ClusterSizeComparator());
+			toReturn = midRootCluster.calculate(tree, startNode, new ClusterSizeComparator(), minimumClusterSize);
 				//TODO: Figure out why it is slow and if we still need this
 //				// Sort the clusters to get the biggest ones in front
 //				for(V vertix:toReturn.getVertices()) {
@@ -83,10 +83,10 @@ public class ClusterAlgos {
 			return toReturn;
 		}
 		
-		private Tree determineBestClusteringGuyIdea(Node startNode, int nrClusters, Tree tree) {
+		private Tree determineBestClusteringGuyIdea(Node startNode, int nrClusters, Tree tree, int minimumClusterSize) {
 			Tree toReturn = null;
 			midRootCluster = new MidRootCluster(nrClusters);
-			toReturn = midRootCluster.calculate(tree, startNode, new ClusterSizeComparator());
+			toReturn = midRootCluster.calculate(tree, startNode, new ClusterSizeComparator(), minimumClusterSize);
 			return toReturn;
 		}
 }

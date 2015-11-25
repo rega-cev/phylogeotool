@@ -250,6 +250,20 @@ public class Tree {
 		}
 	}
 	
+	/**
+	 * Clusters which contain a minimum amount of sequences
+	 * @return
+	 */
+	public List<Node> getAcceptableClusters(int minimumClusterSize) {
+		List<Node> acceptableClusters = new ArrayList<Node>();
+		for(Node leaf:this.getLeaves()) {
+			if(leaf.getSize() >= minimumClusterSize) {
+				acceptableClusters.add(leaf);
+			}
+		}
+		return acceptableClusters;
+	}
+	
 //	public void printTree(Node tmpRoot) {
 //
 //        Queue<Node> currentLevel = new LinkedList<Node>();

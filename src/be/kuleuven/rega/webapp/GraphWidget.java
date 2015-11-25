@@ -137,7 +137,8 @@ public class GraphWidget extends WPaintedWidget {
 			}
 		}
 		
-		this.graphProperties.setNodeColor(this.getTreeClustered());
+		// TODO: Set minimumclustersize
+		this.graphProperties.setNodeColor(this.getTreeClustered(), 2);
 		TreeTraversal.y = 0;
 		TreeTraversal.postOrder(this.getTreeClustered().getRootNode(), shape, getTreeClustered().getRootNode().getLeaves().size(), deepestLevel);
         TreeTraversal.preOrder(this.getTreeClustered().getRootNode(), getTreeClustered().getEdges(), shape);

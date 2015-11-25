@@ -18,7 +18,7 @@ public class GraphProperties {
 	
 	//"#FFDBE5"
 	private static final String[] indexcolors = new String[]{
-        "#FFFFFF", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
+        "#FF4A46", "#FFFF00", "#1CE6FF", "#FF34FF", "#FFFFFF", "#008941", "#006FA6", "#A30059",
         "#ff1a92", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
         "#5A0007", "#809693", "#FEFFE6", "#1B4400", "#4FC601", "#3B5DFF", "#4A3B53", "#FF2F80",
         "#61615A", "#BA0900", "#6B7900", "#00C2A0", "#FFAA92", "#FF90C9", "#B903AA", "#D16100",
@@ -37,15 +37,15 @@ public class GraphProperties {
         "#C895C5", "#320033", "#FF6832", "#66E1D3", "#CFCDAC", "#D0AC94", "#7ED379", "#012C58"
 	};
 	
-	public void setNodeColor(Tree tree) {
+	public void setNodeColor(Tree tree, int minimumClusterSize) {
 		int i = 0;
-		List<Node> nodesList = new ArrayList<Node>(tree.getNodes());
-//		System.out.println(tree.getEdges().size());
+		List<Node> nodesList = tree.getAcceptableClusters(minimumClusterSize);
 		Collections.sort(nodesList, new ClusterIdComparator());
 		
 		for(Node node:nodesList) {
-//			System.out.println(node.getId());
 			if(node.getImmediateChildren().size() == 0) {
+//				System.out.println(node.getSize());
+//				System.out.println(node.getId());
 //				System.out.println(Color.decode(indexcolors[i]));
 				try {
 					node.setColor(Color.decode(indexcolors[i++]));

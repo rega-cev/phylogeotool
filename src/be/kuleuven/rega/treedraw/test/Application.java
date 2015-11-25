@@ -15,25 +15,25 @@ import eu.webtoolkit.jwt.WEnvironment;
 
 public class Application extends WApplication {
 	
-	private Node t1 = new Node("t1");
-	private Node t2 = new Node("t2");
-	private Node t3 = new Node("t3");
-	private Node t4 = new Node("t4");
-	private Node t5 = new Node("t5");
-	private Node t6 = new Node("t6");
-	private Node t7 = new Node("t7");
-	private Node t8 = new Node("t8");
-	private Node t9 = new Node("t9");
-	private Node t10 = new Node("t10");
-	private Node t11 = new Node("t11");
-	private Node t12 = new Node("t12");
-	private Node t13 = new Node("t13");
-	private Node t14 = new Node("t14");
-	private Node t15 = new Node("t15");
-	private Node t16 = new Node("t16");
-	private Node t17 = new Node("t17");
-	private Node t18 = new Node("t18");
-	private Node t19 = new Node("t19");
+	private Node t1 = new Node("t1", 2);
+	private Node t2 = new Node("t2", 2);
+	private Node t3 = new Node("t3", 2);
+	private Node t4 = new Node("t4", 2);
+	private Node t5 = new Node("t5", 2);
+	private Node t6 = new Node("t6", 2);
+	private Node t7 = new Node("t7", 2);
+	private Node t8 = new Node("t8", 2);
+	private Node t9 = new Node("t9", 2);
+	private Node t10 = new Node("t10", 2);
+	private Node t11 = new Node("t11", 2);
+	private Node t12 = new Node("t12", 2);
+	private Node t13 = new Node("t13", 2);
+	private Node t14 = new Node("t14", 2);
+	private Node t15 = new Node("t15", 2);
+	private Node t16 = new Node("t16", 2);
+	private Node t17 = new Node("t17", 2);
+	private Node t18 = new Node("t18", 2);
+	private Node t19 = new Node("t19", 2);
 	
 	private Edge t19t18 = new Edge("t19t18", t19, t18, 0.9063808941);
 	private Edge t13t8 = new Edge("t13t8", t13, t8, 0.4848527387);

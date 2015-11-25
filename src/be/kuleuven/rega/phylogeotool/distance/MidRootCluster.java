@@ -19,7 +19,7 @@ public class MidRootCluster {
 		this.numberOfIClusters = numberOfIClusters;
 	}
 
-	public Tree calculate(Tree tree, Node startNode, Comparator<Node> comparator) {
+	public Tree calculate(Tree tree, Node startNode, Comparator<Node> comparator, int minimumClusterSize) {
 		this.tree = tree;
 		LinkedList<Node> tempQueue = new LinkedList<Node>();
 		
@@ -59,7 +59,7 @@ public class MidRootCluster {
 //					biggestClusters.clear();
 //					biggestClusters.add(tempQueue.get(i));
 //				}
-			if(!acceptableClustersPieterIdea(tree, tempQueue) && !tempQueue.isEmpty()) {
+			if(!acceptableClusters(tree, tempQueue, minimumClusterSize) && !tempQueue.isEmpty()) {
 				node = tempQueue.pop();
 				clusteredNodes.add(node);
 				clusteredEdges.add(tree.getEdge(node.getParent(), node));
@@ -130,8 +130,31 @@ public class MidRootCluster {
 		this.numberOfIClusters = numberOfIClusters;
 	}
 	
+	public boolean acceptableClusters(Tree tree, LinkedList<Node> tempQueue, int minClusterSize) {
+		int nrAcceptableClusters = 0;
+		for(Node node:tempQueue) {
+			if(node.getLeaves().size() >= minClusterSize) {
+				nrAcceptableClusters++;
+			}
+		}
+		
+		if(nrAcceptableClusters >= getNumberOfIClusters()) {
+//		if(tempQueue.size() >= getNumberOfIClusters()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public boolean acceptableClustersPieterIdea(Tree tree, LinkedList<Node> tempQueue) {
-		if(tempQueue.size() >= getNumberOfIClusters()) {
+		int nrChildren = 0;
+		for(Node node:tempQueue) {
+			if(node.hasChildren()) {
+				nrChildren++;
+			}
+		}
+		if(nrChildren >= getNumberOfIClusters()) {
+//		if(tempQueue.size() >= getNumberOfIClusters()) {
 			return true;
 		} else {
 			return false;

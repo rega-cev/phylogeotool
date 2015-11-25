@@ -179,16 +179,16 @@ public class MidRootClusterTest {
 //		midRootCluster.setNumberOfIClusters(2);
 //		assertEquals("", 2, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(3);
-		assertEquals("", 3, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 3, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(), 2).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(4);
-		assertEquals("", 4, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 4, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(), 2).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(5);
-		assertEquals("", 5, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 5, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(), 2).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(6);
-		assertEquals("", 6, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 6, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(), 2).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(7);
-		assertEquals("", 7, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 7, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(), 2).getLeaves().size(), 0.0);
 		midRootCluster.setNumberOfIClusters(8);
-		assertEquals("", 8, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator()).getLeaves().size(), 0.0);
+		assertEquals("", 8, midRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(), 2).getLeaves().size(), 0.0);
 	}
 }
