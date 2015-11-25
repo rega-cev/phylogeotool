@@ -88,7 +88,10 @@ public class Tree {
 		double distance = 0.0;
 		
 		while(node.hasParent()) {
-			distance += this.getEdge(node, node.getParent()).getDistance();
+			if(node.getEdgeToParent() == null) {
+				node.setEdgeToParent(this.getEdge(node, node.getParent()));
+			}
+			distance += node.getEdgeToParent().getDistance();
 			node = node.getParent();
 		}
 		return distance;
@@ -103,7 +106,7 @@ public class Tree {
 	}
 	
 	public double getIntraPairwiseDistance(Node cluster) {
-		List<Node> children = cluster.getLeaves();
+		List<Node> children = this.getNodeById(cluster.getId()).getLeaves();
 		double sum = 0.0D;
 		int amountOfRuns = 0;
 		for(int i = 0; i < children.size(); i++) {
@@ -112,11 +115,15 @@ public class Tree {
 				amountOfRuns++;
 			}
 		}
-		return sum/amountOfRuns;
+		if(amountOfRuns > 0) {
+			return sum/amountOfRuns;
+		} else {
+			return 0.0D;
+		}
 	}
 	
 	public Map<Double, Integer> getIntraPairwiseDistancePieter(Node cluster) {
-		List<Node> children = cluster.getLeaves();
+		List<Node> children = this.getNodeById(cluster.getId()).getLeaves();
 		double sum = 0.0D;
 		int amountOfRuns = 0;
 		for(int i = 0; i < children.size(); i++) {
@@ -135,18 +142,21 @@ public class Tree {
 		if(clusters != null && clusters.size() > 0) {
 			double d1 = 0.0D;
 			double d2 = 0.0D;
+			Node node1;
+			Node node2;
 			for (int i = 0; i < clusters.size(); i++) {
 				for (int j = i + 1; j < clusters.size(); j++) {
-					if ((clusters.get(i).getLeaves().size() >= minimumClusterSize) && (clusters.get(j).getLeaves().size() >= minimumClusterSize)) {
-						d2 += getInterClusterPairwiseDistance(clusters.get(i), clusters.get(j));
+					node1 = this.getNodeById(clusters.get(i).getId());
+					node2 = this.getNodeById(clusters.get(j).getId());
+					if ((node1.getLeaves().size() >= minimumClusterSize) && (node2.getLeaves().size() >= minimumClusterSize)) {
+						d2 += getInterClusterPairwiseDistance(node1, node2);
 						d1 += 1.0D;
 					}
 		        }
 		      }
 			return d2 / d1;
-			}
+		}
 		return 0.0D;
-		
 	}
 
 	private double getInterClusterPairwiseDistance(Node node1, Node node2) {
@@ -154,6 +164,7 @@ public class Tree {
 			List<Node> list1 = node1.getLeaves();
 			List<Node> list2 = node2.getLeaves();
 			double d = 0.0D;
+			
 			for (int i = 0; i < list1.size(); i++) {
 				for (int j = 0; j < list2.size(); j++) {
 					d += this.getDistance(list1.get(i), list2.get(j));
@@ -190,6 +201,16 @@ public class Tree {
 		}
 		return toReturn;
 	}
+	
+//	public Set<Node> getLeaves() {
+//		Set<Node> toReturn = new HashSet<Node>();
+//		for(Node node:nodes) {
+//			if(node.getImmediateChildren().size() == 0 && node.getSize() > 1) {
+//				toReturn.add(node);
+//			}
+//		}
+//		return toReturn;
+//	}
 	
 	public HashMap<Integer, Node> getLeavesMap() {
 		HashMap<Integer, Node> leaves = new HashMap<Integer, Node>();

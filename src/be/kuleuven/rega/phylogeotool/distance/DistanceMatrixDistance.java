@@ -55,7 +55,11 @@ public class DistanceMatrixDistance implements DistanceInterface {
 				j = 0;
 				String[] distancesLine = line.split(";");
 				for (String distance : distancesLine) {
-					distances[i][j++] = new Double(distance);
+					if(distance.equals("")) {
+						distances[i][j++] = 0.0d;
+					} else {
+						distances[i][j++] = new Double(distance);
+					}
 				}
 				i++;
 			}
