@@ -1,5 +1,7 @@
 package be.kuleuven.rega.phylogeotool.tree;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class Edge {
 
 	private String label;
@@ -56,4 +58,29 @@ public class Edge {
 	public String toString() {
 		return this.label + " " + this.node1.getId() + " to " + this.node2.getId() + " distance: " + this.distance;
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		Edge otherEdge = (Edge)other;
+		if(this.getNode1().equals(otherEdge.getNode1()) || this.getNode1().equals(otherEdge.getNode2())) {
+			if(this.getNode2().equals(otherEdge.getNode1()) || this.getNode2().equals(otherEdge.getNode2())) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder(17, 31);
+        if(this.getNode1().getId() < this.getNode2().getId()) {
+        	builder.append(this.getNode1().getId()).append(this.getNode2().getId());
+        } else {
+        	builder.append(this.getNode2().getId()).append(this.getNode1().getId());
+        }
+		return builder.toHashCode();
+    }
 }

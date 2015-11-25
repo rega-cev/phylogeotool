@@ -250,6 +250,29 @@ public class Tree {
 		}
 	}
 	
+	@Override
+    public boolean equals(Object other){
+		Tree otherTree = (Tree)other;
+		if(other != null && (this.getRootNode().getId() == otherTree.getRootNode().getId()
+				&& this.getEdges().size() == otherTree.getEdges().size()
+				&& this.getNodes().size() == otherTree.getNodes().size())) {
+			for(Edge edge:this.getEdges()) {
+				if(!otherTree.getEdges().contains(edge)) {
+					return false;
+				}
+			}
+			
+			for(Node node:this.getNodes()) {
+				if(!otherTree.getNodes().contains(node)) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+    }
+	
 	/**
 	 * Clusters which contain a minimum amount of sequences
 	 * @return

@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import be.kuleuven.rega.phylogeotool.interfaces.ICluster;
 
 public class Node implements ICluster {
@@ -219,4 +221,21 @@ public class Node implements ICluster {
 		node.setLeaves(this.getLeaves());
 		return node;
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		Node otherNode = (Node)other;
+		if(this.getId() == otherNode.getId()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder(17, 31);
+        builder.append(id);
+		return builder.toHashCode();
+    }
 }
