@@ -59,19 +59,26 @@
 	 <classes dir="${build}"/>
     </war>
 
-  	<jar jarfile="${build}/CalculateSDRSDV.jar" basedir="${build}">
+  	<jar jarfile="${dist}/CalculateSDRSDV.jar" basedir="${build}">
 		<manifest>
 			<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.CalculateSDRSDV"/>
 		</manifest>
 		<zipgroupfileset dir="${lib}" includes="commons-lang3-3.3.2.jar, figtree.jar" />
    	</jar>
 	
-	<jar jarfile="${build}/CalculateClusterSDRSDV.jar" basedir="${build}">
+	<jar jarfile="${dist}/CalculateClusterSDRSDV.jar" basedir="${build}">
 		<manifest>
 			<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.CalculateClusterSDRSDV"/>
 		</manifest>
 		<zipgroupfileset dir="${lib}" includes="commons-lang3-3.3.2.jar, figtree.jar" />
 	</jar>
+  	
+  	<jar jarfile="${dist}/ColorTree.jar" basedir="${build}">
+  		<manifest>
+  			<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.ColorTree"/>
+  		</manifest>
+  		<zipgroupfileset dir="${lib}" includes="commons-lang3-3.3.2.jar, figtree.jar, slf4j-api-1.7.10.jar" />
+  	</jar>
     
   	<delete dir="${dist}/deps/"/>
   </target>
