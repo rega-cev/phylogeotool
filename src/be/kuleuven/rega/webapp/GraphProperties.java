@@ -1,16 +1,17 @@
 package be.kuleuven.rega.webapp;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import be.kuleuven.rega.comparator.ClusterIdComparator;
-import be.kuleuven.rega.phylogeotool.tree.Node;
-import be.kuleuven.rega.phylogeotool.tree.Tree;
+import be.kuleuven.rega.phylogeotool.core.Cluster;
+import be.kuleuven.rega.phylogeotool.core.Node;
 
 public class GraphProperties {
 
@@ -18,8 +19,8 @@ public class GraphProperties {
 	
 	//"#FFDBE5"
 	private static final String[] indexcolors = new String[]{
-        "#FF4A46", "#FFFF00", "#1CE6FF", "#FF34FF", "#FFFFFF", "#008941", "#006FA6", "#A30059",
-        "#ff1a92", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
+        "#FF4A46", "#FFFF00", "#1CE6FF", "#FF34FF", "#008941", "#006FA6", "#A30059",
+        "#7A4900", "#ff1a92", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
         "#5A0007", "#809693", "#FEFFE6", "#1B4400", "#4FC601", "#3B5DFF", "#4A3B53", "#FF2F80",
         "#61615A", "#BA0900", "#6B7900", "#00C2A0", "#FFAA92", "#FF90C9", "#B903AA", "#D16100",
         "#DDEFFF", "#000035", "#7B4F4B", "#A1C299", "#300018", "#0AA6D8", "#013349", "#00846F",
@@ -37,42 +38,23 @@ public class GraphProperties {
         "#C895C5", "#320033", "#FF6832", "#66E1D3", "#CFCDAC", "#D0AC94", "#7ED379", "#012C58"
 	};
 	
-	public void setNodeColor(Tree tree, int minimumClusterSize) {
+	public static Map<Node, Color> getClusterColor(Cluster cluster, int minimumClusterSize) {
 		int i = 0;
-		List<Node> nodesList = tree.getAcceptableClusters(minimumClusterSize);
-		Collections.sort(nodesList, new ClusterIdComparator());
+		Map<Node, Color> toReturn = new HashMap<Node, Color>();
+		List<Node> nodes = cluster.getBoundaries();
+//		Collections.sort(nodes, new ClusterIdComparator());
 		
-		for(Node node:nodesList) {
-			if(node.getImmediateChildren().size() == 0) {
-//				System.out.println(node.getSize());
-//				System.out.println(node.getId());
-//				System.out.println(Color.decode(indexcolors[i]));
+		for(Node node:nodes) {
+			if(cluster.getTree().getLeaves(node).size() >= minimumClusterSize) {
 				try {
-					node.setColor(Color.decode(indexcolors[i++]));
+					toReturn.put(node, Color.decode(indexcolors[i++]));
 				} catch(ArrayIndexOutOfBoundsException e) {
-					node.setColor(Color.WHITE);
+					toReturn.put(node, Color.WHITE);
 				}
+			} else {
+				toReturn.put(node, Color.BLACK);
 			}
 		}
+		return toReturn;
 	}
-	
-	public Tree setNodeColor(Tree tree, List<Node> clusters) {
-		int i = 2;
-		Collections.sort(clusters, new ClusterIdComparator());
-		
-		for(Node node:clusters) {
-			try {
-				Color color = Color.decode(indexcolors[i++]);
-				Node tempNode = tree.getNodeById(node.getId());
-				tempNode.setColor(color);
-				for(Node child:tempNode.getAllChildren()) {
-					child.setColor(color);
-				}
-			} catch(ArrayIndexOutOfBoundsException e) {
-				node.setColor(Color.WHITE);
-			}
-		}
-		return tree;
-	}
-
 }

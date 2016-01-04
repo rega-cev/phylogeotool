@@ -55,6 +55,7 @@
 	 webxml="WebRoot/WEB-INF/web.xml">
    	 <metainf file="WebRoot/META-INF/context.xml" />
 	 <fileset dir="${src}"/>
+     <fileset dir="WebRoot"/>
 	 <lib dir="${dist}/deps/"/>
 	 <classes dir="${build}"/>
     </war>
@@ -78,6 +79,13 @@
   			<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.ColorTree"/>
   		</manifest>
   		<zipgroupfileset dir="${lib}" includes="commons-lang3-3.3.2.jar, figtree.jar, slf4j-api-1.7.10.jar" />
+  	</jar>
+  	
+  	<jar jarfile="${dist}/PreRender.jar" basedir="${build}">
+  		<manifest>
+  	  		<attribute name="Main-Class" value="be.kuleuven.rega.prerendering.PreRendering"/>
+  	  	</manifest>
+  	  	<zipgroupfileset dir="${lib}" includes="**/*.jar" />
   	</jar>
     
   	<delete dir="${dist}/deps/"/>

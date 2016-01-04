@@ -1,13 +1,13 @@
 html body { margin: 0px; }
 .ee_topbanner
 {
-	margin: 0pt; 
+	margin-left: 6px; 
 	padding: 0pt; 
     font-family: Arial,Helvetica,sans-serif; 
     font-size: 100%; 
     color: rgb(130, 124, 110); 
     background-attachment: scroll; 
-    background-image: url('images/bg_body_up.jpg'); 
+    background-image: url('images/bg_body_up_big.jpg'); 
     background-repeat: no-repeat; 
     background-position: center top; 
 }
@@ -35,7 +35,7 @@ html body { margin: 0px; }
 
     #ee_header { 
 	    margin: 0px; 
-	    padding: 8px 0px 0px 0px; 
+	    padding: 6px 0px 0px 0px; 
 	    position: relative; 
     }
 

@@ -16,20 +16,29 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import be.kuleuven.rega.phylogeotool.tools.ReadNewickTree;
-import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.core.Cluster;
+import be.kuleuven.rega.phylogeotool.core.Node;
+import be.kuleuven.rega.phylogeotool.core.Tree;
+import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
-import be.kuleuven.rega.phylogeotool.tree.Tree;
-import be.kuleuven.rega.prerendering.PreRendering;
 
 public class PPlacer {
 	
-	private String folderLocationNodeIds;
+//	private String folderLocationNodeIds;
 	private List<String> pplacerIds = null;
 	private Map<String, String> neighbours = null;
 	
+//	public PPlacer(String folderLocationNodeIds, String folderLocationPPlacerIds, String pplacerId) {
+////		this.folderLocationNodeIds = folderLocationNodeIds;
+//		pplacerIds = new ArrayList<String>();
+//		neighbours = new HashMap<String, String>();
+//		if(pplacerId != null) {
+//			this.read(folderLocationPPlacerIds + "/"+ pplacerId + ".xml");
+//		}
+//	}
+	
 	public PPlacer(String folderLocationNodeIds, String folderLocationPPlacerIds, String pplacerId) {
-		this.folderLocationNodeIds = folderLocationNodeIds;
+//		this.folderLocationNodeIds = folderLocationNodeIds;
 		pplacerIds = new ArrayList<String>();
 		neighbours = new HashMap<String, String>();
 		if(pplacerId != null) {
@@ -41,19 +50,19 @@ public class PPlacer {
 		return neighbours.get(pplacerNode);
 	}
 	
-	public Map<String, Boolean> clustersContainPPlacerSequence(List<String> clusterIds) {
-		Map<String, Boolean> toReturn = new HashMap<String, Boolean>();
-		
-		for(String clusterId:clusterIds) {
-			for(String pplacerId:pplacerIds) {
-				if(!toReturn.containsKey(clusterId) || (toReturn.containsKey(clusterId) && !toReturn.get(clusterId))) {
-					toReturn.put(clusterId, clusterContainsPPlacerSequence(pplacerId, clusterId));
-				}
-			}
-		}
-		
-		return toReturn;
-	}
+//	public Map<String, Boolean> clustersContainPPlacerSequence(List<Cluster> clusters) {
+//		Map<Cluster, Boolean> toReturn = new HashMap<Cluster, Boolean>();
+//		
+//		for(Cluster cluster:clusters) {
+//			for(String pplacerId:pplacerIds) {
+//				if(!toReturn.containsKey(clusterId) || (toReturn.containsKey(clusterId) && !toReturn.get(clusterId))) {
+//					toReturn.put(clusterId, clusterContainsPPlacerSequence(pplacerId, clusterId));
+//				}
+//			}
+//		}
+//		
+//		return toReturn;
+//	}
 	
 	public boolean clusterContainsPPlacerSequence(String clusterId) {
 		for(String pplacerId:pplacerIds) {
@@ -64,25 +73,27 @@ public class PPlacer {
 		return false;
 	}
 	
+	// TODO: Update this method
 	public boolean clusterContainsPPlacerSequence(String pplacerSequence, String clusterId) {
-		List<String> nodeIds = PreRendering.getNodeIdFromXML("", folderLocationNodeIds, clusterId, PreRendering.ID.NODEID);
-		if(nodeIds.contains(neighbours.get(pplacerSequence))) {
-			return true;
-		} else {
-			return false;
-		}
+//		List<String> nodeIds = PreRendering.getNodeIdFromXML("", folderLocationNodeIds, clusterId, PreRendering.ID.NODEID);
+//		if(nodeIds.contains(neighbours.get(pplacerSequence))) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+		return false;
 	}
 	
 	public static void write(String treeLocation, String folderLocationPPlacerIds, List<String> pplacerSequences) throws FileNotFoundException, UnsupportedEncodingException {
 		jebl.evolution.trees.Tree jeblTree = null;
 		Map<Node, Node> neighbours = new HashMap<Node, Node>();
 		try {
-			jeblTree = ReadNewickTree.readNewickTree(new FileReader(treeLocation));
+			jeblTree = ReadTree.readTree(new FileReader(treeLocation));
 		} catch (FileNotFoundException e1) {
 			System.err.println(PPlacer.class + ": PPlacer tree not found.");
 			e1.printStackTrace();
 		}
-		Tree tree = ReadNewickTree.jeblToTreeDraw((SimpleRootedTree)jeblTree, pplacerSequences);
+		Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree)jeblTree, pplacerSequences);
 		
 		Node leaf;
 		try {
@@ -110,6 +121,7 @@ public class PPlacer {
 		writer.close();
 	}
 	
+	// TODO: Move this method from here. It's not part of the core business of the PPlacer classes
 	public void read(String folderLocationPPlacerIds) {
 		if(!this.pplacerIds.isEmpty())
 			this.pplacerIds = new ArrayList<String>();

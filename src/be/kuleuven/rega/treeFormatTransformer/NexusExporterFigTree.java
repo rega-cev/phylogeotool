@@ -17,7 +17,7 @@ import java.io.Writer;
 import java.util.*;
 import java.util.List;
 
-import be.kuleuven.rega.phylogeotool.tree.tools.JeblTools;
+import be.kuleuven.rega.jebl.JeblTools;
 
 /**
  * Export sequences and trees to Nexus format.

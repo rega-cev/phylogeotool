@@ -5,13 +5,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
-import be.kuleuven.rega.clustering.ClusterAlgos;
-import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.clustering.MidRootCluster;
+import be.kuleuven.rega.comparator.ClusterSizeComparator;
+import be.kuleuven.rega.phylogeotool.core.Cluster;
+import be.kuleuven.rega.phylogeotool.core.Tree;
+import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
+import be.kuleuven.rega.phylogeotool.io.write.NexusExporter;
 import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
-import be.kuleuven.rega.phylogeotool.tree.Tree;
-import be.kuleuven.rega.webapp.GraphProperties;
 
 public class ColorTree {
 
@@ -42,21 +43,18 @@ public class ColorTree {
 	}
 	
 	private Tree init(String treeLocation) throws FileNotFoundException {
-		jeblTree = ReadNexusTree.readNexusTree(new FileReader(treeLocation));
+		jeblTree = ReadTree.readTree(new FileReader(treeLocation));
 		
-		Tree tree = ReadNexusTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
+		Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 		return tree;
 	}
 	
 	private void colorTree(Tree tree, int nrClusters, int minimumClusterSize) throws IOException {
-		GraphProperties graphProperties = new GraphProperties();
-		ClusterAlgos clusterAlgos = new ClusterAlgos();
-		
-		Tree clusteredTree = clusterAlgos.getCluster(tree, tree.getRootNode(), nrClusters, minimumClusterSize);
-		List<Node> clusters = clusteredTree.getAcceptableClusters(minimumClusterSize);
-		tree = graphProperties.setNodeColor(tree, clusters);
-		FileWriter fileWriter = new FileWriter(nrClusters + ".nxs");
-		NexusExporter.export(tree, clusters, jeblTree, fileWriter);
+		Cluster cluster = MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), minimumClusterSize, nrClusters);
+//		List<Node> clusters = cluster.getAcceptableClusters(minimumClusterSize);
+		FileWriter fileWriter = new FileWriter("/Users/ewout/Documents/phylogeo/TestCases/Portugal/" + nrClusters + ".nxs");
+		System.out.println("Writing to: " + "/Users/ewout/Documents/phylogeo/TestCases/Portugal/" + nrClusters + ".nxs");
+		NexusExporter.export(cluster, jeblTree, fileWriter, 2, true);
 	}
 	
 }
