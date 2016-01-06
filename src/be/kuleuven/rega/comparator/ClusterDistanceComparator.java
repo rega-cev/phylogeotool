@@ -2,8 +2,8 @@ package be.kuleuven.rega.comparator;
 
 import java.util.Comparator;
 
-import be.kuleuven.rega.phylogeotool.tree.Node;
-import be.kuleuven.rega.phylogeotool.tree.Tree;
+import be.kuleuven.rega.phylogeotool.core.Node;
+import be.kuleuven.rega.phylogeotool.core.Tree;
 
 public class ClusterDistanceComparator implements Comparator<Node> {
 

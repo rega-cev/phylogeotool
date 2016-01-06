@@ -261,30 +261,57 @@ public class CsvUtils {
 		}
 	}
 
-	public static HashMap<String, Integer> csvToHashMapStringInteger(File csvFile, char delimitor, List<String> ids, String key) throws IOException {
+	/**
+	 * @Pre This method expects that the according csv file has a column ID
+	 * @param csvFile
+	 * @param delimitor
+	 * @param ids
+	 * @param key
+	 * @return
+	 * @throws IOException
+	 */
+	public static HashMap<String, Integer> csvToHashMapStringInteger(File csvFile, char delimitor, List<String> ids, String key, boolean readNA) {
 		CSVParser parser = new CSVParser(delimitor);
 		HashMap<String, Integer> hashMap= new HashMap<String, Integer>();
-		BufferedReader br = new BufferedReader(new FileReader(csvFile));
+		BufferedReader br = null;
 		try {
+			br = new BufferedReader(new FileReader(csvFile));
 			String line = br.readLine();
 			String[] header = parser.parseLine(line);
 
 			line = br.readLine();
 			while (line != null) {
 				String[] row = parser.parseLine(line);
-				String id = row[indexOf(header, "ID")];
+//				String id = row[indexOf(header, "ID")];
+				String id = row[indexOf(header, "SAMPLE_ID")].concat("_").concat(row[indexOf(header, "PATIENT_ID")]);
 				if(ids.contains(id)) {
+					
 					String value = row[indexOf(header, key)];
-					if(hashMap.containsKey(value)) {
-						hashMap.put(value, hashMap.get(value) + 1);
+//					if(value.equals("HIV-1 Subtype B")) {
+//						System.out.println(id);
+//						System.out.println("Row: " + row[1]);
+//					}
+					if(readNA) {
+						if(hashMap.containsKey(value)) {
+							hashMap.put(value, hashMap.get(value) + 1);
+						} else {
+							hashMap.put(value, 1);
+						}
 					} else {
-						hashMap.put(value, 1);
+						if(value != null && !value.equals("")) {
+							if(hashMap.containsKey(value)) {
+								hashMap.put(value, hashMap.get(value) + 1);
+							} else {
+								hashMap.put(value, 1);
+							}
+						}
 					}
 				}
 				line = br.readLine();
 			}
-		} finally {
 			br.close();
+		} catch(IOException e) {
+			e.printStackTrace();
 		}
 		return hashMap;
 	}

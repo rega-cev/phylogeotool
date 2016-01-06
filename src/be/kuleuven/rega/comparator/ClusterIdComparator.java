@@ -2,7 +2,7 @@ package be.kuleuven.rega.comparator;
 
 import java.util.Comparator;
 
-import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.core.Node;
 
 public class ClusterIdComparator implements Comparator<Node> {
 

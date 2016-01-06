@@ -1,16 +1,24 @@
 package be.kuleuven.rega.webapp;
 
-import java.io.File;
+import java.awt.Color;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
-import be.kuleuven.rega.clustering.ClusterAlgos;
-import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.listeners.WCircleMouseWentOutListener;
+import be.kuleuven.rega.listeners.WCircleMouseWentOverListener;
+import be.kuleuven.rega.listeners.WCircleNodeClickListener;
+import be.kuleuven.rega.listeners.WCircleNodeDoubleClickListener;
+import be.kuleuven.rega.phylogeotool.core.Cluster;
+import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.tree.Shape;
-import be.kuleuven.rega.phylogeotool.tree.Tree;
-import be.kuleuven.rega.prerendering.PreRendering;
+import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
+import be.kuleuven.rega.prerendering.FacadeRequestData;
 import be.kuleuven.rega.treedraw.Draw;
 import be.kuleuven.rega.treedraw.DrawCircular;
+import be.kuleuven.rega.treedraw.DrawData;
 import be.kuleuven.rega.treedraw.DrawRectangular;
 import be.kuleuven.rega.treedraw.TreeTraversal;
 import be.kuleuven.rega.url.UrlManipulator;
@@ -22,62 +30,28 @@ import eu.webtoolkit.jwt.WPainter;
 
 public class GraphWidget extends WPaintedWidget {
 
-	private ClusterAlgos kMedoidsToPhylo;
-	private Tree treeClustered;
-	private GraphProperties graphProperties;
-	private int nrClusters = 11;
+	private Cluster cluster;
 	private Stack<Integer> previousRootId = new Stack<Integer>();
-	private Draw draw = null;
-	private Shape shape = null;
-	private GraphWebApplication graphWebApplication = null;
-	private WebGraphics2DMine graphics = null;
-	private PreRendering preRendering = null;
+//	private PreRendering preRendering = null;
+	private FacadeRequestData facadeRequestData;
 	
-//	public GraphWidget(GraphWebApplication graphWebApplication, File locationNodeIndexProvider, File locationDistances, String clusterLocation) throws IOException {
-//		this.graphWebApplication = graphWebApplication;
-//		this.loadGraph(locationNodeIndexProvider, locationDistances, null);
-//		init(clusterLocation);
-//	}
-
-	public GraphWidget(GraphWebApplication graphWebApplication, File locationNodeIndexProvider, File locationDistances, PreRendering preRendering) throws IOException {
+	// TODO: We need to get rid of the reference to GraphWebApplication
+	public GraphWidget(FacadeRequestData facadeRequestData) throws IOException {
 		//TODO : Check if the trees have been prerendered
-		this.graphWebApplication = graphWebApplication;
-		init(preRendering);
-		this.loadGraph(locationNodeIndexProvider, locationDistances);
+		this.facadeRequestData = facadeRequestData;
+		this.loadGraph();
 	}
 
-	public void init(PreRendering preRendering) {
-		this.graphProperties = new GraphProperties();
-		this.preRendering = preRendering;
-	}
-
-	public void loadGraph(File nodeIndexProvider, File locationDistances) throws IOException {
+	public void loadGraph() throws IOException {
 //		kMedoidsToPhylo = new ClusterAlgos(nodeIndexProvider, locationDistances);
 //		fullTree = ReadNewickTree.jeblToTreeDraw((SimpleRootedTree)ReadNewickTree.readNewickTree(new FileReader(treeLocation)));
 		String rootNodeId = UrlManipulator.getId(WApplication.getInstance().getInternalPath());
 		this.addPreviousRootId(Integer.parseInt(rootNodeId));
 //		this.setTreeClustered(kMedoidsToPhylo.getGraph(fullTree, rootNode, nrClusters));
-		this.setTreeClustered(preRendering.getTreeFromXML(rootNodeId));
+		this.setCluster(facadeRequestData.getCluster(rootNodeId));
 			
 //		preRendering.writeTreeToXML(this.getTreeClustered());
 	}
-
-	public ClusterAlgos getKMedoidsToPhylo() {
-		return kMedoidsToPhylo;
-	}
-
-	// TODO: See if this is necessary
-//	@Override
-//	public void resize(WLength width, WLength height) {
-//		super.resize(width, height);
-//		// Also resizes the tree pane
-//	}
-//
-//	@Override
-//	protected void layoutSizeChanged(int width, int height) {
-//		super.layoutSizeChanged(width, height);
-//		// Also resizes the tree pane
-//	}
 
 	public Integer getPreviousRootId() {
 		//TODO: Catch exception when stack is empty
@@ -98,54 +72,62 @@ public class GraphWidget extends WPaintedWidget {
 		this.previousRootId.empty();
 	}
 	
-	public int getNrClusters() {
-		return nrClusters;
+	public Cluster getCluster() {
+		return this.cluster;
 	}
 
-	public void setNrClusters(int nrClusters) {
-		this.nrClusters = nrClusters;
-	}
-	
-	public Tree getTreeClustered() {
-		return this.treeClustered;
-	}
-
-	public void setTreeClustered(Tree treeClustered) {
-		this.treeClustered = treeClustered;
+	public void setCluster(Cluster cluster) {
+		this.cluster = cluster;
 	}
 
 	//TODO: Check why this method is called 2x
 	@Override
 	protected void paintEvent(WPaintDevice paintDevice) {
 		WPainter painter = new WPainter(paintDevice);
-		graphics = new WebGraphics2DMine(painter);
+		WebGraphics2DMine graphics = new WebGraphics2DMine(painter);
 		int deepestLevel = 0;
-		//TODO : See if we can get the rectangular representation in here
-		//TODO: Do something about the fixed number 12
-//		if(this.preRendering.getNodeById(this.getTreeClustered().getRootNode().getId()).getLeaves().size() < 12) {
-		if(this.getTreeClustered().getLeaves().size() < 12) {
-			shape = Shape.RECTANGULAR_CLADOGRAM;
-			draw = new DrawRectangular(this.getTreeClustered(), shape);
+		//TODO : See which representation we need.
+		Shape shape = Shape.CIRCULAR_CLADOGRAM;
+//		Shape shape = Shape.CIRCULAR_PHYLOGRAM;
+//		Shape shape = Shape.RECTANGULAR_CLADOGRAM;
+//		Shape shape = Shape.RECTANGULAR_PHYLOGRAM;
+//		Shape shape = Shape.RADIAL;
+		Draw draw = null;
+		if(shape.equals(Shape.RECTANGULAR_CLADOGRAM) || shape.equals(Shape.RECTANGULAR_PHYLOGRAM)) {
+			draw = new DrawRectangular(this.getCluster(), shape);
 		} else {
-			shape = Shape.CIRCULAR_CLADOGRAM;
-			draw = new DrawCircular(this.getTreeClustered(), shape);
-			for(Node node:this.getTreeClustered().getNodes()) {
-				int nodeLevel = TreeTraversal.nodeLevel(node, 0);
-				if(nodeLevel > deepestLevel) {
-					deepestLevel = nodeLevel;
-				}
+			draw = new DrawCircular(this.getCluster(), shape);
+		}
+		for(Node node:cluster.getBoundaries()) {
+			int nodeLevel = TreeTraversal.nodeLevel(cluster.getRoot(), node, 0);
+			if(nodeLevel > deepestLevel) {
+				deepestLevel = nodeLevel;
 			}
 		}
 		
-		// TODO: Set minimumclustersize
-		this.graphProperties.setNodeColor(this.getTreeClustered(), 2);
+//		this.graphProperties.getClusterColor(cluster, 2);
 		TreeTraversal.y = 0;
-		TreeTraversal.postOrder(this.getTreeClustered().getRootNode(), shape, getTreeClustered().getRootNode().getLeaves().size(), deepestLevel);
-        TreeTraversal.preOrder(this.getTreeClustered().getRootNode(), getTreeClustered().getEdges(), shape);
+		Map<Node, DrawData> map = new HashMap<Node, DrawData>();
+		Map<Node, Color> nodeToColor = new HashMap<Node, Color>();
+		// TODO: Set minimumclustersize
+		nodeToColor = GraphProperties.getClusterColor(cluster, 2);
+		TreeTraversal.postOrder(cluster, cluster.getRoot(), map, shape, cluster.getBoundaries().size(), deepestLevel);
+        TreeTraversal.preOrder(cluster, cluster.getRoot(), map, cluster.getEdges(), shape);
         for(WAbstractArea area:this.getAreas()) {
         	this.removeArea(area);
         }
-        draw.paint(graphWebApplication, this, graphics, getWidth().getValue(), getHeight().getValue(), paintDevice.getWidth().getValue(), paintDevice.getHeight().getValue());
+
+        List<WCircleNode> circleNodes = draw.paint(graphics, map, nodeToColor, paintDevice.getWidth().getValue(), paintDevice.getHeight().getValue());
+        for(WCircleNode wCircle:circleNodes) {
+        	if(cluster.getTree().getLeaves(wCircle.getNode()).size() > 1) {
+        		wCircle.clicked().addListener(this, new WCircleNodeClickListener(wCircle, (GraphWebApplication)WApplication.getInstance()));
+        	}
+			wCircle.doubleClicked().addListener(this, new WCircleNodeDoubleClickListener(wCircle, (GraphWebApplication)WApplication.getInstance()));
+			wCircle.mouseWentOver().addListener(this, new WCircleMouseWentOverListener(wCircle, (GraphWebApplication)WApplication.getInstance()));
+			wCircle.mouseWentOut().addListener(this, new WCircleMouseWentOutListener(wCircle, (GraphWebApplication)WApplication.getInstance()));
+			this.addArea(wCircle);
+		}
+			
 	}
 	
 	// TODO: Fix the Nexus Exporter
@@ -153,11 +135,12 @@ public class GraphWidget extends WPaintedWidget {
 //		return NexusExporter.export(this.getTree(), this.getTreeClustered());
 //	}
 	
-	public void setTree(int id) {
+	public void setCluster(int id) {
 //		Tree tempTree = kMedoidsToPhylo.getGraph(this.fullTree, node, nrClusters);
 		String nodeId = Integer.toString(id);
-		Tree tempTree = preRendering.getTreeFromXML(nodeId);
-		this.setTreeClustered(tempTree);
+//		Tree tempTree = preRendering.getTreeFromXML(nodeId);
+		Cluster tempCluster = facadeRequestData.getCluster(nodeId);
+		this.setCluster(tempCluster);
 		//TODO: check if pplacer is part of link
 		WApplication.getInstance().setInternalPath("/root_" + nodeId);
 //		WApplication.getInstance().getInternalPath();

@@ -1,9 +1,11 @@
 package be.kuleuven.rega.treedraw;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
-import be.kuleuven.rega.phylogeotool.tree.Edge;
-import be.kuleuven.rega.phylogeotool.tree.Node;
+import be.kuleuven.rega.phylogeotool.core.Cluster;
+import be.kuleuven.rega.phylogeotool.core.Edge;
+import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.tree.Shape;
 
 public class TreeTraversal {
@@ -21,7 +23,7 @@ public class TreeTraversal {
 	 * @param simpleRootedTree
 	 * @param root
 	 */
-	public static void preOrder (Node root, Set<Edge> edges, Shape shape) {
+	public static void preOrder (Cluster cluster, Node root, Map<Node, DrawData> nodeToDrawData, List<Edge> edges, Shape shape) {
 		if(root == null) return;
 		
 		// Calculate x || Calculate r
@@ -29,40 +31,48 @@ public class TreeTraversal {
 			if(root.getParent() != null) {
 				for(Edge edge:edges) {
 					if(edge.getNode2() == root) {
-						root.setX(root.getParent().getX() + edge.getDistance());
+						updateMap(nodeToDrawData, root, nodeToDrawData.get(root.getParent()).getX() + edge.getDistance(), null, null);
+//						root.setX(root.getParent().getX() + edge.getDistance());
 						break;
 					}
 				}
 			} else {
-				root.setX(0.0);
+				updateMap(nodeToDrawData, root, 0.0, null, null);
+//				root.setX(0.0);
 			}
 		} else if(shape == Shape.RECTANGULAR_CLADOGRAM) {
 			if(root.getParent() != null) {
-				root.setX(nodeLevel(root, 0));
+				updateMap(nodeToDrawData, root, (double)nodeLevel(cluster.getRoot(), root, 0), null, null);
+//				root.setX(nodeLevel(root, 0));
 			} else {
-				root.setX(0.0);
+				updateMap(nodeToDrawData, root, 0.0, null, null);
+//				root.setX(0.0);
 			}
 		} else if(shape == Shape.RADIAL) {
 			if(root.getParent() != null) {
 				
 				for(Edge edge:edges) {
 					if(edge.getNode2() == root) {
-						root.setX(root.getParent().getX() + edge.getDistance() * Math.cos(root.getTheta()));
-						root.setY(root.getParent().getY() + edge.getDistance() * Math.sin(root.getTheta()));
+						updateMap(nodeToDrawData, root,
+								nodeToDrawData.get(root.getParent()).getX() + edge.getDistance() * Math.cos(nodeToDrawData.get(root).getTheta()),
+								nodeToDrawData.get(root.getParent()).getX() + edge.getDistance() * Math.sin(nodeToDrawData.get(root).getTheta()), null);
+//						root.setX(root.getParent().getX() + edge.getDistance() * Math.cos(root.getTheta()));
+//						root.setY(root.getParent().getY() + edge.getDistance() * Math.sin(root.getTheta()));
 						break;
 					}
 				}
 			} else {
-				root.setX(0.0);
-				root.setY(0.0);
+				updateMap(nodeToDrawData, root, 0.0, 0.0, null);
+//				root.setX(0.0);
+//				root.setY(0.0);
 			}
 		}
 		
-		if(root.getImmediateChildren().size() > 0) {
-			preOrder(root.getImmediateChildren().get(0), edges, shape);
-			preOrder(root.getImmediateChildren().get(1), edges, shape);
+		if(!cluster.getBoundaries().contains(root)) {
+			preOrder(cluster, root.getImmediateChildren().get(0), nodeToDrawData, edges, shape);
+			preOrder(cluster, root.getImmediateChildren().get(1), nodeToDrawData, edges, shape);
 		} else {
-			preOrder(null, edges, shape);
+			preOrder(cluster, null, nodeToDrawData, edges, shape);
 		}
 	}
 
@@ -73,44 +83,75 @@ public class TreeTraversal {
 	 * @param simpleRootedTree
 	 * @param root
 	 */
-	public static void postOrder (Node root, Shape shape, int nrLeaves, int deepestLevel) {
+	public static void postOrder (Cluster cluster, Node root, Map<Node, DrawData> nodeToDrawData, Shape shape, int nrLeaves, int deepestLevel) {
 		if(root == null) return;
 		// Inner node
-		if(root.getImmediateChildren().size() > 0) {
-			postOrder(root.getImmediateChildren().get(0), shape, nrLeaves, deepestLevel);
-			postOrder(root.getImmediateChildren().get(1), shape, nrLeaves, deepestLevel);
+		if(!cluster.getBoundaries().contains(root)) {
+			postOrder(cluster, root.getImmediateChildren().get(0), nodeToDrawData, shape, nrLeaves, deepestLevel);
+			postOrder(cluster, root.getImmediateChildren().get(1), nodeToDrawData, shape, nrLeaves, deepestLevel);
 			if(shape == Shape.RECTANGULAR_PHYLOGRAM || shape == Shape.RECTANGULAR_CLADOGRAM) {
-				root.setY((root.getImmediateChildren().get(0).getY() + root.getImmediateChildren().get(1).getY())/2);
+				updateMap(nodeToDrawData, root, null, (nodeToDrawData.get(root.getImmediateChildren().get(0)).getY() + nodeToDrawData.get(root.getImmediateChildren().get(1)).getY())/2, null);
+//				root.setY((root.getImmediateChildren().get(0).getY() + root.getImmediateChildren().get(1).getY())/2);
 			} else if(shape == Shape.CIRCULAR_PHYLOGRAM) {
-				root.setTheta((root.getImmediateChildren().get(0).getTheta() + root.getImmediateChildren().get(1).getTheta())/2);
+				updateMap(nodeToDrawData, root, null, null, (nodeToDrawData.get(root.getImmediateChildren().get(0)).getTheta() + nodeToDrawData.get(root.getImmediateChildren().get(1)).getTheta())/2);
+//				root.setTheta((root.getImmediateChildren().get(0).getTheta() + root.getImmediateChildren().get(1).getTheta())/2);
 			} else if(shape == Shape.CIRCULAR_CLADOGRAM || shape == Shape.RADIAL) {
 				if(root.getParent() != null) {
-					root.setX(nodeLevel(root, 0));
-					root.setTheta((root.getImmediateChildren().get(0).getTheta() + root.getImmediateChildren().get(1).getTheta())/2);
+					updateMap(nodeToDrawData, root, (double)nodeLevel(cluster.getRoot(), root, 0), null, 
+							(nodeToDrawData.get(root.getImmediateChildren().get(0)).getTheta() + nodeToDrawData.get(root.getImmediateChildren().get(1)).getTheta())/2);
+//					root.setX(nodeLevel(root, 0));
+//					root.setTheta((root.getImmediateChildren().get(0).getTheta() + root.getImmediateChildren().get(1).getTheta())/2);
 				} else {
-					root.setX(0.0);
-					root.setY(0.0);
+					updateMap(nodeToDrawData, root, 0.0, 0.0, null);
+//					root.setX(0.0);
+//					root.setY(0.0);
 				}
 			}
 		// Leaf
 		} else {
-			postOrder(null, shape, nrLeaves, deepestLevel);
+			postOrder(cluster, null, nodeToDrawData, shape, nrLeaves, deepestLevel);
 			if(shape == Shape.RECTANGULAR_PHYLOGRAM || shape == Shape.RECTANGULAR_CLADOGRAM) {
-				root.setY(++y);
+				updateMap(nodeToDrawData, root, null, (double)++y, null);
+//				root.setY(++y);
 			} else if(shape == Shape.CIRCULAR_PHYLOGRAM || shape == Shape.RADIAL) {
-				root.setTheta(2*Math.PI*((double)++y/nrLeaves));
+				updateMap(nodeToDrawData, root, null, null, 2*Math.PI*((double)++y/nrLeaves));
+//				root.setTheta(2*Math.PI*((double)++y/nrLeaves));
 			} else if(shape == Shape.CIRCULAR_CLADOGRAM) {
-				root.setX(deepestLevel);
-				root.setTheta(2*Math.PI*((double)++y/nrLeaves));
+				updateMap(nodeToDrawData, root, (double)deepestLevel, null, 2*Math.PI*((double)++y/nrLeaves));
+//				root.setX(deepestLevel);
+//				root.setTheta(2*Math.PI*((double)++y/nrLeaves));
 			}
 		}
 	}
 	
-	public static int nodeLevel(Node node, int nodeLevel) {
-		if(node.getParent() == null) {
+	public static void updateMap(Map<Node, DrawData> map, Node node, Double x, Double y, Double theta) {
+		if(map.containsKey(node)) {
+			if(x != null)
+				map.get(node).setX(x);
+			if(y != null)
+				map.get(node).setY(y);
+			if(theta != null)
+				map.get(node).setTheta(theta);
+		} else {
+			DrawData drawData = new DrawData(0.0, 0.0, 0.0);
+			if(x != null) {
+				drawData.setX(x);
+			}
+			if(y != null) {
+				drawData.setY(y);
+			}
+			if(theta != null) {
+				drawData.setTheta(theta);
+			}
+			map.put(node, drawData);
+		}
+	}
+	
+	public static int nodeLevel(Node root, Node node, int nodeLevel) {
+		if(node.equals(root)) {
 			return nodeLevel;
 		} else {
-			return nodeLevel(node.getParent(), ++nodeLevel);
+			return nodeLevel(root, node.getParent(), ++nodeLevel);
 		}
 	}
 }
