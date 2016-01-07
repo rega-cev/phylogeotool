@@ -49,7 +49,9 @@ public class CsvColorTree {
 				if (taxa.size() == 0) {
 					throw new RuntimeException("Could not find node with label \"" + s.label + "\"");
 				} else if (taxa.size() >= 1) {
-					taxonNameToColor.put(s.label, colorToAttribute(s.color));
+					for(Taxon t : taxa) {
+						taxonNameToColor.put(t.getName(), colorToAttribute(s.color));
+					}
 				} else {
 					//taxonNameToColor.put(s.label, colorToAttribute(Color.black));				
 				}
