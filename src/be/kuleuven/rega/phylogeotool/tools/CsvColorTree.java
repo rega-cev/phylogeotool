@@ -53,7 +53,7 @@ public class CsvColorTree {
 						taxonNameToColor.put(t.getName(), colorToAttribute(s.color));
 					}
 				} else {
-					//taxonNameToColor.put(s.label, colorToAttribute(Color.black));				
+					taxonNameToColor.put(s.label, colorToAttribute(Color.black));				
 				}
 			}
 		
