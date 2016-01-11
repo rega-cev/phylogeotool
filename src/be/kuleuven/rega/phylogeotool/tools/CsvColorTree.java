@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import jebl.evolution.taxa.Taxon;
+import jebl.evolution.trees.RootedTree;
 import jebl.evolution.trees.Tree;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import be.kuleuven.rega.treeFormatTransformer.NexusExporterFigTree;
@@ -23,7 +24,7 @@ import com.opencsv.CSVParser;
 public class CsvColorTree {
 	public static void main(String [] args) throws IOException {
 		if (args.length < 2) {
-			System.err.println("Usage: CsvColorTree tree.nexus colors.csv");
+			System.err.println("Usage: CsvColorTree tree.newick colors.csv");
 			System.exit(0);
 		}
 		
@@ -34,7 +35,6 @@ public class CsvColorTree {
 			Tree tree = readTree(nexus);
 			List<Sequence> sequences = parseCSV(csvColor);
 			
-			Map<String, String> taxonNameToColor = new HashMap<String,String>();
 			for (Sequence s : sequences) {
 				System.err.println(s.label);
 				
@@ -49,15 +49,16 @@ public class CsvColorTree {
 				if (taxa.size() == 0) {
 					throw new RuntimeException("Could not find node with label \"" + s.label + "\"");
 				} else if (taxa.size() >= 1) {
-					for(Taxon t : taxa) {
-						taxonNameToColor.put(t.getName(), colorToAttribute(s.color));
-					}
-				} else {
-					taxonNameToColor.put(s.label, colorToAttribute(Color.black));				
+					final String key = "!color";
+					final String value = colorToAttribute(s.color);
+					for(Taxon t : taxa) { 
+						t.setAttribute(key, value);
+						((RootedTree)tree).getNode(t).setAttribute(key, value);
+					}	
 				}
 			}
 		
-			System.out.print(exportTree(tree, taxonNameToColor));			
+			System.out.print(exportTree(tree, new HashMap<String,String>()));			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
