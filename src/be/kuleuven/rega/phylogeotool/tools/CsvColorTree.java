@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jebl.evolution.graphs.Node;
 import jebl.evolution.taxa.Taxon;
 import jebl.evolution.trees.RootedTree;
 import jebl.evolution.trees.Tree;
@@ -36,6 +37,17 @@ public class CsvColorTree {
 		try {
 			Tree tree = readTree(treeFile);
 			List<Sequence> sequences = parseCSV(csvColor);
+			
+			for (Taxon t : tree.getTaxa()) {
+				final String key = "!color";
+				final String value = colorToAttribute(Color.lightGray);
+				t.setAttribute(key, value);
+				Node n = ((RootedTree)tree).getNode(t);
+				while (n != null) {
+					n.setAttribute(key, value);
+					n = ((RootedTree)tree).getParent(n);
+				}
+			}
 			
 			for (Sequence s : sequences) {
 				System.err.println(s.label);
