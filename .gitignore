@@ -1,4 +1,9 @@
 bin
+dataset
 build
 dist
-dataset
+lib/EUResist
+lib/EUResistCorrect
+lib/EwoutTrees
+lib/Test
+*.DS_STORE

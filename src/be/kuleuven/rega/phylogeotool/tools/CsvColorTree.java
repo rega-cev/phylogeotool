@@ -6,21 +6,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import jebl.evolution.graphs.Node;
+import jebl.evolution.io.NexusExporter;
 import jebl.evolution.taxa.Taxon;
 import jebl.evolution.trees.RootedTree;
 import jebl.evolution.trees.Tree;
-import be.kuleuven.rega.phylogeotool.io.read.NewickImporterAdapted;
-import be.kuleuven.rega.phylogeotool.io.read.NexusImporter;
-import be.kuleuven.rega.treeFormatTransformer.NexusExporterFigTree;
 
 import com.opencsv.CSVParser;
 
@@ -72,7 +67,7 @@ public class CsvColorTree {
 				}
 			}
 		
-			System.out.print(exportTree(tree, new HashMap<String,String>()));			
+			System.out.print(exportTree(tree));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -82,11 +77,11 @@ public class CsvColorTree {
 		return "#" + String.format("%06x", c.getRGB() & 0x00FFFFFF);
 	}
 	
-	private static String exportTree(Tree tree, Map<String, String> taxonNameToColor) {
+	private static String exportTree(Tree tree) {
 		StringWriter writer = new StringWriter();
-		NexusExporterFigTree nexusExporterFigTree = null;
+		NexusExporter nexusExporterFigTree = null;
 		try {
-			nexusExporterFigTree = new NexusExporterFigTree(writer, taxonNameToColor);
+			nexusExporterFigTree = new NexusExporter(writer);
 			nexusExporterFigTree.exportTree(tree);
 			return writer.toString();
 		} catch (IOException e) {
