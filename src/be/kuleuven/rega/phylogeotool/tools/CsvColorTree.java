@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -16,7 +17,8 @@ import java.util.Map;
 import jebl.evolution.taxa.Taxon;
 import jebl.evolution.trees.RootedTree;
 import jebl.evolution.trees.Tree;
-import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
+import be.kuleuven.rega.phylogeotool.io.read.NewickImporterAdapted;
+import be.kuleuven.rega.phylogeotool.io.read.NexusImporter;
 import be.kuleuven.rega.treeFormatTransformer.NexusExporterFigTree;
 
 import com.opencsv.CSVParser;
@@ -24,15 +26,15 @@ import com.opencsv.CSVParser;
 public class CsvColorTree {
 	public static void main(String [] args) throws IOException {
 		if (args.length < 2) {
-			System.err.println("Usage: CsvColorTree tree.newick colors.csv");
+			System.err.println("Usage: CsvColorTree tree.[newick|nexus] colors.csv");
 			System.exit(0);
 		}
 		
-		File nexus = new File(args[0]);
+		File treeFile = new File(args[0]);
 		File csvColor = new File(args[1]);
 		
 		try {
-			Tree tree = readTree(nexus);
+			Tree tree = readTree(treeFile);
 			List<Sequence> sequences = parseCSV(csvColor);
 			
 			for (Sequence s : sequences) {
@@ -147,10 +149,49 @@ public class CsvColorTree {
 		
 		return sequences;
 	}
+
+	private static Tree readNexus(Reader reader) {
+		try {
+			NexusImporter nexusImporter = new NexusImporter(reader);
+			if (nexusImporter.hasTree()) {
+				return nexusImporter.importNextTree();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
-	private static Tree readTree(File nexus) throws FileNotFoundException {
-		jebl.evolution.trees.Tree tree = ReadTree.readTree(new FileReader(nexus.getAbsolutePath()));
-		
-		return tree;
+	private static Tree readNewick(Reader reader) {
+		try {
+			NewickImporterAdapted newickImporter = new NewickImporterAdapted(reader, false);
+			if (newickImporter.hasTree()) {
+				return newickImporter.importNextTree();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private static Tree readTree(File tree) throws FileNotFoundException {
+		Reader reader = null;
+		try {
+			reader = new FileReader(tree.getAbsolutePath());
+	
+			if (tree.getName().endsWith(".nexus")) {
+				return readNexus(reader);
+			} else if (tree.getName().endsWith(".newick")) {
+				return readNewick(reader);
+			} else {
+				throw new RuntimeException("Unknown tree format");
+			}
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
