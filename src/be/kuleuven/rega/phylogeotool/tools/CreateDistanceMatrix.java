@@ -38,8 +38,8 @@ public class CreateDistanceMatrix {
 		String distanceMatrixLocation = "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.EUResist.txt";
 //		String distanceMatrixLocation = "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.portugal.txt";
 		
-		System.out.println("TreeLocation: " + treeLocation);
-		System.out.println("Distance Matrix Location: " + distanceMatrixLocation);
+		System.err.println("TreeLocation: " + treeLocation);
+		System.err.println("Distance Matrix Location: " + distanceMatrixLocation);
 		
 		CreateDistanceMatrix createDistanceMatrix = new CreateDistanceMatrix();
 		try {
@@ -56,8 +56,8 @@ public class CreateDistanceMatrix {
 	
 	public void init(String treeLocation) throws FileNotFoundException {
 		jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader(treeLocation));
-		System.out.println(((SimpleRootedTree) jeblTree).getNodes().size());
-		System.out.println(((SimpleRootedTree) jeblTree).getChildren(((SimpleRootedTree) jeblTree).getRootNode()));
+//		System.out.println(((SimpleRootedTree) jeblTree).getNodes().size());
+//		System.out.println(((SimpleRootedTree) jeblTree).getChildren(((SimpleRootedTree) jeblTree).getRootNode()));
 		tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 		
 		int index = 0;
@@ -65,7 +65,7 @@ public class CreateDistanceMatrix {
 			leafs.add(leaf);
 			translatedNodeNames.put(leaf.getLabel(), index++);
 		}
-		System.out.println("Size: " + translatedNodeNames.keySet().size());
+//		System.out.println("Size: " + translatedNodeNames.keySet().size());
 	}
 	
 	public void createDistanceMatrix(String distanceMatrixLocation, DistanceInterface distanceInterface) throws IOException {

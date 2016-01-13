@@ -1,6 +1,5 @@
 package be.kuleuven.rega.prerendering;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -24,7 +23,7 @@ public class PreRenderingThread extends RecursiveTask<List<Double>> {
 	private final Comparator<Node> comparator;
 	private int minimumClusterSize;
 	
-	public PreRenderingThread(int min, int max, Tree tree, Node startNode, DistanceInterface distanceInterface, Comparator<Node> comparator, int minimumClusterSize) throws FileNotFoundException {
+	public PreRenderingThread(int min, int max, Tree tree, Node startNode, DistanceInterface distanceInterface, Comparator<Node> comparator, int minimumClusterSize) {
 		this.min = min;
 		this.max = max;
 		this.tree = tree;

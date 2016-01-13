@@ -42,7 +42,7 @@ public class ClusterDistance {
 		try {
 //			ClusterDistance clusterDistance = new ClusterDistance(treeLocation, null);
 			ClusterDistance clusterDistance = new ClusterDistance(treeLocation, distanceMatrixLocation);
-			clusterDistance.getBestClustering(clusterDistance.getTree(), clusterDistance.getTree().getNodeById(1), 2, 50, 2);
+//			clusterDistance.getBestClustering(clusterDistance.getTree(), clusterDistance.getTree().getNodeById(1), 2, 50, 2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -81,51 +81,51 @@ public class ClusterDistance {
 		return tree;
 	}
 	
-	public Cluster getBestClustering(Tree tree, Node startNode, int minNrClusters, int maxNrClusters, int minClusterSize) {
-		List<Double> distances = new ArrayList<Double>();
-		int min = minNrClusters;
-		int max = maxNrClusters;
-//		TreeMap<Integer, List<Cluster>> clusterMapper = new TreeMap<Integer, List<Cluster>>();
-		Cluster lastClustering = null;
-		
-		/**
-		 * Calculate SDR's
-		 */
-		for(int i = min; i <= max; i++) {
-			Cluster cluster = MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), 2, i);
-//			System.out.println(clusteredTree.getAcceptableClusters(2).size());
-			if(cluster == null) {
-				cluster = lastClustering;
-				break;
-			} else {
-				if(cluster.getBoundaries().size() >= 2) {
-					double value = TreeStatistics.calculateStatistics(cluster, distanceInterface, minClusterSize);
-					distances.add(value);
-//					clusterMapper.put(i, clusters);
-					lastClustering = cluster;
-				} else if(cluster.getBoundaries().size() < 2 && distances.size() >= 3){
-					break;
-				} else {
-					return cluster;
-				}
-			}
-		}
-		
-		Entry<Integer, Double> maxSecondDerivative = this.getMaxSecondDerivative(distances);
-		// This R-Script should be changed location
-		String args1[] = {"/usr/local/Cellar/R/3.2.1/bin/Rscript", "/Users/ewout/Test.R", distances.toString(), Integer.toString(startNode.getId())};
-		
-		Runtime rt = Runtime.getRuntime();
-		try {
-			rt.exec(args1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-//		long stopTime = java.lang.System.nanoTime();
-//		System.out.println((stopTime - startTime)/1000000000);
-		return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), 2, maxSecondDerivative.getKey());
-	}
+//	public Cluster getBestClustering(Tree tree, Node startNode, int minNrClusters, int maxNrClusters, int minClusterSize) {
+//		List<Double> distances = new ArrayList<Double>();
+//		int min = minNrClusters;
+//		int max = maxNrClusters;
+////		TreeMap<Integer, List<Cluster>> clusterMapper = new TreeMap<Integer, List<Cluster>>();
+//		Cluster lastClustering = null;
+//		
+//		/**
+//		 * Calculate SDR's
+//		 */
+//		for(int i = min; i <= max; i++) {
+//			Cluster cluster = MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), 2, i);
+////			System.out.println(clusteredTree.getAcceptableClusters(2).size());
+//			if(cluster == null) {
+//				cluster = lastClustering;
+//				break;
+//			} else {
+//				if(cluster.getBoundaries().size() >= 2) {
+//					double value = TreeStatistics.calculateStatistics(cluster, distanceInterface, minClusterSize);
+//					distances.add(value);
+////					clusterMapper.put(i, clusters);
+//					lastClustering = cluster;
+//				} else if(cluster.getBoundaries().size() < 2 && distances.size() >= 3){
+//					break;
+//				} else {
+//					return cluster;
+//				}
+//			}
+//		}
+//		
+//		Entry<Integer, Double> maxSecondDerivative = this.getMaxSecondDerivative(distances);
+//		// This R-Script should be changed location
+//		String args1[] = {"/usr/local/Cellar/R/3.2.1/bin/Rscript", "/Users/ewout/Test.R", distances.toString(), Integer.toString(startNode.getId())};
+//		
+//		Runtime rt = Runtime.getRuntime();
+//		try {
+//			rt.exec(args1);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		
+////		long stopTime = java.lang.System.nanoTime();
+////		System.out.println((stopTime - startTime)/1000000000);
+//		return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), 2, maxSecondDerivative.getKey());
+//	}
 	
 	/**
 	 * @pre It is expected that the list of distances given to this method exceeds size 3
