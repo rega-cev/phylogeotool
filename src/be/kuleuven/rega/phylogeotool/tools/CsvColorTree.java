@@ -16,6 +16,7 @@ import jebl.evolution.io.NexusExporter;
 import jebl.evolution.taxa.Taxon;
 import jebl.evolution.trees.RootedTree;
 import jebl.evolution.trees.Tree;
+import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 
 import com.opencsv.CSVParser;
 
@@ -30,7 +31,7 @@ public class CsvColorTree {
 		File csvColor = new File(args[1]);
 		
 		try {
-			Tree tree = TreeUtils.readTree(treeFile);
+			Tree tree = ReadTree.readTree(new FileReader(treeFile));
 			List<Sequence> sequences = parseCSV(csvColor);
 			
 			for (Taxon t : tree.getTaxa()) {

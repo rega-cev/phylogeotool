@@ -1,5 +1,9 @@
 package be.kuleuven.rega.phylogeotool.io.read;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -7,29 +11,50 @@ import java.util.HashSet;
 import java.util.List;
 
 import jebl.evolution.io.ImportException;
+import jebl.evolution.io.NewickImporter;
+import jebl.evolution.io.TreeImporter;
 import jebl.evolution.trees.SimpleRootedTree;
 import jebl.evolution.trees.Tree;
 import be.kuleuven.rega.phylogeotool.core.Edge;
 import be.kuleuven.rega.phylogeotool.core.Node;
+import figtree.application.FigTreeNexusImporter;
 
 public class ReadTree {
 	
 	public static Tree jeblTree = null;
 	
 	public static Tree readTree(Reader reader) {
-		NewickImporterAdapted newickImporter = new NewickImporterAdapted(reader, false);
-		try {
-			if (newickImporter.hasTree()) {
-				jeblTree = newickImporter.importNextTree();
-				return jeblTree;
+		
+		BufferedReader bufferedReader = new BufferedReader(reader);
+        String line = null;
+        List<Tree> trees = new ArrayList<Tree>();
+        try {
+			line = bufferedReader.readLine();
+			while (line != null && line.length() == 0) {
+				line = bufferedReader.readLine();
+			}
+			bufferedReader.close();
+			
+			boolean isNexus = (line != null && line.toUpperCase().contains("#NEXUS"));
+			TreeImporter importer;
+			if (isNexus) {
+                importer = new FigTreeNexusImporter(reader);
+            } else {
+                importer = new NewickImporter(reader, true);
+            }		
+			trees.add(importer.importNextTree());
+
+			if (trees.size() == 0) {
+				throw new ImportException("This file contained no trees.");
 			} else {
-				return null;
+				return trees.get(0);
 			}
 		} catch (IOException e) {
 			System.err.println(ReadTree.class.getName() + ": Treefile not found");
 		} catch (ImportException e) {
 			System.err.println(ReadTree.class.getName() + ": Could not import the tree");
 		}
+        
 		return null;
 	}
 	

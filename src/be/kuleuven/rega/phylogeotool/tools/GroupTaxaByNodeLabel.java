@@ -1,10 +1,12 @@
 package be.kuleuven.rega.phylogeotool.tools;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import jebl.evolution.graphs.Node;
 import jebl.evolution.taxa.Taxon;
 import jebl.evolution.trees.RootedTree;
@@ -19,7 +21,7 @@ public class GroupTaxaByNodeLabel {
 		
 		File treeFile = new File(args[0]);
 		
-		Tree tree = TreeUtils.readTree(treeFile);
+		Tree tree = ReadTree.readTree(new FileReader(treeFile));
 		
 		List<Node> namedNodes = new ArrayList<Node>();
 		for (Node n : tree.getNodes()) {
