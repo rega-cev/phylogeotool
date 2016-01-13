@@ -6,12 +6,13 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import jebl.evolution.trees.SimpleRootedTree;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import be.kuleuven.rega.phylogeotool.core.Tree;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
-import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
 
 public class ReadTreeTest {
 

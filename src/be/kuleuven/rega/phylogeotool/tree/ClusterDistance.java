@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import jebl.evolution.trees.SimpleRootedTree;
 import be.kuleuven.rega.clustering.MidRootCluster;
 import be.kuleuven.rega.comparator.ClusterSizeComparator;
 import be.kuleuven.rega.phylogeotool.core.Cluster;

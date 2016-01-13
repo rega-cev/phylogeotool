@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import jebl.evolution.trees.SimpleRootedTree;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.core.Tree;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
-import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceCalculateFromTree;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceInterface;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceMatrixDistance;

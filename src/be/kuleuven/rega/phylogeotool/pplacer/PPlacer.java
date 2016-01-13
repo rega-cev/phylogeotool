@@ -11,16 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jebl.evolution.trees.SimpleRootedTree;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.core.Tree;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
-import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
 
 public class PPlacer {
 	

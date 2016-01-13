@@ -7,11 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import jebl.evolution.io.ImportException;
+import jebl.evolution.trees.SimpleRootedTree;
 import jebl.evolution.trees.Tree;
 import be.kuleuven.rega.phylogeotool.core.Edge;
 import be.kuleuven.rega.phylogeotool.core.Node;
-import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
-import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree.SimpleRootedNode;
 
 public class ReadTree {
 	
@@ -43,7 +42,7 @@ public class ReadTree {
 		} else {
 			nrNodes = tree.getNodes().size() - (2*pplacerSequences.size() - 1);
 		}
-		preOrder((SimpleRootedNode)tree.getRootNode(), null, nodes, edges, pplacerSequences);
+		preOrder(tree, tree.getRootNode(), null, nodes, edges, pplacerSequences);
 		return new be.kuleuven.rega.phylogeotool.core.Tree(new HashSet<Node>(nodes), new HashSet<Edge>(edges), nodes.iterator().next());
 	}
 	
@@ -60,7 +59,7 @@ public class ReadTree {
 	 */
 	private static int i = 1;
 	private static int nrNodes;
-	private static void preOrder (SimpleRootedNode root, Node parent, List<Node> nodes, List<Edge> edges, List<String> pplacerSequences) {
+	private static void preOrder (jebl.evolution.trees.RootedTree tree, jebl.evolution.graphs.Node root, Node parent, List<Node> nodes, List<Edge> edges, List<String> pplacerSequences) {
 		if(root == null) return;
 		
 		Node tempStorage = null;
@@ -70,18 +69,18 @@ public class ReadTree {
 			attribute = root.getAttribute("!name").toString();
 		}
 		
-		if(root.getChildren().size() <= 0) {
+		if(tree.getChildren(root).size() <= 0) {
 			/* Special pplacer situation */
-			if(pplacerSequences.contains(root.getTaxon().getName())) {
-				tempStorage = new Node(nrNodes++, root.getTaxon().getName(), parent, attribute);
+			if(pplacerSequences.contains(tree.getTaxon(root).getName())) {
+				tempStorage = new Node(nrNodes++, tree.getTaxon(root).getName(), parent, attribute);
 			} else {
-				tempStorage = new Node(i++, root.getTaxon().getName(), parent, attribute);
+				tempStorage = new Node(i++, tree.getTaxon(root).getName(), parent, attribute);
 			}
 		} else {
 			boolean pplacedChild = false;
 			
-			for(jebl.evolution.graphs.Node node:root.getChildren()) {
-				if(((SimpleRootedNode)node).getChildren().size() <= 0 && pplacerSequences.contains(((SimpleRootedNode)node).getTaxon().toString())) {
+			for(jebl.evolution.graphs.Node node:tree.getChildren(root)) {
+				if(tree.getChildren(node).size() <= 0 && pplacerSequences.contains(tree.getTaxon(node).toString())) {
 					pplacedChild = true;
 				}
 			}
@@ -94,15 +93,15 @@ public class ReadTree {
 		
 		nodes.add(tempStorage);
 		if(parent != null) {
-			edges.add(new Edge("", parent, tempStorage, root.getLength()));
+			edges.add(new Edge("", parent, tempStorage, tree.getLength(root)));
 		}
 		
-		if(root.getChildren().size() > 0) {
-			for(int j = root.getChildren().size() - 1; j >= 0; j-- ) {
-				preOrder((SimpleRootedNode)root.getChildren().get(j), tempStorage, nodes, edges, pplacerSequences);
+		if(tree.getChildren(root).size() > 0) {
+			for(int j = tree.getChildren(root).size() - 1; j >= 0; j-- ) {
+				preOrder(tree, tree.getChildren(root).get(j), tempStorage, nodes, edges, pplacerSequences);
 			}
 		} else {
-			preOrder(null, tempStorage, nodes, edges, pplacerSequences);
+			preOrder(tree, null, tempStorage, nodes, edges, pplacerSequences);
 		}
 	}
 }

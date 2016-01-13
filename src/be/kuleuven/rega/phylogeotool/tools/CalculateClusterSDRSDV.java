@@ -4,12 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import jebl.evolution.trees.SimpleRootedTree;
 import be.kuleuven.rega.clustering.MidRootCluster;
 import be.kuleuven.rega.comparator.ClusterSizeComparator;
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Tree;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
-import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceCalculateFromTree;
 import be.kuleuven.rega.phylogeotool.tree.distance.TreeStatistics;
 

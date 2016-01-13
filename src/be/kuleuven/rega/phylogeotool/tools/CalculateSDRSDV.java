@@ -1,15 +1,5 @@
 package be.kuleuven.rega.phylogeotool.tools;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import be.kuleuven.rega.phylogeotool.core.Cluster;
-import be.kuleuven.rega.phylogeotool.core.Node;
-import be.kuleuven.rega.phylogeotool.core.Tree;
-import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
-import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
 
 public class CalculateSDRSDV {
 

@@ -14,6 +14,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import jebl.evolution.trees.SimpleRootedTree;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -26,7 +27,6 @@ import be.kuleuven.rega.phylogeotool.core.Tree;
 import be.kuleuven.rega.phylogeotool.data.csv.CsvUtils;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import be.kuleuven.rega.phylogeotool.io.write.NexusExporter;
-import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceCalculateFromTree;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceInterface;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceMatrixDistance;

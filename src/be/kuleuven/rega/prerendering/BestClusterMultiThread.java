@@ -15,7 +15,6 @@ import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.core.Tree;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import be.kuleuven.rega.phylogeotool.tree.ClusterDistance;
-import be.kuleuven.rega.phylogeotool.tree.SimpleRootedTree;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceCalculateFromTree;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceInterface;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceMatrixDistance;

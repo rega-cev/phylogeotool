@@ -1,7 +1,6 @@
 package be.kuleuven.rega.webapp;
 
 import java.awt.Color;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import be.kuleuven.rega.comparator.ClusterIdComparator;
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
 
