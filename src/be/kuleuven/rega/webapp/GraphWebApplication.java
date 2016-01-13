@@ -15,8 +15,8 @@ import be.kuleuven.rega.url.UrlManipulator;
 import be.kuleuven.rega.webapp.widgets.GoogleChartWidget;
 import be.kuleuven.rega.webapp.widgets.WBarChartMine;
 import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
+import be.kuleuven.rega.webapp.widgets.WFigTreeMine;
 import be.kuleuven.rega.webapp.widgets.WImageSDRMine;
-import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
 import eu.webtoolkit.jwt.WApplication;
@@ -125,7 +125,7 @@ public class GraphWebApplication extends WApplication {
 		        showSDR();
 		    }
 		});
-		wPushButton.setDisabled(true);
+//		wPushButton.setDisabled(true);
 		sdrButton.setDisabled(true);
 		
 		WHBoxLayout wHBoxLayout = new WHBoxLayout();
@@ -229,12 +229,10 @@ public class GraphWebApplication extends WApplication {
 	
 	private final void showDialog() {
 	    final WDialog dialog = new WDialog("Tree");
-	    WImageTreeMine wImageTreeMine = new WImageTreeMine(treeViewRenderLocation, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
-	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
-//	    SVGWidget svgWidget = new SVGWidget(treeViewRenderLocation, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
-//	    svgWidget.load();
-//	    svgWidget.refresh();
-//	    dialog.getContents().addWidget(svgWidget);
+	    WFigTreeMine wFigTreeMine = new WFigTreeMine(facadeRequestData.getJeblTree(), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())));
+//	    WImageTreeMine wImageTreeMine = new WImageTreeMine(treeViewRenderLocation, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
+//	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
+	    dialog.getContents().addWidget(wFigTreeMine.getWidget());
 	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
 	    dialog.rejectWhenEscapePressed();
 	    cancel.clicked().addListener(dialog,
