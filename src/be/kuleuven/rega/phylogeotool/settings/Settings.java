@@ -63,6 +63,10 @@ public class Settings {
 	public String getMetaDataFile() {
 		return metaDataFile;
 	}
+	
+	public String getPhyloTree() {
+		return phyloTreeFile;
+	}
 
 	public String getDatalessRegionColor() {
 		return datalessRegionColor;
@@ -101,6 +105,7 @@ public class Settings {
 	private String pplacerIdsPath;
 	private String rGraphsPath;
 	private String metaDataFile;
+	private String phyloTreeFile;
 	private boolean showNAData;
 	private String datalessRegionColor;
 	private String backgroundcolor;
@@ -143,6 +148,8 @@ public class Settings {
             	rGraphsPath = e.getValue().trim();
             } else if(name.equals("metadataFile")) {
             	metaDataFile = e.getValue().trim();
+            } else if(name.equals("phyloTreeFile")) {
+            	phyloTreeFile = e.getValue().trim();
             } else if(name.equals("showNAData")) {
             	showNAData = Boolean.parseBoolean(e.getValue().trim());
             } else if(name.equals("colorCodes")) {

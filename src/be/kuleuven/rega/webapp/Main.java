@@ -1,17 +1,18 @@
 package be.kuleuven.rega.webapp;
 
 import java.io.IOException;
-import java.util.Arrays;
 
+import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WEnvironment;
 import eu.webtoolkit.jwt.WtServlet;
 
-public class Main extends WtServlet {
+public class Main extends WtServlet implements javax.servlet.ServletContextListener {
 	/**
 	 * 
 	 */
@@ -38,5 +39,27 @@ public class Main extends WtServlet {
 			}
 		}
 		super.doGet(req, resp);
+	}
+	
+//	@Override
+//	public void init(ServletConfig config) throws ServletException {
+//		super.init(config);
+//		System.out.println("Here");
+//		// TODO: Might have to change TreeDrawTree
+//		ReadTree.getJeblTree();
+//		ReadTree.getTreeDrawTree();
+//	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
+		System.err.println("Phylogeotool stop");
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent arg0) {
+		System.err.println("Phylogeotool started");
+		ReadTree.getJeblTree();
+		System.out.println(ReadTree.getJeblTree().getTaxa().size());
+		ReadTree.getTreeDrawTree();
 	}
 }

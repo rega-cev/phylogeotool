@@ -11,25 +11,38 @@ import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.core.Tree;
 import be.kuleuven.rega.phylogeotool.data.csv.CsvUtils;
+import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceInterface;
 
 public class FacadeRequestData {
 
 	private PreRendering preRendering;
 	private Tree tree;
+	private jebl.evolution.trees.Tree jeblTree;
 	private File csvFile;
 	private DistanceInterface distanceInterface;
 	private int minimumClusterSize;
 	
 	public FacadeRequestData(PreRendering preRendering) {
 		this.preRendering = preRendering;
-		this.tree = preRendering.getTreeFromXML("1");
+//		this.tree = preRendering.getTreeFromXML("1");
+		this.jeblTree = ReadTree.getJeblTree();
+		this.tree = ReadTree.getTreeDrawTree();
 	}
 	
+	//TODO: Needs a jeblTree
 	public FacadeRequestData(Tree tree, File csvFile, DistanceInterface distanceInterface) {
 		this.tree = tree;
 		this.csvFile = csvFile;
 		this.distanceInterface = distanceInterface;
+	}
+	
+	public Tree getTree() {
+		return this.tree;
+	}
+	
+	public jebl.evolution.trees.Tree getJeblTree() {
+		return this.jeblTree;
 	}
 	
 	public Cluster getCluster(String clusterId) {
@@ -41,7 +54,8 @@ public class FacadeRequestData {
 			}
 		} else {
 			// TODO: Change the nr 12 and add SDRCalculations
-			return MidRootCluster.calculate(tree, tree.getNodeById(Integer.parseInt(clusterId)), new ClusterSizeComparator(tree), minimumClusterSize, 12);
+//			return MidRootCluster.calculate(tree, tree.getNodeById(Integer.parseInt(clusterId)), new ClusterSizeComparator(tree), minimumClusterSize, 12);
+			return BestClusterMultiThread.getBestCluster(minimumClusterSize, 50, 2, tree, tree.getNodeById(Integer.parseInt(clusterId)), distanceInterface);
 		}
 	}
 	

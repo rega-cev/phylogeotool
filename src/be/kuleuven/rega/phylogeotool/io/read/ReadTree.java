@@ -17,11 +17,35 @@ import jebl.evolution.trees.SimpleRootedTree;
 import jebl.evolution.trees.Tree;
 import be.kuleuven.rega.phylogeotool.core.Edge;
 import be.kuleuven.rega.phylogeotool.core.Node;
+import be.kuleuven.rega.phylogeotool.settings.Settings;
 import figtree.application.FigTreeNexusImporter;
 
 public class ReadTree {
 	
-	public static Tree jeblTree = null;
+	private static Tree jeblTree;
+	private static be.kuleuven.rega.phylogeotool.core.Tree treeDrawTree;
+	
+	public static Tree getJeblTree() {
+		if(jeblTree == null) {
+			System.err.println("Reading Jebl Tree");
+			Settings settings = Settings.getInstance();
+			try {
+				jeblTree = readTree(new FileReader(new File(settings.getPhyloTree())));
+			} catch (FileNotFoundException e) {
+				System.err.println("Could not find the tree to import.");
+				e.printStackTrace();
+			}
+		}
+		return jeblTree;
+	}
+	
+	public static be.kuleuven.rega.phylogeotool.core.Tree getTreeDrawTree() {
+		if(treeDrawTree == null) {
+			System.err.println("Reading Draw Tree");
+			treeDrawTree = jeblToTreeDraw((SimpleRootedTree)getJeblTree(), null);
+		}
+		return treeDrawTree;
+	}
 	
 	public static Tree readTree(Reader reader) {
 		
