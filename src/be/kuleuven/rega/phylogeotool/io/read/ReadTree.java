@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,9 +55,6 @@ public class ReadTree {
         List<Tree> trees = new ArrayList<Tree>();
         try {
 			line = bufferedReader.readLine();
-			while (line != null && line.length() == 0) {
-				line = bufferedReader.readLine();
-			}
 			bufferedReader.close();
 			
 			boolean isNexus = (line != null && line.toUpperCase().contains("#NEXUS"));
@@ -64,7 +62,7 @@ public class ReadTree {
 			if (isNexus) {
                 importer = new FigTreeNexusImporter(reader);
             } else {
-                importer = new NewickImporter(reader, true);
+                importer = new NewickImporter(new StringReader(line), true);
             }		
 			trees.add(importer.importNextTree());
 
