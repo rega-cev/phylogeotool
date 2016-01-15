@@ -1,12 +1,15 @@
 package be.kuleuven.rega.phylogeotool.io.write;
 
 import java.awt.Color;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
 import jebl.evolution.taxa.Taxon;
 import jebl.evolution.trees.RootedTree;
+import jebl.evolution.trees.Tree;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +23,15 @@ public class NexusExporter {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(NexusExporter.class);
 	
-	public static void export(Cluster cluster, jebl.evolution.trees.Tree jeblTree, Writer writer, int minimumClusterSize, boolean colorLeafs) {
+	public static Tree export(Cluster cluster, jebl.evolution.trees.Tree jeblTree, Writer writer, int minimumClusterSize, boolean colorLeafs) {
 		// To print nxs file
 		
 		Map<String, Color> taxonNameToColor = new HashMap<String,Color>();
 		if(colorLeafs) {
 			LOGGER.info("Sequences exported to file.");
 			Map<Node,Color> clusterToColor = GraphProperties.getClusterColor(cluster, minimumClusterSize);
-			jebl.evolution.trees.RootedTree copyTree = Utils.copyTree((RootedTree) jeblTree);
+//			jebl.evolution.trees.RootedTree copyTree = Utils.copyTree((RootedTree) jeblTree);
+			jebl.evolution.trees.RootedTree copyTree = (RootedTree) jeblTree;
 			
 			for(Node node:cluster.getBoundaries()) {
 				for(Node leaf:cluster.getTree().getLeaves(node)) {
@@ -37,6 +41,7 @@ public class NexusExporter {
 			}
 			
 			for (Taxon taxon : copyTree.getTaxa()) {
+//				System.out.println("Setting color: " + taxon.getName() + " Color: " + taxonNameToColor.get(taxon.getName()));
 				taxon.setAttribute("!color", taxonNameToColor.get(taxon.getName()));
 				copyTree.getNode(taxon).setAttribute("!color", taxonNameToColor.get(taxon.getName()));
 				jebl.evolution.graphs.Node parent = copyTree.getParent(copyTree.getNode(taxon));
@@ -46,6 +51,17 @@ public class NexusExporter {
 				}
 			}
 			
+			if(writer != null) {
+				jebl.evolution.io.NexusExporter nexusExporter = new jebl.evolution.io.NexusExporter(writer);
+				try {
+					nexusExporter.exportTree(copyTree);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			return copyTree;
 		}
+		
+		return jeblTree;
 	}
 }

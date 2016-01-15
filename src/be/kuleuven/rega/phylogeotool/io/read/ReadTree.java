@@ -13,13 +13,13 @@ import java.util.List;
 
 import jebl.evolution.io.ImportException;
 import jebl.evolution.io.NewickImporter;
+import jebl.evolution.io.NexusImporter;
 import jebl.evolution.io.TreeImporter;
 import jebl.evolution.trees.SimpleRootedTree;
 import jebl.evolution.trees.Tree;
 import be.kuleuven.rega.phylogeotool.core.Edge;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
-import figtree.application.FigTreeNexusImporter;
 
 public class ReadTree {
 	
@@ -49,23 +49,30 @@ public class ReadTree {
 	}
 	
 	public static Tree readTree(Reader reader) {
-		
 		BufferedReader bufferedReader = new BufferedReader(reader);
-        String line = null;
-        List<Tree> trees = new ArrayList<Tree>();
-        try {
-			line = bufferedReader.readLine();
-			bufferedReader.close();
-			
-			boolean isNexus = (line != null && line.toUpperCase().contains("#NEXUS"));
+		String line;
+		List<Tree> trees = new ArrayList<Tree>();
+		StringBuilder fullText = new StringBuilder();
+		try {
+			while ((line = bufferedReader.readLine()) != null) {
+				fullText.append(line + "\n");
+			} 
+			String tree = fullText.toString();
+			boolean isNexus;
+        	if(tree.contains("#NEXUS")) {
+        		isNexus = true;
+        	} else {
+        		isNexus = false;
+        	}
 			TreeImporter importer;
 			if (isNexus) {
-                importer = new FigTreeNexusImporter(reader);
+                importer = new NexusImporter(new StringReader(tree));
             } else {
-                importer = new NewickImporter(new StringReader(line), true);
+                importer = new NewickImporter(new StringReader(tree), true);
             }		
 			trees.add(importer.importNextTree());
 
+			bufferedReader.close();
 			if (trees.size() == 0) {
 				throw new ImportException("This file contained no trees.");
 			} else {
@@ -73,6 +80,7 @@ public class ReadTree {
 			}
 		} catch (IOException e) {
 			System.err.println(ReadTree.class.getName() + ": Treefile not found");
+			e.printStackTrace();
 		} catch (ImportException e) {
 			System.err.println(ReadTree.class.getName() + ": Could not import the tree");
 		}
