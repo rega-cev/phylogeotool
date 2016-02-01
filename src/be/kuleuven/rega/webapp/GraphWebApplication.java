@@ -15,12 +15,17 @@ import be.kuleuven.rega.url.UrlManipulator;
 import be.kuleuven.rega.webapp.widgets.GoogleChartWidget;
 import be.kuleuven.rega.webapp.widgets.WBarChartMine;
 import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
-import be.kuleuven.rega.webapp.widgets.WFigTreeMine;
+import be.kuleuven.rega.webapp.widgets.WDownloadResource;
 import be.kuleuven.rega.webapp.widgets.WImageSDRMine;
+import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
+import be.kuleuven.rega.webapp.widgets.WTreeDownloaderForm;
+import eu.webtoolkit.jwt.AnchorTarget;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
+import eu.webtoolkit.jwt.WAnchor;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WBorderLayout;
+import eu.webtoolkit.jwt.WButtonGroup;
 import eu.webtoolkit.jwt.WComboBox;
 import eu.webtoolkit.jwt.WCssTextRule;
 import eu.webtoolkit.jwt.WDialog;
@@ -32,11 +37,15 @@ import eu.webtoolkit.jwt.WLength;
 import eu.webtoolkit.jwt.WLink;
 import eu.webtoolkit.jwt.WMouseEvent;
 import eu.webtoolkit.jwt.WPushButton;
+import eu.webtoolkit.jwt.WRadioButton;
+import eu.webtoolkit.jwt.WResource.DispositionType;
 import eu.webtoolkit.jwt.WString;
+import eu.webtoolkit.jwt.WTable;
 import eu.webtoolkit.jwt.WTemplate;
 import eu.webtoolkit.jwt.WText;
 import eu.webtoolkit.jwt.WVBoxLayout;
 import eu.webtoolkit.jwt.WXmlLocalizedStrings;
+import figtree.application.GraphicFormat;
 
 public class GraphWebApplication extends WApplication {
 
@@ -229,12 +238,24 @@ public class GraphWebApplication extends WApplication {
 	
 	private final void showDialog() {
 	    final WDialog dialog = new WDialog("Tree");
-	    WFigTreeMine wFigTreeMine = new WFigTreeMine(facadeRequestData.getJeblTree(), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())));
-//	    WImageTreeMine wImageTreeMine = new WImageTreeMine(treeViewRenderLocation, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
+//	    WFigTreeMine wFigTreeMine = new WFigTreeMine(facadeRequestData.getJeblTree(), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())));
+	    WImageTreeMine wImageTreeMine = new WImageTreeMine(treeViewRenderLocation, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 //	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
-	    dialog.getContents().addWidget(wFigTreeMine.getWidget());
-	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
+	    WPushButton cancel = new WPushButton("Exit");
+	    
+	    WPushButton button = new WPushButton("Create", dialog.getContents());
+
+	    final WDownloadResource wDownloadResource = new WDownloadResource(dialog.getContents(), "cluster_" + UrlManipulator.getId(WApplication.getInstance().getInternalPath()), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), GraphicFormat.PDF);
+	    wDownloadResource.setDispositionType(DispositionType.Attachment);
+	    button.setLink(new WLink(wDownloadResource));
+
+	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
+	    WTreeDownloaderForm wTreeDownloader = new WTreeDownloaderForm(dialog, wDownloadResource, button, cancel);
+	    dialog.getContents().addWidget(wTreeDownloader.getWidget());
+	    
 	    dialog.rejectWhenEscapePressed();
+	    
+	    
 	    cancel.clicked().addListener(dialog,
 	            new Signal1.Listener<WMouseEvent>() {
 	                public void trigger(WMouseEvent e1) {
