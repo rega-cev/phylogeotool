@@ -16,13 +16,8 @@ public class WImageTreeMine {
 	    int width = 500;
 	    int height = 500;
 	    WResource wResource = null;
-//	    if(new File(treeRenderLocation + File.separator + Integer.valueOf(clusterId) + ".svg").exists()) {
 	    if(new File(treeRenderLocation + File.separator + Integer.valueOf(clusterId) + ".png").exists()) {
 	    	wResource = new WFileResource("PNG", treeRenderLocation + File.separator + clusterId + ".png");
-//	    	System.out.println(treeRenderLocation + File.separator + clusterId + ".pdf");
-//	    	wResource = new WFileResource("pdf", treeRenderLocation + File.separator + clusterId + ".pdf");
-//	    	wResource = new WSvgImage(new WLength(width), new WLength(height));
-//	    	wSvgImage.set
 	    } else {
 	    	wResource = new WFileResource("PNG", treeRenderLocation + File.separator + "default.png");
 	    }
