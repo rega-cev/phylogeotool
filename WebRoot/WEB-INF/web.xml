@@ -29,20 +29,23 @@
     <url-pattern>/phylogeotool/*</url-pattern>
   </servlet-mapping>
     
-  <servlet>
-   <servlet-name>service</servlet-name>
-   <display-name>PhyloGeoTool service</display-name>
-   <description>PhyloGeoTool service</description>
-   <servlet-class>be.kuleuven.rega.treedraw.test.PhyloGeoService</servlet-class>
-  </servlet>
+<!--  <servlet>-->
+<!--   <servlet-name>service</servlet-name>-->
+<!--   <display-name>PhyloGeoTool service</display-name>-->
+<!--   <description>PhyloGeoTool service</description>-->
+<!--   <servlet-class>be.kuleuven.rega.treedraw.test.PhyloGeoService</servlet-class> -->
+<!--   <servlet-class>be.kuleuven.rega.treedraw.test.Test2</servlet-class> -->
+<!--	   <servlet-class>be.kuleuven.rega.phylogeotool.trash.Main</servlet-class>-->
+<!--  </servlet>-->
 
-   <servlet-mapping>
-     <servlet-name>service</servlet-name>
-     <url-pattern>/service/*</url-pattern>
-   </servlet-mapping>
-<!--  <listener>-->
-<!--    <listener-class>net.sf.regadb.system.Launcher</listener-class>-->
-<!--  </listener>-->
+<!--   <servlet-mapping>-->
+<!--     <servlet-name>service</servlet-name>-->
+<!--     <url-pattern>/service/*</url-pattern>-->
+<!--   </servlet-mapping>-->
+  
+  <listener>
+    <listener-class>be.kuleuven.rega.webapp.Main</listener-class>
+  </listener>
   
 </web-app>
 

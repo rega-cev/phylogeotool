@@ -1,7 +1,6 @@
 package be.kuleuven.rega.phylogeotool.io.write;
 
 import java.awt.Color;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import jebl.evolution.trees.Tree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import be.kuleuven.rega.jebl.Utils;
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.webapp.GraphProperties;
