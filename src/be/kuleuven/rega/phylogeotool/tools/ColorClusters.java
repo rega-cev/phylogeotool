@@ -68,7 +68,7 @@ public class ColorClusters {
 	private void colorClusterExportNexus(String treeLocation, String clustersLocation, String treeviewLocation, int minimumClusterSize) {
 		try {
 			Tree jeblTree = ReadTree.readTree(new FileReader(treeLocation));
-			PreRendering preRendering = new PreRendering("", clustersLocation, "", treeviewLocation, "", "");
+			PreRendering preRendering = new PreRendering("", clustersLocation, "", treeviewLocation);
 			File clusters = new File(clustersLocation);
 			File[] files = clusters.listFiles();
 			Cluster currentCluster = null;
@@ -89,7 +89,7 @@ public class ColorClusters {
 	}
 
 	private void colorClusterExportPNG(String treeLocation, String clustersLocation, String treeviewLocation, int minimumClusterSize) {
-		PreRendering preRendering = new PreRendering("", clustersLocation, "", treeviewLocation, "", "");
+		PreRendering preRendering = new PreRendering("", clustersLocation, "", treeviewLocation);
 		File clusters = new File(clustersLocation);
 		File[] files = clusters.listFiles();
 		Cluster currentCluster = null;

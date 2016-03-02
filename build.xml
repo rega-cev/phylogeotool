@@ -101,6 +101,13 @@
   	  	</manifest>
   	  	<zipgroupfileset dir="${lib}" includes="**/*.jar" />
   	</jar>
+  	
+  	<jar jarfile="${dist}/DistanceMatrix.jar" basedir="${build}">
+  	  		<manifest>
+  	  	  		<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.CreateDistanceMatrix"/>
+  	  	  	</manifest>
+  	  	  	<zipgroupfileset dir="${lib}" includes="**/*.jar" />
+  	  	</jar>
     
   	<delete dir="${dist}/deps/"/>
   </target>

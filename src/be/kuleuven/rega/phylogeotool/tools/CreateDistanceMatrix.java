@@ -24,30 +24,33 @@ public class CreateDistanceMatrix {
 	private List<Node> leafs = new ArrayList<Node>();
 	
 	public static void main(String[] args) {
+		String treeLocation = "";
+		String distanceMatrixLocation = "";
 		
-//		String treeLocation = args[0];
+		if (args.length >= 2) {
+			treeLocation = args[0];
+			distanceMatrixLocation = args[1];
+		} else {
+			System.err.println("TreeLocation: " + treeLocation);
+			System.err.println("Distance Matrix Location: " + distanceMatrixLocation);
+			System.err.println("java -jar DistanceMatrix.jar phylo.tree distance.matrix");
+			System.exit(0);
+		}
+		
 //		String treeLocation = "/Users/ewout/Documents/TDRDetector/fullPortugal/trees/RAxML_bipartitions.fullPortugal.final.tree";
 //		String treeLocation = "/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree";
-		String treeLocation = "/Users/ewout/Documents/phylogeo/EUResist/data/temp/phylo.solved.midpoint.newick";
+//		String treeLocation = "/Users/ewout/Documents/phylogeo/EUResist/data/temp/phylo.solved.midpoint.newick";
 //		String treeLocation = "/Users/ewout/git/phylogeotool/lib/Test/tree.phylo";
 //		String treeLocation = "/Users/ewout/Documents/phylogeo/TestCases/Portugal/besttree.500.midpoint.solved.newick";
-//		String distanceMatrixLocation = args[1];
 //		String distanceMatrixLocation = "/Users/ewout/git/phylogeotool/lib/Test/Portugal/distance.EUResist.txt";
 //		String distanceMatrixLocation = "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.test.other.txt";
 //		String distanceMatrixLocation = "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.500.txt";
-		String distanceMatrixLocation = "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.EUResist.txt";
+//		String distanceMatrixLocation = "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.EUResist.txt";
 //		String distanceMatrixLocation = "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.portugal.txt";
-		
-		System.err.println("TreeLocation: " + treeLocation);
-		System.err.println("Distance Matrix Location: " + distanceMatrixLocation);
 		
 		CreateDistanceMatrix createDistanceMatrix = new CreateDistanceMatrix();
 		try {
 			createDistanceMatrix.init(treeLocation);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		try {
 			createDistanceMatrix.createDistanceMatrix(distanceMatrixLocation, new DistanceCalculateFromTree());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -79,27 +82,10 @@ public class CreateDistanceMatrix {
 					fw.write(";");
 				}
 			}
-			System.out.println("i: " + i);
+			System.err.println("i: " + i);
 			fw.write("\n");
 		}
 		fw.close();
 	}
-	
-//	public void createDistanceMatrix(String distanceMatrixLocation) throws IOException {
-//		FileWriter fw = new FileWriter(new File(distanceMatrixLocation));
-//		DecimalFormat df = new DecimalFormat("#.###");
-//		for(int i = 0; i < translatedNodeNames.keySet().size(); i++) {
-//			for(int j = translatedNodeNames.keySet().size() - 1; j > 0; j--) {
-//				if(j >= i + 1) {
-//					fw.write(df.format(tree.getDistance(leafs.get(i), leafs.get(j))) + ";");
-//				} else {
-//					fw.write(";");
-//				}
-//			}
-//			System.out.println("i: " + i);
-//			fw.write("\n");
-//		}
-//		fw.close();
-//	}
 	
 }
