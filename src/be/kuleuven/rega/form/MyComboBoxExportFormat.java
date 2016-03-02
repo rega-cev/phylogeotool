@@ -10,7 +10,7 @@ public class MyComboBoxExportFormat extends WComboBox {
 
 	private String[] exportFormats = {"PDF","PNG","NEXUS","SVG"};
 	
-	public MyComboBoxExportFormat(WDialog dialog, WDownloadResource wDownloadResource) {
+	public MyComboBoxExportFormat(WDialog dialog, final WDownloadResource wDownloadResource) {
 		super(dialog.getContents());
 		
 		for(int i = 0; i < exportFormats.length; i++) {

@@ -33,7 +33,7 @@ public class WBarChartMine {
 //		wvBoxLayout = new WVBoxLayout();
 		chart = new WCartesianChart();
 		setData(fullDataset);
-		chart.resize(new WLength(360), new WLength(360));
+		chart.resize(new WLength(120), new WLength(120));
 		chart.setMargin(new WLength(10), EnumSet.of(Side.Top, Side.Left));
 		whBoxLayout.addWidget(chart);
 //		whBoxLayout.addLayout(wvBoxLayout);

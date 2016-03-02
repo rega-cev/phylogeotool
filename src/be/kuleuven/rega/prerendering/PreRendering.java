@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -26,6 +27,10 @@ import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.core.Tree;
 import be.kuleuven.rega.phylogeotool.data.csv.CsvUtils;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
+import be.kuleuven.rega.phylogeotool.io.write.NexusExporter;
+import be.kuleuven.rega.phylogeotool.tree.distance.DistanceCalculateFromTree;
+import be.kuleuven.rega.phylogeotool.tree.distance.DistanceInterface;
+import be.kuleuven.rega.phylogeotool.tree.distance.DistanceMatrixDistance;
 
 import com.opencsv.CSVReader;
 import com.thoughtworks.xstream.XStream;
@@ -44,7 +49,7 @@ public class PreRendering {
 		LEAFID, NODEID
 	}
 	
-	public PreRendering(String folderLocationTree, String folderLocationClusters, String folderLocationCsvs, String folderLocationTreeView, String folderLocationLeafIds, String folderLocationNodeIds) {
+	public PreRendering(String folderLocationTree, String folderLocationClusters, String folderLocationCsvs, String folderLocationTreeView) {
 		this.xStream = new XStream();
 		this.xStream.alias("cluster", Cluster.class);
 		this.xStream.alias("tree", Tree.class);
@@ -212,7 +217,7 @@ public class PreRendering {
 		Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 		int minimumClusterSize = 2;
 //		this.writeTreeToXML(tree);
-		/*
+		
 		HashMap<String, Integer> translatedNodeNames = new HashMap<String, Integer>();
 		DistanceInterface distanceInterface = null;
 		boolean showNA = true;
@@ -235,6 +240,7 @@ public class PreRendering {
 		
 		while(toDo.peek() != null) {
 			currentNode = toDo.pop();
+//			currentNode = tree.getNodeById(12996);
 			// Do multi thread here
 			Cluster cluster = BestClusterMultiThread.getBestCluster(minimumClusterSize, 50, 2, tree, currentNode, distanceInterface);
 			if(cluster != null) {
@@ -253,14 +259,25 @@ public class PreRendering {
 						toDo.add(tree.getNodeById(node.getId()));
 					// Leaf
 					} else {
-						// What do we want to do with leaves?
+						this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, showNA);
+						this.writeClusterToXML(new Cluster(tree, node, new ArrayList<Node>()));
 					}
 				}
+				// Case that the amount of nodes is too small to make a cluster
+			} else {
+				List<Node> boundaries = new ArrayList<Node>();
+				for(Node node:tree.getLeaves(currentNode)) {
+					this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, showNA);
+					boundaries.add(node);
+					this.writeClusterToXML(new Cluster(tree, node, new ArrayList<Node>()));
+				}
+				Cluster fakeCluster = new Cluster(tree, currentNode, boundaries);
+				this.writeClusterToXML(fakeCluster);
+				this.prepareCSV(fakeCluster.getRoot().getId(), tree.getLeaves(fakeCluster.getRoot()), csvLocation, showNA);
 			}
 			
 //			toDo.addAll(tempTree.getLeaves());
-//			break;
-		}*/
+		}
 	}
 	
 	public boolean checkFoldersEmpty() {
@@ -467,7 +484,7 @@ public class PreRendering {
 		}
 		
 //		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/Configs/Portugal/tree","/Users/ewout/Documents/phylogeo/Configs/Portugal/clusters", "/Users/ewout/Documents/phylogeo/Configs/Portugal/xml", "/Users/ewout/Documents/phylogeo/Configs/Portugal/treeview", "/Users/ewout/Documents/phylogeo/Configs/Portugal/leafIds", "/Users/ewout/Documents/phylogeo/Configs/Portugal/nodeIds");
-		PreRendering preRendering = new PreRendering(treeRenderLocation, clusterRenderLocation, csvRenderLocation, treeViewRenderLocation, "", "");
+		PreRendering preRendering = new PreRendering(treeRenderLocation, clusterRenderLocation, csvRenderLocation, treeViewRenderLocation);
 		
 		try {
 //			preRendering.preRender("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree", "/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv", "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.portugal.txt");

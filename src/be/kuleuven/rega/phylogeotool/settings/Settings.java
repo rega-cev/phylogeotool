@@ -52,14 +52,6 @@ public class Settings {
 		return treeviewPath;
 	}
 	
-	public String getLeafsIdsPath() {
-		return leafIdsPath;
-	}
-	
-	public String getNodeIdsPath() {
-		return nodeIdsPath;
-	}
-	
 	public String getMetaDataFile() {
 		return metaDataFile;
 	}
@@ -88,10 +80,6 @@ public class Settings {
 		return this.columnsToExport;
 	}
 	
-	public String getPPlacerIdsPath() {
-		return pplacerIdsPath;
-	}
-
 	public String getRGraphsPath() {
 		return rGraphsPath;
 	}
@@ -100,9 +88,6 @@ public class Settings {
 	private String treePath;
 	private String clusterPath;
 	private String treeviewPath;
-	private String leafIdsPath;
-	private String nodeIdsPath;
-	private String pplacerIdsPath;
 	private String rGraphsPath;
 	private String metaDataFile;
 	private String phyloTreeFile;
@@ -138,12 +123,6 @@ public class Settings {
             	clusterPath = e.getValue().trim();
             } else if(name.equals("fullTreeImagesPath")) {
             	treeviewPath = e.getValue().trim();
-            } else if(name.equals("leafIdsPath")) {
-            	leafIdsPath = e.getValue().trim();
-            } else if(name.equals("nodeIdsPath")) {
-            	nodeIdsPath = e.getValue().trim();
-            } else if (name.equals("pplacerIdsPath")) {
-            	pplacerIdsPath = e.getValue().trim();
             } else if (name.equals("r")) {
             	rGraphsPath = e.getValue().trim();
             } else if(name.equals("metadataFile")) {

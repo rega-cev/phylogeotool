@@ -11,7 +11,7 @@ public class MyButtonGroupColorTree extends WButtonGroup {
 	private WRadioButton radioYes;
 	private WRadioButton radioNo;
 	
-	public MyButtonGroupColorTree(WDialog wDialog, WDownloadResource wDownloadResource) {
+	public MyButtonGroupColorTree(WDialog wDialog, final WDownloadResource wDownloadResource) {
 		super(wDialog.getContents());
 		
 		radioYes = new WRadioButton("Yes");

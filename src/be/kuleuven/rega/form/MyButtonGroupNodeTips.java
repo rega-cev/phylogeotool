@@ -11,7 +11,7 @@ public class MyButtonGroupNodeTips extends WButtonGroup {
 	private WRadioButton radioYes;
 	private WRadioButton radioNo;
 	
-	public MyButtonGroupNodeTips(WDialog wDialog, WDownloadResource wDownloadResource) {
+	public MyButtonGroupNodeTips(WDialog wDialog, final WDownloadResource wDownloadResource) {
 		super(wDialog.getContents());
 		
 		radioYes = new WRadioButton("Yes");
