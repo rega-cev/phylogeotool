@@ -136,6 +136,13 @@ public class TreeTest {
 	}
 	
 	@Test
+	public void testGetAllChildren() {
+		assertEquals("", 15, tree.getAllNodes(node1).size(), 0.0);
+		assertEquals("", 11, tree.getAllNodes(node2).size(), 0.0);
+		assertEquals("", 3, tree.getAllNodes(node3).size(), 0.0);
+	}
+	
+	@Test
 	public void testGetParents() {
 		assertEquals("", 0, tree.getAllParents(node1).size(), 0.0);
 		assertEquals("", 1, tree.getAllParents(node2).size(), 0.0);

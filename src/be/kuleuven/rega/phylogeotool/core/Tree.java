@@ -105,7 +105,12 @@ public class Tree {
 	
 	// SHOULD ONLY BE CALLED WHEN CREATING A CLUSTER
 	public List<Node> getLeaves(Node node) {
-		return visitNode(node, new ArrayList<Node>());
+		return visitLeafsRecursive(node, new ArrayList<Node>());
+	}
+	
+	// Note: This is rootnode + inner nodes + leafs
+	public List<Node> getAllNodes(Node node) {
+		return visitNodes(node, new ArrayList<Node>());
 	}
 	
 	public List<Node> getAllParents(Node node) {
@@ -117,12 +122,23 @@ public class Tree {
 		return parents;
 	}
 	
-	private List<Node> visitNode(Node node, List<Node> leafs) {
+	private List<Node> visitNodes(Node node, List<Node> leafs) {
 		if (node.hasChildren() && node.getImmediateChildren().get(0) != null) {
-			visitNode(node.getImmediateChildren().get(0), leafs);
+			visitNodes(node.getImmediateChildren().get(0), leafs);
 		}
 		if (node.hasChildren() && node.getImmediateChildren().get(1) != null) {
-			visitNode(node.getImmediateChildren().get(1), leafs);
+			visitNodes(node.getImmediateChildren().get(1), leafs);
+		}
+		leafs.add(node);
+		return leafs;
+	}
+	
+	private List<Node> visitLeafsRecursive(Node node, List<Node> leafs) {
+		if (node.hasChildren() && node.getImmediateChildren().get(0) != null) {
+			visitLeafsRecursive(node.getImmediateChildren().get(0), leafs);
+		}
+		if (node.hasChildren() && node.getImmediateChildren().get(1) != null) {
+			visitLeafsRecursive(node.getImmediateChildren().get(1), leafs);
 		}
 		if (!node.hasChildren()) {
 			leafs.add(node);
