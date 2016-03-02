@@ -1,155 +1,119 @@
 package be.kuleuven.rega.phylogeotool.pplacer;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import jebl.evolution.trees.SimpleRootedTree;
-
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-
+import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.core.Tree;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 
 public class PPlacer {
-	
-//	private String folderLocationNodeIds;
-	private List<String> pplacerIds = null;
-	private Map<String, String> neighbours = null;
-	
-//	public PPlacer(String folderLocationNodeIds, String folderLocationPPlacerIds, String pplacerId) {
-////		this.folderLocationNodeIds = folderLocationNodeIds;
-//		pplacerIds = new ArrayList<String>();
-//		neighbours = new HashMap<String, String>();
-//		if(pplacerId != null) {
-//			this.read(folderLocationPPlacerIds + "/"+ pplacerId + ".xml");
-//		}
-//	}
-	
-	public PPlacer(String folderLocationNodeIds, String folderLocationPPlacerIds, String pplacerId) {
-//		this.folderLocationNodeIds = folderLocationNodeIds;
-		pplacerIds = new ArrayList<String>();
-		neighbours = new HashMap<String, String>();
-		if(pplacerId != null) {
-			this.read(folderLocationPPlacerIds + "/"+ pplacerId + ".xml");
-		}
+
+	private List<String> pplacerSequences = null;
+	private Map<Node, Node> neighbours = null;
+	private Tree tree;
+
+	public PPlacer(String pplacedTreeLocation, List<String> pplacerSequences) {
+		this.pplacerSequences = pplacerSequences;
+		this.neighbours = getNeighbourSeqs(pplacedTreeLocation, pplacerSequences);
 	}
-	
-	public String getNeighbour(String pplacerNode) {
+
+	public Node getNeighbour(Node pplacerNode) {
 		return neighbours.get(pplacerNode);
 	}
-	
-//	public Map<String, Boolean> clustersContainPPlacerSequence(List<Cluster> clusters) {
-//		Map<Cluster, Boolean> toReturn = new HashMap<Cluster, Boolean>();
-//		
-//		for(Cluster cluster:clusters) {
-//			for(String pplacerId:pplacerIds) {
-//				if(!toReturn.containsKey(clusterId) || (toReturn.containsKey(clusterId) && !toReturn.get(clusterId))) {
-//					toReturn.put(clusterId, clusterContainsPPlacerSequence(pplacerId, clusterId));
-//				}
+
+	public boolean clusterContainsPPlacerSequence(Cluster cluster) {
+//		System.out.println("Here: " + cluster.getRootId());
+//		for (Node node:neighbours.values()) {
+//			if (cluster != null && cluster.getTree().getAllNodes(cluster.getRoot()).contains(node)) {
+////				System.out.println("Label: " + node.getId());
+//				return true;
 //			}
 //		}
-//		
-//		return toReturn;
-//	}
-	
-	public boolean clusterContainsPPlacerSequence(String clusterId) {
-		for(String pplacerId:pplacerIds) {
-			if(clusterContainsPPlacerSequence(pplacerId, clusterId)) {
-				return true;
+		
+		for(Entry<Node, Node> neighbour:neighbours.entrySet()) {
+			for(Node node:cluster.getTree().getAllNodes(cluster.getRoot())) {
+				if(node.getId() == neighbour.getValue().getId()) {
+					System.out.println("RootId: " + cluster.getRootId() + " NodeId: " + neighbour.getValue().getId());
+					System.out.println("PPlaced: " + neighbour.getKey().getLabel());
+					return true;
+				}
 			}
 		}
+		
 		return false;
 	}
-	
-	// TODO: Update this method
-	public boolean clusterContainsPPlacerSequence(String pplacerSequence, String clusterId) {
-//		List<String> nodeIds = PreRendering.getNodeIdFromXML("", folderLocationNodeIds, clusterId, PreRendering.ID.NODEID);
-//		if(nodeIds.contains(neighbours.get(pplacerSequence))) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-		return false;
-	}
-	
-	public static void write(String treeLocation, String folderLocationPPlacerIds, List<String> pplacerSequences) throws FileNotFoundException, UnsupportedEncodingException {
+
+	private Map<Node, Node> getNeighbourSeqs(String locationTree, List<String> pplacedSequences) {
 		jebl.evolution.trees.Tree jeblTree = null;
 		Map<Node, Node> neighbours = new HashMap<Node, Node>();
 		try {
-			jeblTree = ReadTree.readTree(new FileReader(treeLocation));
-		} catch (FileNotFoundException e1) {
-			System.err.println(PPlacer.class + ": PPlacer tree not found.");
-			e1.printStackTrace();
-		}
-		Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree)jeblTree, pplacerSequences);
-		
-		Node leaf;
-		try {
-			for(String introducedSequence: pplacerSequences) {
-				leaf = tree.getLeafByLabel(introducedSequence);
-				for(Node node:leaf.getParent().getImmediateChildren()) {
-					if(!node.equals(leaf)) {
-						neighbours.put(leaf, node);
-					}
-				}
-			}
-		} catch (Exception e) {
+			jeblTree = ReadTree.readTree(new FileReader(locationTree));
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		PrintWriter writer = new PrintWriter(folderLocationPPlacerIds, "UTF-8");
-		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		writer.write("<pplacer>\n");
-		for(Node pplacerSeq:neighbours.keySet()) {
-			writer.write("\t<node id=\"" + pplacerSeq.getId() + "\" label=\"" + pplacerSeq.getLabel() +"\">\n");
-			writer.write("\t\t<neighbour id=\"" + neighbours.get(pplacerSeq).getId() + "\" />\n");
-			writer.write("\t</node>\n");
+
+		tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, pplacedSequences);
+
+		Node leaf;
+		for (String introducedSequence : pplacedSequences) {
+			leaf = tree.getLeafByLabel(introducedSequence);
+			for (Node node : leaf.getParent().getImmediateChildren()) {
+				if (!node.equals(leaf)) {
+					neighbours.put(leaf, node);
+				}
+			}
 		}
-		writer.write("</pplacer>\n");
-		writer.close();
+		return neighbours;
 	}
 	
-	// TODO: Move this method from here. It's not part of the core business of the PPlacer classes
-	public void read(String folderLocationPPlacerIds) {
-		if(!this.pplacerIds.isEmpty())
-			this.pplacerIds = new ArrayList<String>();
-		if(!neighbours.isEmpty())
-			this.neighbours = new HashMap<String, String>();
-        SAXBuilder builder = new SAXBuilder();
-        Document doc = null;
-        if (new File(folderLocationPPlacerIds).exists()) {
-	        try {
-	            doc = builder.build(folderLocationPPlacerIds);
-	        } catch (JDOMException e) {
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
+	public Map<Node, Node> getNeighbourSeqs() {
+		return this.neighbours;
+	}
 	
-	        Element root = doc.getRootElement();
-	
-	        List<Element> children = root.getChildren("node");
-	        
-	        for(Element child:children) {
-	        	pplacerIds.add(child.getAttributeValue("id"));
-	        	neighbours.put(child.getAttributeValue("id"), child.getChild("neighbour").getAttributeValue("id"));
-	        }
-        } else {
-        	// TODO: Create error message on the screen
-	       System.err.println(PPlacer.class + ": " + folderLocationPPlacerIds + ", unknown file.");
-	    }
+	public static List<String> getPPlacerIds(String location) {
+		List<String> pplacerIds = new ArrayList<String>();
+		File file = new File(location + File.separator + "sequences.fasta");
+		BufferedReader bufferedReader;
+		try {
+			String line;
+			bufferedReader = new BufferedReader(new FileReader(file));
+			while((line = bufferedReader.readLine()) != null) {
+				if(line.startsWith(">")) {
+					pplacerIds.add(line.substring(1).trim());
+				}
+			}
+			bufferedReader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return pplacerIds;
 	}
 
+	public Tree getTree() {
+		return this.tree;
+	}
+	
+	public static void main(String[] args) {
+		// Test situation
+		List<String> pplacedIds = new ArrayList<String>();
+		pplacedIds.add("TEST_1");
+		pplacedIds.add("TEST_2");
+		pplacedIds.add("TEST_3");
+		PPlacer pplacer = new PPlacer("/var/folders/0q/jfc96hd17xzfy6ck_ghw9grh0000gn/T/pplacer.KjSYNmgz/sequences.tog.tre", pplacedIds);
+		Map<Node, Node> neighbours = pplacer.getNeighbourSeqs("/var/folders/0q/jfc96hd17xzfy6ck_ghw9grh0000gn/T/pplacer.KjSYNmgz/sequences.tog.tre", pplacedIds);
+		for(Entry<Node,Node> entry:neighbours.entrySet()) {
+			System.out.println(entry.getKey().getLabel() + " neighbour: " + entry.getValue().getId());
+		}
+	}
 }

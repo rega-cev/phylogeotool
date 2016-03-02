@@ -13,6 +13,7 @@ import be.kuleuven.rega.listeners.WCircleNodeClickListener;
 import be.kuleuven.rega.listeners.WCircleNodeDoubleClickListener;
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
+import be.kuleuven.rega.phylogeotool.pplacer.PPlacer;
 import be.kuleuven.rega.phylogeotool.tree.Shape;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
 import be.kuleuven.rega.prerendering.FacadeRequestData;
@@ -34,6 +35,7 @@ public class GraphWidget extends WPaintedWidget {
 	private Stack<Integer> previousRootId = new Stack<Integer>();
 //	private PreRendering preRendering = null;
 	private FacadeRequestData facadeRequestData;
+	private PPlacer pplacer;
 	
 	// TODO: We need to get rid of the reference to GraphWebApplication
 	public GraphWidget(FacadeRequestData facadeRequestData) throws IOException {
@@ -80,7 +82,7 @@ public class GraphWidget extends WPaintedWidget {
 		this.cluster = cluster;
 	}
 
-	//TODO: Check why this method is called 2x
+	//TODO: Method is called twice due to the addition of the view tree button on top
 	@Override
 	protected void paintEvent(WPaintDevice paintDevice) {
 		WPainter painter = new WPainter(paintDevice);
@@ -105,7 +107,6 @@ public class GraphWidget extends WPaintedWidget {
 			}
 		}
 		
-//		this.graphProperties.getClusterColor(cluster, 2);
 		TreeTraversal.y = 0;
 		Map<Node, DrawData> map = new HashMap<Node, DrawData>();
 		Map<Node, Color> nodeToColor = new HashMap<Node, Color>();
@@ -126,7 +127,19 @@ public class GraphWidget extends WPaintedWidget {
 			wCircle.mouseWentOver().addListener(this, new WCircleMouseWentOverListener(wCircle, (GraphWebApplication)WApplication.getInstance()));
 			wCircle.mouseWentOut().addListener(this, new WCircleMouseWentOutListener(wCircle, (GraphWebApplication)WApplication.getInstance()));
 			this.addArea(wCircle);
-		}
+//			System.out.println(wCircle.getCenterX() + wCircle.getRadius() + 5);
+			
+//			WImage wImage = new WImage(new WLink("http://www.google.com/mapfiles/marker.png"));
+//			System.out.println(pplacer);
+//			if(pplacer != null && cluster.getTree().getLeaves(wCircle.getNode()).size() > 3) {
+//				System.out.println(pplacer.clusterContainsPPlacerSequence(facadeRequestData.getCluster(Integer.toString(wCircle.getNode().getId()))));
+//			}
+//			System.out.println(facadeRequestData.getCluster(Integer.toString(wCircle.getNode().getId())));
+			if(pplacer != null && pplacer.clusterContainsPPlacerSequence(facadeRequestData.getCluster(Integer.toString(wCircle.getNode().getId())))) {
+//				System.out.println("Here: " + Integer.toString(wCircle.getNode().getId()));
+				graphics.drawString("pplaced", wCircle.getCenterX() + wCircle.getRadius() + 5, wCircle.getCenterY());
+			}
+        }
 			
 	}
 	
@@ -145,5 +158,9 @@ public class GraphWidget extends WPaintedWidget {
 		WApplication.getInstance().setInternalPath("/root_" + nodeId);
 //		WApplication.getInstance().getInternalPath();
 		update();
+	}
+	
+	public void setPPlacer(PPlacer pplacer) {
+		this.pplacer = pplacer;
 	}
 }
