@@ -401,7 +401,7 @@ public class GraphWebApplication extends WApplication {
 		
 		
 		wvBoxLayoutChart.addLayout(wBarChartMine.getLayout());
-		wvBoxLayoutChart.setStretchFactor(wBarChartMine, 1);
+		wvBoxLayoutChart.setStretchFactor(wBarChartMine.getLayout(), 1);
 		return wvBoxLayout;
 	}
 	
