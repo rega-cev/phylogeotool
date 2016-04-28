@@ -96,7 +96,7 @@ public class CsvColorTree {
 		List<Taxon> taxa = new ArrayList<Taxon>();
 		
 		for (Taxon t : tree.getTaxa()) {
-			if (t.getName().contains(label)) {
+			if (t.getName().equals(label)) {
 				taxa.add(t);
 			}
 		}
@@ -106,11 +106,12 @@ public class CsvColorTree {
 	
 	private static Color toColor(String colorName) {
 		try {
-		    Field field = Class.forName("java.awt.Color").getField(colorName);
-		    return (Color)field.get(null);
+//		    Field field = Class.forName("java.awt.Color").getField(colorName);
+//		    return (Color)field.get(null);
+			return Color.decode(colorName);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			return Color.BLACK;
 		}
 	}
 	
