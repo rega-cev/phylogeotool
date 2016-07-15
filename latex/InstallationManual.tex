@@ -31,12 +31,12 @@
 %----------------------------------------------------------------------------------------
 
 \title{\textbf{Phylogeotool}\\ % Title
-Reference Manual} % Subtitle
+Installation Reference Manual} % Subtitle
 
 \author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, anderen, Guy Baele} % Author
-\\{\textit{Rega Institute}}} % Institution
+\\{\textit{Rega Institute for Medical Research, KU Leuven}}} % Institution
 
-\date{2016} % Date
+\date{August 2016} % Date
 
 %----------------------------------------------------------------------------------------
 
@@ -50,14 +50,14 @@ Reference Manual} % Subtitle
 \newpage
 
 \section{Installation}
-\subsection{Preparations before installation}
+\subsection{Prerequisites}
 \subsubsection*{Java}
 Download and install the newest Java Development Kit (JDK) from \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
 The current version of the tool was build on JDK 1.8.0\_31.
 \subsubsection*{Tomcat}
 Download and install the newest Tomcat version from \url{http://tomcat.apache.org}.
 \subsubsection*{Github}
-Download the code from \url{https://github.com/rega-cev/phylogeotool/}. The project is currently still private. During the trial period you can send an email to \href{mailto:ewout.vandeneynden@kuleuven.be}  {ewout.vandeneynden@kuleuven.be} with your Github account name to get read rights on the project.
+Download the code from \url{https://github.com/rega-cev/phylogeotool/}. The project is currently still private. During the trial period you can send an email to \href{mailto:phylogeotool@kuleuven.be}  {phylogeotool@kuleuven.be} with your Github account name to get read rights on the project.
 \subsubsection*{Ant}
 Download and install the newest Ant version from \url{http://ant.apache.org/} as we will use it to build our project.
 The current version of the tool was build with Ant 1.9.4
@@ -90,68 +90,6 @@ PreRender.jar takes the input files:
 \item folder figtree: Link to the folder where this jar can write its resulting figtree representations.
 \end{itemize}
 
-%------------------------------------------------
-\section{Tool functionality}
-\subsection{Basic functionality}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/initial_view.PNG}
-\caption{Initial view of the tool}
-\label{fig:initial_view}
-\end{figure}
-
-The tool is divided into different area's
-\begin{itemize}
-  \item Top left shows a world map where each country is colored darker as more sequences are originating from here. It also contains a drop down box where you can select the region on which you want to zoom in (e.g. Europe, North-America, \ldots).
-  \item Bottom left shows a bar chart which shows a certain attribute/characteristic from all sequences currently shown in the circular tree on the right. It also contains a drop down box where you can select the attribute/characteristic that you want to display in the bar chart. The attributes available for representation depend on the attributes given in the csv file.
-  \item On the right, initially, the best clustering of the phylogenetic tree is shown. It also contains a button to visualise the tree in FigTree format.
-\end{itemize}
-
-\subsubsection{Hover over node in clustered tree}
-\begin{figure}[H]
-\centering
-\includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/hover_node.PNG}
-\caption{Hovering over a node in the tree}
-\label{fig:hover_node}
-\end{figure}
-
-When you hover over a node in the phylogenetic tree, the bar chart on the bottom left and the map on the top left will be updated with data coming specifically from the node you hovered over.
-\\
-In the bar chart it'll be shown as an extra column that is added next to the already visible column.
-\\
-On the map it'll be shown as a new country colouring where each country is coloured based on only information coming from the hovered node.
-
-\subsubsection{Change region}
-\begin{figure}[H]
-\centering
-\includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/change_country.PNG}
-\caption{Change the region in the drop down box}
-\label{fig:change_region}
-\end{figure}
-When you change the region by selecting a new value in the drop down box on top of the map (see fig. \ref{fig:change_region}), the world map will update and now only show information originating from this specific region.
-
-\subsubsection{Change attribute}
-\begin{figure}[H]
-\centering
-\includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/change_attr.PNG}
-\caption{Change the attribute in the drop down box}
-\label{fig:change_attr}
-\end{figure}
-When you change the attribute by selecting a new value in the drop down box on top of the bar chart (see fig. \ref{fig:change_attr}), the chart will update and now only show data for this specific newly selected attribute.
-
-\subsubsection{View Tree}
-\begin{figure}[H]
-\centering
-\includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/view_tree.PNG}
-\caption{Tree visualization in FigTree}
-\label{fig:view_tree}
-\end{figure}
-When the 'View Tree' button on top of the circular phylogenetic tree representation is clicked, a popup window will appear such as in fig. \ref{fig:view_tree} where the tree is shown as a radial tree such as it is represented in FigTree. The different clusters get different colours. The colours in the radial tree representation correspond to the colours in the circular tree representation.
-\\
-In addition to the visualisation of the tree, export options are available. The user can select if he/she wants the tree to be coloured, if the node tips should be shown and in which format the tree will be exported. 
-
-\subsection{PPlacer}
-Explanation of the PPlacer here. Not enough relevant data yet. Should be added here.
 
 \end{document}

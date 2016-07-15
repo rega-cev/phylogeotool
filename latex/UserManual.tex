@@ -31,12 +31,12 @@
 %----------------------------------------------------------------------------------------
 
 \title{\textbf{Phylogeotool}\\ % Title
-Reference Manual} % Subtitle
+User Reference Manual} % Subtitle
 
 \author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, anderen, Guy Baele} % Author
-\\{\textit{Rega Institute}}} % Institution
+\\{\textit{Rega Institute for Medical Research, KU Leuven}}} % Institution
 
-\date{2016} % Date
+\date{August 2016} % Date
 
 %----------------------------------------------------------------------------------------
 
@@ -49,48 +49,8 @@ Reference Manual} % Subtitle
 \tableofcontents
 \newpage
 
-\section{Installation}
-\subsection{Preparations before installation}
-\subsubsection*{Java}
-Download and install the newest Java Development Kit (JDK) from \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
-The current version of the tool was build on JDK 1.8.0\_31.
-\subsubsection*{Tomcat}
-Download and install the newest Tomcat version from \url{http://tomcat.apache.org}.
-\subsubsection*{Github}
-Download the code from \url{https://github.com/rega-cev/phylogeotool/}. The project is currently still private. During the trial period you can send an email to \href{mailto:ewout.vandeneynden@kuleuven.be}  {ewout.vandeneynden@kuleuven.be} with your Github account name to get read rights on the project.
-\subsubsection*{Ant}
-Download and install the newest Ant version from \url{http://ant.apache.org/} as we will use it to build our project.
-The current version of the tool was build with Ant 1.9.4
-%------------------------------------------------
+This document provides additional information to use the Phylogeotool once installed (as described in the Installation Manual)
 
-\section{Data preparation}
-After building the code, different jar files can be found in the dist folder. Their function is explained here.
-\subsection{DistanceMatrix.jar}
-Tool to create a distance matrix based on the phylogenetic tree that will be used in the PhyloGeoTool.
-\\
-DistanceMatrix.jar takes the following input values:
-\begin{itemize}
-\item phylo.tree: Link to the phylogenetic tree to be used in the PhyloGeoTool.
-\item distance matrix: Link to the location where the distance matrix can be written.
-\end{itemize}
-
-\subsection{PreRender.jar}
-Before any data can be shown to the user, a lot of calculations are done backend. To speed up the process, most of those calculations can be done beforehand.
-\\
-PreRender.jar is a multithreaded application meaning that it performs best on any Java version > 7. Lower Java versions do not support our implementation of multithreading and will thus fail.
-\\
-PreRender.jar takes the input files:
-\begin{itemize}
-\item phylo.tree: Link to the phylogenetic tree used in the PhyloGeoTool.
-\item csvFile: Link to the csv file that connects nodes in the tool to attributes. Note: The id in the csv file has to be the same as the id of the nodes in the tree.
-\item distance matrix: Link to the distance matrix that was generated from this tree.
-\item folder xml tree: Link to the folder where this jar can write its resulting tree files.
-\item folder xml clusters: Link to the folder where this jar can write its resulting cluster files.
-\item folder xml csv: Link to the folder where this jar can write its resulting csv files.
-\item folder figtree: Link to the folder where this jar can write its resulting figtree representations.
-\end{itemize}
-
-%------------------------------------------------
 \section{Tool functionality}
 \subsection{Basic functionality}
 

@@ -1,0 +1,7 @@
+\contentsline {section}{\numberline {1}Tool functionality}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}Basic functionality}{2}{subsection.1.1}
+\contentsline {subsubsection}{\numberline {1.1.1}Hover over node in clustered tree}{3}{subsubsection.1.1.1}
+\contentsline {subsubsection}{\numberline {1.1.2}Change region}{4}{subsubsection.1.1.2}
+\contentsline {subsubsection}{\numberline {1.1.3}Change attribute}{4}{subsubsection.1.1.3}
+\contentsline {subsubsection}{\numberline {1.1.4}View Tree}{5}{subsubsection.1.1.4}
+\contentsline {subsection}{\numberline {1.2}PPlacer}{6}{subsection.1.2}
