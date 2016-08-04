@@ -5,6 +5,8 @@
 \usepackage{hyperref}
 \usepackage{float}
 
+ \usepackage{natbib}
+
 \usepackage{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Required for accented characters
 \linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
@@ -30,13 +32,13 @@
 %	TITLE
 %----------------------------------------------------------------------------------------
 
-\title{\textbf{Phylogeotool}\\ % Title
-Reference Manual} % Subtitle
+\title{\textbf{PhyloGeoTool}\\ % Title
+User Reference Manual} % Subtitle
 
 \author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, anderen, Guy Baele} % Author
-\\{\textit{Rega Institute}}} % Institution
+\\{\textit{Rega Institute for Medical Research, KU Leuven}}} % Institution
 
-\date{2016} % Date
+\date{August 2016} % Date
 
 %----------------------------------------------------------------------------------------
 
@@ -49,50 +51,23 @@ Reference Manual} % Subtitle
 \tableofcontents
 \newpage
 
-\section{Installation}
-\subsection{Preparations before installation}
-\subsubsection*{Java}
-Download and install the newest Java Development Kit (JDK) from \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
-The current version of the tool was build on JDK 1.8.0\_31.
-\subsubsection*{Tomcat}
-Download and install the newest Tomcat version from \url{http://tomcat.apache.org}.
-\subsubsection*{Github}
-Download the code from \url{https://github.com/rega-cev/phylogeotool/}. The project is currently still private. During the trial period you can send an email to \href{mailto:ewout.vandeneynden@kuleuven.be}  {ewout.vandeneynden@kuleuven.be} with your Github account name to get read rights on the project.
-\subsubsection*{Ant}
-Download and install the newest Ant version from \url{http://ant.apache.org/} as we will use it to build our project.
-The current version of the tool was build with Ant 1.9.4
-%------------------------------------------------
+This document provides additional information on how to use the PhyloGeoTool once it's installed (as described in the Installation Manual).
+A deployed version of the PhyloGeoTool can be found at \url{http://regatools.med.kuleuven.be/phylogeotool/PhyloGeoTool}.
 
-\section{Data preparation}
-After building the code, different jar files can be found in the dist folder. Their function is explained here.
-\subsection{DistanceMatrix.jar}
-Tool to create a distance matrix based on the phylogenetic tree that will be used in the PhyloGeoTool.
-\\
-DistanceMatrix.jar takes the following input values:
-\begin{itemize}
-\item phylo.tree: Link to the phylogenetic tree to be used in the PhyloGeoTool.
-\item distance matrix: Link to the location where the distance matrix can be written.
-\end{itemize}
-
-\subsection{PreRender.jar}
-Before any data can be shown to the user, a lot of calculations are done backend. To speed up the process, most of those calculations can be done beforehand.
-\\
-PreRender.jar is a multithreaded application meaning that it performs best on any Java version > 7. Lower Java versions do not support our implementation of multithreading and will thus fail.
-\\
-PreRender.jar takes the input files:
-\begin{itemize}
-\item phylo.tree: Link to the phylogenetic tree used in the PhyloGeoTool.
-\item csvFile: Link to the csv file that connects nodes in the tool to attributes. Note: The id in the csv file has to be the same as the id of the nodes in the tree.
-\item distance matrix: Link to the distance matrix that was generated from this tree.
-\item folder xml tree: Link to the folder where this jar can write its resulting tree files.
-\item folder xml clusters: Link to the folder where this jar can write its resulting cluster files.
-\item folder xml csv: Link to the folder where this jar can write its resulting csv files.
-\item folder figtree: Link to the folder where this jar can write its resulting figtree representations.
-\end{itemize}
-
-%------------------------------------------------
 \section{Tool functionality}
+
+\subsection{Required input files}
+
+\begin{itemize}
+\item How do we get started with a typical visual exploration in the PhyloGeoTool? 
+\item What are the required input files a user needs to upload before the visual exploration can start? If this is covered in the installation manual, we should mention it here. If nothing more is needed after deployment, we should mention that as well.
+\end{itemize}
+
+
 \subsection{Basic functionality}
+
+
+
 
 \begin{figure}[H]
 \centering
@@ -152,6 +127,26 @@ When the 'View Tree' button on top of the circular phylogenetic tree representat
 In addition to the visualisation of the tree, export options are available. The user can select if he/she wants the tree to be coloured, if the node tips should be shown and in which format the tree will be exported. 
 
 \subsection{PPlacer}
-Explanation of the PPlacer here. Not enough relevant data yet. Should be added here.
+pplacer is a software package for phylogenetic placement and subsequent visualization \citep{Matsen2010}.
+Phylogenetic placement allows to insert/place unknown query sequences onto an existing phylogenetic tree via a reference alignment and uses techniques from likelihood-based phylogenetic inference to do so.
+As such, pplacer features calculation of the posterior probability of the placement on an edge, which is a statistically rigorous way of quantifying uncertainty on an edge-by-edge basis.
+
+PhyloGeoTool focuses on using pplacer to position additional sequences onto a previously reconstructed phylogenetic tree.
+To do so, select PPlacer in the clustering window; there are two ways to add a new sequence to the tree:
+\begin{itemize}
+\item Paste the nucleotide sequence you'd like to add in the presented window.
+\item Choose a Fasta file containing the nucleotide sequence using the file chooser.
+\item Fasta files containing multiple sequences are allowed up to a total of MAX sequences, which will be placed sequentially into the phylogenetic tree.
+\end{itemize}
+
+
+
+\section{Example: exploring an HIV-1 data set}
+
+In this section, we provide an example application of the PhyloGeoTool on HIV-1 using data available within the EuResist Integrated Data Base \citep{Zazzi2012}. 
+This database contains virus genotypes, clinical responses and epidemiological markers of more than 66.000 patients from 12 different countries.
+
+\bibliographystyle{natbib}%%%%natbib.sty
+\bibliography{References}%%%refs.bib
 
 \end{document}
