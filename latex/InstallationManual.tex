@@ -55,7 +55,7 @@ Installation Reference Manual} % Subtitle
 
 \subsubsection*{Java}
 Download and install the newest Java Development Kit (JDK) from \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
-The current version of PhyloGeoTool was built on JDK 1.8.0\_31.
+The current version of PhyloGeoTool was built using JDK 1.8.0\_31.
 
 \subsubsection*{Tomcat}
 Download and install the latest Tomcat version from \url{http://tomcat.apache.org}.
@@ -67,17 +67,21 @@ During the trial period you can send an email to \href{mailto:phylogeotool@kuleu
 
 \subsubsection*{Ant}
 Download and install the newest Ant version from \url{http://ant.apache.org/} as we will use it to build our project.
-The current version of PhyloGeoTool was built with Ant 1.9.4
-%------------------------------------------------
+The current version of PhyloGeoTool was built using Ant 1.9.4
+
+\subsubsection*{Phylogenetic tree} %GB: we also need a phylogenetic tree to deploy the application, right? Or to at least perform the distance matrix calculations and such? So what format should this tree be in? Can it be a time-stamped tree, i.e. with heterochronous taxa? Can it be rooted or unrooted?
+
+
 
 \subsection{Building the project}
 
-\subsubsection{Linux}
+\subsubsection{Ubuntu Linux}
 
 We here outline the various steps necessary for a successful build of the project.
 The build process here is described as it was performed on an Ubuntu 14.04 LTS (Trusty Tahr) installation.
 \begin{itemize}
 \item Go the the following directory:
+\item In that directory, you should see the following files:
 \item \ldots
 \end{itemize}
 
@@ -86,30 +90,36 @@ After the project has been built successfully, different jar files can be found 
 Their function is explained in the sections below.
 
 \subsection{DistanceMatrix.jar}
-Tool to create a distance matrix based on the phylogenetic tree that will be used in the PhyloGeoTool.
-\\
+%GB: Is this mandatory? Why do we need to do this? Would be nice to explain here.
+This jar file contains a tool to create a distance matrix based on the phylogenetic tree that will be used in the PhyloGeoTool.
 DistanceMatrix.jar takes the following input values:
 \begin{itemize}
-\item phylo.tree: Link to the phylogenetic tree to be used in the PhyloGeoTool.
-\item distance matrix: Link to the location where the distance matrix can be written.
+\item /path/to/phylogenetic.tree: Link to the phylogenetic tree to be used in the PhyloGeoTool. %GB: what is this phylo.tree? What format should it be in? Should it have a specific extension?
+\item /path/to/distance\_matrix: Link to the location where the distance matrix can be written. Make sure you have write privileges in the provided directory.
 \end{itemize}
+For example, the following command uses DistanceMatrix.jar to generate a distance matrix from a previously reconstructed phylogenetic tree: %GB: add example command
+
 
 \subsection{PreRender.jar}
-Before any data can be shown to the user, a lot of calculations are done backend. To speed up the process, most of those calculations can be done beforehand.
-\\
-PreRender.jar is a multithreaded application meaning that it performs best on any Java version > 7. Lower Java versions do not support our implementation of multithreading and will thus fail.
-\\
-PreRender.jar takes the input files:
+%GB: Does this step somehow require the distance matrix computed in the previous section?
+Before any data can be shown to the user, a lot of calculations are done at the back end. 
+To speed up the visualization process, most of those calculations can be done up front.
+
+PreRender.jar is a multithreaded application, meaning that it performs best on any Java version > 7. 
+Older Java versions do not support our implementation of multithreading and should hence not be used.
+PreRender.jar takes the following input files: %GB: are all of these mandatory or are some of these optional?
 \begin{itemize}
-\item phylo.tree: Link to the phylogenetic tree used in the PhyloGeoTool.
-\item csvFile: Link to the csv file that connects nodes in the tool to attributes. Note: The id in the csv file has to be the same as the id of the nodes in the tree.
-\item distance matrix: Link to the distance matrix that was generated from this tree.
-\item folder xml tree: Link to the folder where this jar can write its resulting tree files.
-\item folder xml clusters: Link to the folder where this jar can write its resulting cluster files.
-\item folder xml csv: Link to the folder where this jar can write its resulting csv files.
-\item folder figtree: Link to the folder where this jar can write its resulting figtree representations.
+\item /path/to.phylogenetic.tree: Link to the phylogenetic tree used in the PhyloGeoTool.
+\item /path/to/csvFile: Link to the csv file that connects nodes in the tool to attributes. Note: The id in the csv file has to be the same as the id of the nodes in the tree.
+\item /path/to/distance\_matrix: Link to the distance matrix that was generated from this tree.
+\item /path/to/folder\_xml\_tree: Link to the folder where this jar can write its resulting tree files.
+\item /path/to/folder\_xml\_clusters: Link to the folder where this jar can write its resulting cluster files.
+\item /path/to/folder\_xml\_csv: Link to the folder where this jar can write its resulting csv files.
+\item /path/to/folder\_figtree: Link to the folder where this jar can write its resulting figtree representations.
 \end{itemize}
 
+For example, the following command uses PreRender.jar to \ldots: %GB: add example command
+%GB: and now what? Are we done here? Shall we show what the user should see now and what he/she can do next?
 
 
 \end{document}
