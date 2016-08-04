@@ -25,7 +25,6 @@ import jebl.evolution.trees.Tree;
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import be.kuleuven.rega.phylogeotool.io.write.NexusExporter;
-import be.kuleuven.rega.phylogeotool.settings.Settings;
 import be.kuleuven.rega.prerendering.PreRendering;
 
 import com.itextpdf.text.DocumentException;
@@ -53,6 +52,9 @@ public class ColorClusters {
 			treeLocation = args[0];
 			clusterLocation = args[1];
 			treeviewLocation = args[2];
+			
+			ReadTree.setJeblTree(treeLocation);
+			ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
 		} else {
 			System.err.println("java -jar ColorClusters.jar phylo.tree clusterLocation treeviewLocation");
 			System.exit(0);
@@ -95,25 +97,27 @@ public class ColorClusters {
 		Cluster currentCluster = null;
 
 		// Generate Default Drawing
-		currentCluster = preRendering.getClusterFromXML("1");
+		currentCluster = preRendering.getClusterFromXML("3363");
 		try {
-			prepareFullTreeView(currentCluster, GraphicFormat.PNG, new FileOutputStream(new File(treeviewLocation + File.separator + "default")),
+			prepareFullTreeView(treeLocation, currentCluster, GraphicFormat.PDF, new FileOutputStream(new File(treeviewLocation + File.separator + "default")),
 					minimumClusterSize, false, false);
 
-			for (int i = 0; i < 2; i++) {
-				if (files[i].getName().contains(".xml")) {
-					System.err.println("File: " + files[i].getName());
-					currentCluster = preRendering.getClusterFromXML(files[i].getName().split("\\.")[0]);
-					if (currentCluster.getTree().getAllParents(currentCluster.getRoot()).size() < 20) {
-						prepareFullTreeView(currentCluster, GraphicFormat.PDF, new FileOutputStream(new File(treeviewLocation + File.separator
-								+ files[i].getName().split("\\.")[0] + ".pdf")), minimumClusterSize, true, false);
-					} else {
-						System.err.println("Cluster too far away from root to color");
-					}
-				} else {
-					System.err.println(files[i].getName() + " is not a nexus file.");
-				}
-			}
+//			for (int i = 0; i < files.length; i++) {
+//				if (files[i].getName().contains(".xml")) {
+//					System.err.println("File: " + files[i].getName());
+//					currentCluster = preRendering.getClusterFromXML(files[i].getName().split("\\.")[0]);
+//					if (currentCluster.getTree().getAllParents(currentCluster.getRoot()).size() < 20) {
+//						prepareFullTreeView(treeLocation, currentCluster, GraphicFormat.PNG, new FileOutputStream(new File(treeviewLocation + File.separator
+//								+ files[i].getName().split("\\.")[0] + ".png")), minimumClusterSize, true, false);
+			prepareFullTreeView(treeLocation, currentCluster, GraphicFormat.PDF, new FileOutputStream(new File(treeviewLocation + File.separator
+					+ "3363.pdf")), minimumClusterSize, true, false);
+//					} else {
+//						System.err.println("Cluster too far away from root to color");
+//					}
+//				} else {
+//					System.err.println(files[i].getName() + " is not a nexus file.");
+//				}
+//			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -142,15 +146,15 @@ public class ColorClusters {
 		}
 	}
 
-	public static void prepareFullTreeView(Cluster cluster, GraphicFormat graphicsFormat, OutputStream output, int minimumClusterSize, boolean colorTree, boolean showTips) {
+	public static void prepareFullTreeView(String treeLocation, Cluster cluster, GraphicFormat graphicsFormat, OutputStream output, int minimumClusterSize, boolean colorTree, boolean showTips) {
 		int CONTROL_PALETTE_WIDTH = 200;
 		Tree tree;
 		// We read a new instance of jebltree to prevent overlapping coloring events to occur
 		try {
-			tree = ReadTree.readTree(new FileReader(new File(Settings.getInstance().getPhyloTree())));
+			tree = ReadTree.readTree(new FileReader(new File(treeLocation)));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
-			tree = ReadTree.getJeblTree();
+			tree = null;
 		}
 		try {
 			if (graphicsFormat == null) {
@@ -196,12 +200,12 @@ public class ColorClusters {
 					simpleLabelPainterTip.setTextDecorator(branchDecorator);
 					((TreePane) comp).setTipLabelPainter(simpleLabelPainterTip);
 				}
-			try {
-				be.kuleuven.rega.phylogeotool.io.write.NexusExporter.export(cluster, ReadTree.getJeblTree(), new FileWriter(new File("/Users/ewout/Desktop/test.nexus")), 2, true);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				be.kuleuven.rega.phylogeotool.io.write.NexusExporter.export(cluster, ReadTree.getJeblTree(), new FileWriter(new File("/Users/ewout/Desktop/test.nexus")), 2, true);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 				
 				try {
 					FigTreeFrame.exportGraphics(graphicsFormat, ((TreePane) comp), output);

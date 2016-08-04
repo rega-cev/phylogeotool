@@ -88,6 +88,13 @@
   		<zipgroupfileset dir="${lib}" includes="commons-lang3-3.3.2.jar, figtree.jar, slf4j-api-1.7.10.jar, opencsv-3.2.jar" />
     </jar>
   	
+  	<jar jarfile="${dist}/ColorClusters.jar" basedir="${build}">
+  	  	  	<manifest>
+  	  	  		<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.ColorClusters"/>
+  	  	  	</manifest>
+  	  	<zipgroupfileset dir="${lib}" includes="**/*.jar" />
+  	</jar>
+  	
   	<jar jarfile="${dist}/GroupTaxaByNodeLabel.jar" basedir="${build}">
   	  		<manifest>
   	  			<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.GroupTaxaByNodeLabel"/>

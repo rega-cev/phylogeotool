@@ -30,6 +30,8 @@ public class CreateDistanceMatrix {
 		if (args.length >= 2) {
 			treeLocation = args[0];
 			distanceMatrixLocation = args[1];
+			ReadTree.setJeblTree(treeLocation);
+			ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
 		} else {
 			System.err.println("TreeLocation: " + treeLocation);
 			System.err.println("Distance Matrix Location: " + distanceMatrixLocation);
