@@ -5,6 +5,8 @@
 \usepackage{hyperref}
 \usepackage{float}
 
+ \usepackage{natbib}
+
 \usepackage{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Required for accented characters
 \linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
@@ -30,7 +32,7 @@
 %	TITLE
 %----------------------------------------------------------------------------------------
 
-\title{\textbf{Phylogeotool}\\ % Title
+\title{\textbf{PhyloGeoTool}\\ % Title
 User Reference Manual} % Subtitle
 
 \author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, anderen, Guy Baele} % Author
@@ -49,10 +51,24 @@ User Reference Manual} % Subtitle
 \tableofcontents
 \newpage
 
-This document provides additional information to use the Phylogeotool once installed (as described in the Installation Manual)
+This document provides additional information to use the PhyloGeoTool once installed (as described in the Installation Manual).
+A deployed version of the PhyloGeoTool can be found at \url{http://regatools.med.kuleuven.be/phylogeotool/PhyloGeoTool}.
 
 \section{Tool functionality}
+
+\subsection{Required input files}
+
+\begin{itemize}
+\item How do we get started with a typical visual exploration in the PhyloGeoTool? 
+\item What are the required input files a user needs to upload before the visual exploration can start? If this is covered in the installation manual, we should mention it here.
+\item 
+\end{itemize}
+
+
 \subsection{Basic functionality}
+
+
+
 
 \begin{figure}[H]
 \centering
@@ -113,5 +129,23 @@ In addition to the visualisation of the tree, export options are available. The 
 
 \subsection{PPlacer}
 Explanation of the PPlacer here. Not enough relevant data yet. Should be added here.
+
+Using PPLacer, additional sequences can be added to a previously reconstructed phylogenetic tree.
+To do so, select PPlacer in the clustering window; there are two ways to add a new sequence to the tree:
+\begin{itemize}
+\item Paste the nucleotide sequence you'd like to add in the presented window.
+\item Choose a Fasta file containing the nucleotide sequence using the file chooser.
+\item Fasta files containing multiple sequences are allowed up to a total of MAX sequences, which will be placed sequentially into the phylogenetic tree.
+\end{itemize}
+
+
+
+\section{Example: exploring an HIV-1 data set}
+
+In this section, we provide an example application of the PhyloGeoTool on HIV-1 using data available within the EuResist Integrated Data Base \citep{Zazzi2012}. 
+This database contains virus genotypes, clinical responses and epidemiological markers of more than 66.000 patients from 12 different countries.
+
+\bibliographystyle{natbib}%%%%natbib.sty
+\bibliography{References}%%%refs.bib
 
 \end{document}
