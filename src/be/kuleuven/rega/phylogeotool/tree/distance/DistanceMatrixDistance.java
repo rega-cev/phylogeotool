@@ -62,6 +62,7 @@ public class DistanceMatrixDistance implements DistanceInterface {
 						distances[i][j++] = new Double(distance);
 					}
 				}
+				System.err.println("Read line: " + i);
 				i++;
 			}
 			bufferedReader.close();
