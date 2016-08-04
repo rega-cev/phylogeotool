@@ -2,9 +2,14 @@ package be.kuleuven.rega.prerendering;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,13 +32,15 @@ import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.core.Tree;
 import be.kuleuven.rega.phylogeotool.data.csv.CsvUtils;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
-import be.kuleuven.rega.phylogeotool.io.write.NexusExporter;
+import be.kuleuven.rega.phylogeotool.tools.ColorClusters;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceCalculateFromTree;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceInterface;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceMatrixDistance;
 
 import com.opencsv.CSVReader;
 import com.thoughtworks.xstream.XStream;
+
+import figtree.application.GraphicFormat;
 
 public class PreRendering {
 
@@ -42,8 +49,6 @@ public class PreRendering {
 	private String folderLocationClusters;
 	private String folderLocationCsvs;
 	private String folderLocationTreeView;
-//	private String folderLocationLeafIds;
-//	private String folderLocationNodeIds;
 	public final static int CONTROL_PALETTE_WIDTH = 200;
 	public static enum ID {
 		LEAFID, NODEID
@@ -58,13 +63,10 @@ public class PreRendering {
 		this.xStream.omitField(Cluster.class, "tree");
 		this.xStream.omitField(Cluster.class, "root");
 		this.xStream.omitField(Cluster.class, "boundaries");
-//		xStream.setMode(XStream.ID_REFERENCES);
 		this.folderLocationTree = folderLocationTree;
 		this.folderLocationClusters = folderLocationClusters;
 		this.folderLocationCsvs = folderLocationCsvs;
 		this.folderLocationTreeView = folderLocationTreeView;
-//		this.folderLocationLeafIds = folderLocationLeafIds;
-//		this.folderLocationNodeIds = folderLocationNodeIds;
 	}
 	
 //	public void writeJeblTreeToXML(jebl.evolution.trees.Tree tree) {
@@ -103,95 +105,6 @@ public class PreRendering {
 		}
 	}
 	
-//	public void writeNodeIdsToXML(Cluster cluster, ID id) {
-//		FileWriter fileWriter = null;
-//		List<Node> ids = null;
-//		try {
-//			switch(id) {
-//				case LEAFID:
-//					fileWriter = new FileWriter(new File(this.folderLocationLeafIds + File.separator + cluster.getRoot().getId() + ".xml"));
-//					ids = cluster.getTree().getLeaves(cluster.getRoot());
-//					break;
-//				// TODO: Has to be updates to all the inner nodes
-//				case NODEID:
-//					fileWriter = new FileWriter(new File(this.folderLocationNodeIds + File.separator + cluster.getRoot().getId() + ".xml"));
-//					ids = cluster.getAllNodes();
-//					break;
-//			}
-//			fileWriter.write("<xml>" + "\n");
-//			
-//			StringBuffer stringBuffer = new StringBuffer();
-//			for(Node node:ids) {
-//				switch(id) {
-//					case LEAFID:
-//						stringBuffer.append(node.getLabel() + ",");
-//						break;
-//					case NODEID:
-//						stringBuffer.append(node.getId() + ",");
-//						break;
-//				}
-//			}
-//			
-//			String nodeIds = stringBuffer.toString();
-//			if(nodeIds.length() > 0) {
-//				fileWriter.write("\t<tree id=\"nodeIds\">" + nodeIds.substring(0, nodeIds.length()-1) + "</tree>" + "\n");
-//			} else {
-//				fileWriter.write("\t<tree id=\"nodeIds\"></tree>" + "\n");
-//			}
-//			fileWriter.write("</xml>");
-//			fileWriter.close();
-//		} catch (IOException e) {
-//			System.err.println(PreRendering.class + " : Error with writing the tree to an xml file.");
-//		}
-//	}
-	
-//	public static List<String> getNodeIdFromXML(String folderLocationLeafIds, String folderLocationNodeIds, String clusterId, ID id) {
-//		List<String> idsList = new ArrayList<String>();
-//		String[] ids = null;
-//		try {
-//			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-//			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-//			Document doc = null;
-//			switch(id) {
-//				case LEAFID:
-//					doc = dBuilder.parse(new File(folderLocationLeafIds + File.separator + clusterId + ".xml"));
-//					break;
-//				case NODEID:
-//					doc = dBuilder.parse(new File(folderLocationNodeIds + File.separator + clusterId + ".xml"));
-//					break;
-//			}
-//			
-//			NodeList nList = doc.getElementsByTagName("tree");
-//		
-//			for (int temp = 0; temp < nList.getLength(); temp++) {
-//				org.w3c.dom.Node nNode = nList.item(temp);
-//				if (nNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-//					Element eElement = (Element) nNode;
-//					
-//					if(eElement.getAttribute("id").equals("nodeIds")) {
-//						ids = eElement.getTextContent().split(",");
-//					}
-//				}
-//			}
-//		} catch (SAXException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} catch (ParserConfigurationException e) {
-//			e.printStackTrace();
-//		}
-//		idsList.addAll(Arrays.asList(ids));
-//		return idsList;
-//	}
-//	
-//	public Tree getTreeFromXML(String treeId) {
-//		Tree newTree = null;
-////			byte[] encoded = Files.readAllBytes(Paths.get(folderLocation + File.separator + clusterId + ".xml"));
-////			newTree = (Tree)xStream.fromXML(new String(encoded));
-//		newTree = (Tree)xStream.fromXML(new File(folderLocationTree + File.separator + treeId + ".xml"));
-//		return newTree;
-//	}
-	
 	public Cluster getClusterFromXML(String clusterId) {
 		Cluster cluster = null;
 //			byte[] encoded = Files.readAllBytes(Paths.get(folderLocation + File.separator + clusterId + ".xml"));
@@ -211,12 +124,13 @@ public class PreRendering {
 	}
 	
 	public void preRender(String treeLocation, String csvLocation, String distanceMatrixLocation) throws IOException {
+		System.err.println("Reading JeblTree");
 		jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader(treeLocation));
-//		this.writeJeblTreeToXML(jeblTree);
+		System.err.println("JeblTree read");
 		
 		Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
+		System.err.println("JeblTree transformed to TreeDraw");
 		int minimumClusterSize = 2;
-//		this.writeTreeToXML(tree);
 		
 		HashMap<String, Integer> translatedNodeNames = new HashMap<String, Integer>();
 		DistanceInterface distanceInterface = null;
@@ -227,30 +141,35 @@ public class PreRendering {
 			translatedNodeNames.put(leaf.getLabel(), index++);
 		}
 		
+		System.err.println("NodeList created");
+		
 		if(distanceMatrixLocation != null && !distanceMatrixLocation.equals("")) {
+			System.err.println("Reading DistanceMatrix");
 			distanceInterface = new DistanceMatrixDistance(translatedNodeNames, distanceMatrixLocation);
+			System.err.println("DistanceMatrix Read");
 		} else {
 			distanceInterface = new DistanceCalculateFromTree();
 		}
 		
 		LinkedList<Node> toDo = new LinkedList<Node>();
 		toDo.add(tree.getRootNode());
-//		toDo.add(tree.getNodeById(12996));
 		Node currentNode;
+		
+		System.err.println("Start calculations");
 		
 		while(toDo.peek() != null) {
 			currentNode = toDo.pop();
-//			currentNode = tree.getNodeById(12996);
+//			currentNode = tree.getNodeById(1);
 			// Do multi thread here
 			Cluster cluster = BestClusterMultiThread.getBestCluster(minimumClusterSize, 50, 2, tree, currentNode, distanceInterface);
 			if(cluster != null) {
-	//			Cluster cluster = MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), minimumClusterSize, 11);
-	//			Tree tempTree = clusterAlgos.getCluster(tree,tree.getNodeById(currentNode.getId()), 12);
 				this.writeClusterToXML(cluster);
+				System.err.println("Cluster " + cluster.getRootId() + " structure written to file");
 				this.prepareCSV(cluster.getRoot().getId(), tree.getLeaves(cluster.getRoot()), csvLocation, showNA);
-				NexusExporter.export(cluster, jeblTree, new FileWriter(new File(this.folderLocationTreeView + File.separator + cluster.getRoot().getId() + ".nexus")), minimumClusterSize, true);
-	//			this.writeNodeIdsToXML(cluster, ID.LEAFID);
-	//			this.writeNodeIdsToXML(cluster, ID.NODEID);
+				System.err.println("XML details written to file");
+//				NexusExporter.export(cluster, jeblTree, new FileWriter(new File(this.folderLocationTreeView + File.separator + cluster.getRoot().getId() + ".nexus")), minimumClusterSize, true);
+				ColorClusters.prepareFullTreeView(treeLocation, cluster, GraphicFormat.PNG, new FileOutputStream(new File(this.folderLocationTreeView + File.separator + cluster.getRoot().getId() + ".png")), minimumClusterSize, true, false);
+				System.err.println("Image written to file");
 				
 				List<Node> nodesList = cluster.getBoundaries();
 				for(Node node:nodesList) {
@@ -284,36 +203,38 @@ public class PreRendering {
 		File folder = new File(folderLocationClusters);
 		File folderCsvs = new File(folderLocationCsvs);
 		File folderTreeView = new File(folderLocationTreeView);
-//		File folderLeafIds = new File(folderLocationLeafIds);
-//		File folderNodeIds = new File(folderLocationNodeIds);
+
+		DirectoryStream<Path> clustersStream = null;
+		DirectoryStream<Path> csvsStream = null;
+		DirectoryStream<Path> treeviewStream = null;
+		
+		try {
+			clustersStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(folderLocationClusters));
+			csvsStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(folderLocationCsvs));
+			treeviewStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(folderLocationTreeView));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		if(folder.isDirectory() && folderCsvs.isDirectory() && folderTreeView.isDirectory()){
-			if(folder.list().length>0 || folderCsvs.list().length>0 || folderTreeView.list().length>0){
+			if(clustersStream.iterator().hasNext() || csvsStream.iterator().hasNext() || treeviewStream.iterator().hasNext()){
 				return false;
 			} else {
 				return true;
 			}
 		} else if(folder.isFile()) {
-			System.out.println(PreRendering.class + ": The path " + folderLocationClusters + " to the folder seems to direct to a file.");
+			System.err.println(PreRendering.class + ": The path " + folderLocationClusters + " to the folder seems to direct to a file.");
 			return false;
 		} else if(folderCsvs.isFile()) { 
-			System.out.println(PreRendering.class + ": The path " + folderLocationCsvs + " to the folder seems to direct to a file.");
+			System.err.println(PreRendering.class + ": The path " + folderLocationCsvs + " to the folder seems to direct to a file.");
 			return false;
 		} else if(folderTreeView.isFile()) {
-			System.out.println(PreRendering.class + ": The path " + folderLocationTreeView + " to the folder seems to direct to a file.");
+			System.err.println(PreRendering.class + ": The path " + folderLocationTreeView + " to the folder seems to direct to a file.");
 			return false;
-//		} else if(folderLeafIds.isFile()) {
-//			System.out.println(PreRendering.class + ": The path " + folderLocationLeafIds + " to the folder seems to direct to a file.");
-//			return false;
-//		} else if(folderNodeIds.isFile()) {
-//			System.out.println(PreRendering.class + ": The path " + folderLocationNodeIds + " to the folder seems to direct to a file.");
-//			return false;
 		} else {
 			folder.mkdirs();
 			folderCsvs.mkdirs();
 			folderTreeView.mkdirs();
-//			folderLeafIds.mkdirs();
-//			folderNodeIds.mkdirs();
 			return true;
 		}
 	}
@@ -418,8 +339,9 @@ public class PreRendering {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			DirectoryStream<Path> dirStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(folderLocationCsvs));
 //			System.out.println(new File(folderLocationCsvs + File.separator + clusterId + ".xml"));
-			if(folderLocationCsvs != null && !folderLocationCsvs.equals("") && new File(folderLocationCsvs).list().length>0) {
+			if(folderLocationCsvs != null && !folderLocationCsvs.equals("") && dirStream.iterator().hasNext()) {
 				Document doc = dBuilder.parse(new File(folderLocationCsvs + File.separator + clusterId + ".xml"));
 				NodeList nList = doc.getElementsByTagName(key);
 				for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -477,6 +399,9 @@ public class PreRendering {
 			clusterRenderLocation = args[4];
 			csvRenderLocation = args[5];
 			treeViewRenderLocation = args[6];
+			
+			ReadTree.setJeblTree(treeLocation);
+			ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
 		} else {
 			System.err.println("You need to have a java -version > 7");
 			System.err.println("java -jar PreRendering.jar phylo.tree csvFile distance.matrix folderXMLTree folderXMLClusters folderXMLCsv folderFigtreeRep");
