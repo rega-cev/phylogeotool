@@ -56,8 +56,37 @@ public class Settings {
 		return metaDataFile;
 	}
 	
+	/**
+	 * Location of the phylogenetic tree used in this tool
+	 * @return Location of the phylogenetic tree
+	 */
 	public String getPhyloTree() {
 		return phyloTreeFile;
+	}
+	
+	/**
+	 * Location of the alignment file that was used to build the phylogenetic tree used in this tool
+	 * @return Location of the alignment file
+	 */
+	public String getAlignmentLocation() {
+		return alignmentLocation;
+	}
+	
+	/**
+	 * Location of the logfile file that was returned by the tree building program to build the phylogenetic tree used in this tool
+	 * @return Location of the log file
+	 */
+	public String getLogfileLocation() {
+		return logfileLocation;
+	}
+	
+	/**
+	 * Location of the shell scripts that are used to to initiate the PPlacer
+	 * This folder contains init.sh, place.sh
+	 * @return Location of the shell scripts folder
+	 */
+	public String getScriptFolder() {
+		return scriptFolder;
 	}
 
 	public String getDatalessRegionColor() {
@@ -76,22 +105,25 @@ public class Settings {
 		return showNAData;
 	}
 	
-	public List<String> getColumnsToExport() {
-		return this.columnsToExport;
+	public String getVisualizeGeography() {
+		return visualizeGeography;
 	}
 	
-	public String getRGraphsPath() {
-		return rGraphsPath;
+	public List<String> getColumnsToExport() {
+		return this.columnsToExport;
 	}
 	
 	private String xmlPath;
 	private String treePath;
 	private String clusterPath;
 	private String treeviewPath;
-	private String rGraphsPath;
 	private String metaDataFile;
 	private String phyloTreeFile;
+	private String alignmentLocation;
+	private String logfileLocation;
+	private String scriptFolder;
 	private boolean showNAData;
+	private String visualizeGeography;
 	private String datalessRegionColor;
 	private String backgroundcolor;
 	private String[] colorAxis;
@@ -123,13 +155,19 @@ public class Settings {
             	clusterPath = e.getValue().trim();
             } else if(name.equals("fullTreeImagesPath")) {
             	treeviewPath = e.getValue().trim();
-            } else if (name.equals("r")) {
-            	rGraphsPath = e.getValue().trim();
             } else if(name.equals("metadataFile")) {
             	metaDataFile = e.getValue().trim();
             } else if(name.equals("phyloTreeFile")) {
             	phyloTreeFile = e.getValue().trim();
-            } else if(name.equals("showNAData")) {
+            } else if(name.equals("alignmentFile")) {
+            	alignmentLocation = e.getValue().trim();
+            } else if(name.equals("logFile")) {
+            	logfileLocation = e.getValue().trim();
+            } else if(name.equals("scriptFolder")) {
+            	scriptFolder = e.getValue().trim();
+            } else if(name.equals("visualizeGeography")) {
+            	visualizeGeography = e.getValue().trim();
+            }else if(name.equals("showNAData")) {
             	showNAData = Boolean.parseBoolean(e.getValue().trim());
             } else if(name.equals("colorCodes")) {
             	List<Element> colorProperties = e.getChildren();

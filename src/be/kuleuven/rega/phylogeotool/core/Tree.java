@@ -99,6 +99,44 @@ public class Tree {
 		}
 	}
 	
+//	public Node getLeastCommonAncestor(List<Node> nodes) {
+//		
+//		List<Node> parents = this.getAllParents(nodes.get(0));
+//	
+//		for(Node node:nodes) {
+//			parents.retainAll(this.getAllParents(node));
+//		}
+//		
+//		if(parents.size() > 0) {
+//			return parents.iterator().next();
+//		} else {
+//			System.err.print(Tree.class + " what to do in else?");
+//			return null;
+//		}
+//	}
+	
+	
+	public Node getLeastCommonAncestor(List<String> leafs) {
+		
+		List<Node> nodes = new ArrayList<Node>();
+		for(String label:leafs) {
+			nodes.add(this.getLeafByLabel(label));
+		}
+		
+		List<Node> parents = this.getAllParents(nodes.get(0));
+	
+		for(Node node:nodes) {
+			parents.retainAll(this.getAllParents(node));
+		}
+		
+		if(parents.size() > 0) {
+			return parents.iterator().next();
+		} else {
+			System.err.print(Tree.class + " what to do in else?");
+			return null;
+		}
+	}
+	
 	public List<Node> getLeaves() {
 		return this.getLeaves(this.getRootNode());
 	}
@@ -106,6 +144,18 @@ public class Tree {
 	// SHOULD ONLY BE CALLED WHEN CREATING A CLUSTER
 	public List<Node> getLeaves(Node node) {
 		return visitLeafsRecursive(node, new ArrayList<Node>());
+	}
+	
+	// SHOULD ONLY BE CALLED WHEN CREATING A CLUSTER
+	public List<String> getLeavesAsString(Node node) {
+		List<Node> leafs = visitLeafsRecursive(node, new ArrayList<Node>());
+		List<String> toReturn = new ArrayList<String>();
+		
+		for(Node leaf:leafs) {
+			toReturn.add(leaf.getLabel());
+		}
+		
+		return toReturn;
 	}
 	
 	// Note: This is rootnode + inner nodes + leafs

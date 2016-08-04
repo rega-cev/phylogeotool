@@ -43,15 +43,16 @@ public class GraphProperties {
 //		Collections.sort(nodes, new ClusterIdComparator());
 		
 		for(Node node:nodes) {
-			if(cluster.getTree().getLeaves(node).size() >= minimumClusterSize) {
-				try {
-					toReturn.put(node, Color.decode(indexcolors[i++]));
-				} catch(ArrayIndexOutOfBoundsException e) {
-					toReturn.put(node, Color.WHITE);
+			if(node != null)
+				if(cluster.getTree().getLeaves(node).size() >= minimumClusterSize) {
+					try {
+						toReturn.put(node, Color.decode(indexcolors[i++]));
+					} catch(ArrayIndexOutOfBoundsException e) {
+						toReturn.put(node, Color.WHITE);
+					}
+				} else {
+					toReturn.put(node, Color.BLACK);
 				}
-			} else {
-				toReturn.put(node, Color.BLACK);
-			}
 		}
 		return toReturn;
 	}

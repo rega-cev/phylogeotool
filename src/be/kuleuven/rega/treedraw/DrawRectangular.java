@@ -79,7 +79,7 @@ public class DrawRectangular extends Draw {
 				graphics.setColor(graphics.getColor().darker());
 				graphics.draw(circle);
 			
-				final WCircleNode wCircle = new WCircleNode((int)(map.get(edge.getNode2()).getX()), (int)(map.get(edge.getNode2()).getY()), (int)(r/2), edge.getNode2());
+				final WCircleNode wCircle = new WCircleNode((int)(map.get(edge.getNode2()).getX()), (int)(map.get(edge.getNode2()).getY()), (int)(r/2), edge.getNode2(), graphics.getColor());
 				wCircle.setToolTip("Node " + edge.getNode2().getId());
 				wCircle.setCursor(Cursor.CrossCursor);
 				circleNodes.add(wCircle);

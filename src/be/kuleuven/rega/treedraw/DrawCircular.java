@@ -1,5 +1,6 @@
 package be.kuleuven.rega.treedraw;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Arc2D;
@@ -13,8 +14,10 @@ import java.util.Map;
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Edge;
 import be.kuleuven.rega.phylogeotool.core.Node;
+import be.kuleuven.rega.phylogeotool.pplacer.PPlacer;
 import be.kuleuven.rega.phylogeotool.tree.Shape;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
+import be.kuleuven.rega.prerendering.FacadeRequestData;
 import be.kuleuven.rega.webapp.WebGraphics2DMine;
 import eu.webtoolkit.jwt.Cursor;
 
@@ -22,10 +25,12 @@ public class DrawCircular extends Draw {
 
 	private Cluster cluster = null;
 	private Shape shape = null;
-
-	public DrawCircular(Cluster cluster, Shape shape) {
+	private List<Node> clustersWithPPlacerSeq = null;
+	
+	public DrawCircular(Cluster cluster, Shape shape, List<Node> clustersWithPPlacerSeq) {
 		this.cluster = cluster;
 		this.shape = shape;
+		this.clustersWithPPlacerSeq = clustersWithPPlacerSeq;
 	}
 
 	public List<WCircleNode> paint(WebGraphics2DMine graphics, Map<Node, DrawData> map, Map<Node, Color> nodeToColor, double paintAreaWidth, double paintAreaHeight) {	
@@ -94,8 +99,14 @@ public class DrawCircular extends Draw {
 					circleWidth = (int) (diameter * factor);
 				}
 				Rectangle boundingBox = new Rectangle((int) (polarToEucledianX(map.get(cluster.getRoot()).getX(), map.get(cluster.getRoot()).getTheta()) * factor + moveRight - circleWidth / 2), (int) (polarToEucledianY(map.get(cluster.getRoot()).getX(), map.get(cluster.getRoot()).getTheta()) * factor + moveDown - circleWidth / 2), circleWidth, circleWidth);
+				
+				if(clustersWithPPlacerSeq.contains(edge.getNode2())) {
+					graphics.setStroke(new BasicStroke(3));
+				}
 				graphics.draw(new Arc2D.Double(boundingBox, 360 - Math.toDegrees(map.get(edge.getNode1()).getTheta()), Math.toDegrees(map.get(edge.getNode1()).getTheta()) - Math.toDegrees(map.get(edge.getNode2()).getTheta()), Arc2D.Double.OPEN));
 				graphics.draw(new Line2D.Double(corner, end));
+				graphics.setStroke(new BasicStroke(1));
+				
 //				graphics.drawString(Integer.toString(edge.getNode2().getId()), (int)map.get(edge.getNode2()).getX(), (int)map.get(edge.getNode2()).getY());
 			} else if (shape == Shape.RADIAL) {
 				graphics.draw(new Line2D.Double(map.get(edge.getNode1()).getX() * factor + moveRight, map.get(edge.getNode1()).getY() * factor + moveDown, map.get(edge.getNode2()).getX() * factor + moveRight, map.get(edge.getNode2()).getY() * factor + moveDown));
@@ -118,13 +129,20 @@ public class DrawCircular extends Draw {
 				Ellipse2D.Double circle = new Ellipse2D.Double(x - (r / 2), y - (r / 2), r, r);
 				graphics.fill(circle);
 				// If you want the circle to be surrounded
-				graphics.setColor(graphics.getColor().darker());
+				if(clustersWithPPlacerSeq.contains(edge.getNode2())) {
+					graphics.setColor(Color.black);
+					graphics.setStroke(new BasicStroke(3));
+				} else {
+					graphics.setColor(graphics.getColor().darker());
+				}
 //				graphics.setStroke(new BasicStroke(5));
 				graphics.draw(circle);
+				graphics.setStroke(new BasicStroke(1));
 				
-				final WCircleNode wCircle = new WCircleNode((int)(x), (int)(y), (int)(r/2), edge.getNode2());
+				final WCircleNode wCircle = new WCircleNode((int)(x), (int)(y), (int)(r/2), edge.getNode2(), nodeToColor.get(edge.getNode2()));
 				circleNodes.add(wCircle);
-				wCircle.setToolTip("Node " + edge.getNode2().getId());
+//				wCircle.setToolTip("Node " + edge.getNode2().getId());
+				wCircle.setToolTip(Integer.toString(cluster.getTree().getLeaves(wCircle.getNode()).size()) + " taxa");
 				wCircle.setCursor(Cursor.CrossCursor);
 				
 				// TODO: Handle the clicks. How to?

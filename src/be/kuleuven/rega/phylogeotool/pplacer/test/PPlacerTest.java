@@ -2,8 +2,6 @@ package be.kuleuven.rega.phylogeotool.pplacer.test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -13,7 +11,6 @@ import org.junit.Test;
 
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
-import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
 import be.kuleuven.rega.phylogeotool.pplacer.PPlacer;
 
@@ -28,11 +25,12 @@ public class PPlacerTest {
 		introducedSequences.add("C.ZA.1998.TV001_patent.AX455917");
 		introducedSequences.add("G.ES.2014.ARP1201.KT276261");
 		JobScheduler jobScheduler = new JobScheduler();
-		String tempDir = jobScheduler.createTempDirs();
-		String pplacedTree = jobScheduler.doPPlacing(tempDir, "/Users/ewout/git/phylogeotool/test/phylo.tree", 
-				"/Users/ewout/git/phylogeotool/test/alignment.fasta", "/Users/ewout/git/phylogeotool/test/sequences.fasta", 
-				"/Users/ewout/git/phylogeotool/test/logfile.log");
-		pplacer = new PPlacer(pplacedTree, introducedSequences);
+		//TODO: Add folder with test files
+//		jobScheduler.addPPlacerJob();
+//		String pplacedTree = jobScheduler.doPPlacing(tempDir, "/Users/ewout/git/phylogeotool/test/phylo.tree", 
+//				"/Users/ewout/git/phylogeotool/test/alignment.fasta", "/Users/ewout/git/phylogeotool/test/sequences.fasta", 
+//				"/Users/ewout/git/phylogeotool/test/logfile.log");
+//		pplacer = new PPlacer(pplacedTree, introducedSequences);
 	}
 	
 	@Test

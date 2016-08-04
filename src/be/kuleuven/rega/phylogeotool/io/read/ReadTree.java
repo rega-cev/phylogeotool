@@ -19,33 +19,48 @@ import jebl.evolution.trees.SimpleRootedTree;
 import jebl.evolution.trees.Tree;
 import be.kuleuven.rega.phylogeotool.core.Edge;
 import be.kuleuven.rega.phylogeotool.core.Node;
-import be.kuleuven.rega.phylogeotool.settings.Settings;
 
 public class ReadTree {
 	
 	private static Tree jeblTree;
 	private static be.kuleuven.rega.phylogeotool.core.Tree treeDrawTree;
 	
-	public static Tree getJeblTree() {
+	// TODO: Improve the code to distinguish between method that stores the tree and one that creates new tree
+	public static void setJeblTree(String locationJeblTree) {
 		if(jeblTree == null) {
 			System.err.println("Reading Jebl Tree");
-			Settings settings = Settings.getInstance();
+//			Settings settings = Settings.getInstance();
 			try {
-				jeblTree = readTree(new FileReader(new File(settings.getPhyloTree())));
+				jeblTree = readTree(new FileReader(new File(locationJeblTree)));
 			} catch (FileNotFoundException e) {
 				System.err.println("Could not find the tree to import.");
 				e.printStackTrace();
 			}
 		}
-		return jeblTree;
+	}
+	
+	public static Tree getJeblTree() {
+		if(jeblTree != null) {
+			return jeblTree;
+		} else {
+			throw new RuntimeException("Jebl Tree not set before trying to get!");
+		}
+	}
+	
+	public static be.kuleuven.rega.phylogeotool.core.Tree setTreeDrawTree(Tree jeblTree) {
+		if(treeDrawTree == null) {
+			System.err.println("Reading Draw Tree");
+			treeDrawTree = jeblToTreeDraw((SimpleRootedTree)jeblTree, null);
+		}
+		return treeDrawTree;
 	}
 	
 	public static be.kuleuven.rega.phylogeotool.core.Tree getTreeDrawTree() {
-		if(treeDrawTree == null) {
-			System.err.println("Reading Draw Tree");
-			treeDrawTree = jeblToTreeDraw((SimpleRootedTree)getJeblTree(), null);
+		if(treeDrawTree != null) {
+			return treeDrawTree;
+		} else {
+			throw new RuntimeException("TreeDraw Tree not set before trying to get!");
 		}
-		return treeDrawTree;
 	}
 	
 	public static Tree readTree(Reader reader) {

@@ -7,7 +7,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import jebl.evolution.trees.Tree;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
+import be.kuleuven.rega.phylogeotool.settings.Settings;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WEnvironment;
 import eu.webtoolkit.jwt.WtServlet;
@@ -58,8 +60,8 @@ public class Main extends WtServlet implements javax.servlet.ServletContextListe
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.err.println("Phylogeotool started");
-		ReadTree.getJeblTree();
+		ReadTree.setJeblTree(Settings.getInstance().getPhyloTree());
 //		System.out.println(ReadTree.getJeblTree().getTaxa().size());
-		ReadTree.getTreeDrawTree();
+		ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
 	}
 }

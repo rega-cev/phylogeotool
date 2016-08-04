@@ -44,8 +44,6 @@ public class PPlacer {
 		for(Entry<Node, Node> neighbour:neighbours.entrySet()) {
 			for(Node node:cluster.getTree().getAllNodes(cluster.getRoot())) {
 				if(node.getId() == neighbour.getValue().getId()) {
-					System.out.println("RootId: " + cluster.getRootId() + " NodeId: " + neighbour.getValue().getId());
-					System.out.println("PPlaced: " + neighbour.getKey().getLabel());
 					return true;
 				}
 			}
@@ -70,7 +68,7 @@ public class PPlacer {
 			leaf = tree.getLeafByLabel(introducedSequence);
 			for (Node node : leaf.getParent().getImmediateChildren()) {
 				if (!node.equals(leaf)) {
-					neighbours.put(leaf, node);
+					neighbours.put(leaf, ReadTree.getTreeDrawTree().getLeastCommonAncestor(tree.getLeavesAsString(node)));
 				}
 			}
 		}
@@ -110,9 +108,13 @@ public class PPlacer {
 		pplacedIds.add("TEST_1");
 		pplacedIds.add("TEST_2");
 		pplacedIds.add("TEST_3");
-		PPlacer pplacer = new PPlacer("/var/folders/0q/jfc96hd17xzfy6ck_ghw9grh0000gn/T/pplacer.KjSYNmgz/sequences.tog.tre", pplacedIds);
-		Map<Node, Node> neighbours = pplacer.getNeighbourSeqs("/var/folders/0q/jfc96hd17xzfy6ck_ghw9grh0000gn/T/pplacer.KjSYNmgz/sequences.tog.tre", pplacedIds);
-		for(Entry<Node,Node> entry:neighbours.entrySet()) {
+		PPlacer pplacer = new PPlacer("/var/folders/0q/jfc96hd17xzfy6ck_ghw9grh0000gn/T/pplacer.CnHlwGf6/sequences.tog.tre", pplacedIds);
+		Map<Node, Node> neighbours = pplacer.getNeighbourSeqs("/var/folders/0q/jfc96hd17xzfy6ck_ghw9grh0000gn/T/pplacer.CnHlwGf6/sequences.tog.tre", pplacedIds);
+		for(Entry<Node, Node> entry:neighbours.entrySet()) {
+//			System.out.println("Key: " + entry.getKey().getLabel());
+//			for(Node node:entry.getValue()) {
+//				System.out.println(node.getLabel());
+//			}
 			System.out.println(entry.getKey().getLabel() + " neighbour: " + entry.getValue().getId());
 		}
 	}

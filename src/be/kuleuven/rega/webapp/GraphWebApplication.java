@@ -1,5 +1,6 @@
 package be.kuleuven.rega.webapp;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import be.kuleuven.rega.form.MyComboBox;
 import be.kuleuven.rega.phylogeotool.core.Node;
+import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
 import be.kuleuven.rega.phylogeotool.pplacer.PPlacer;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
@@ -17,15 +19,16 @@ import be.kuleuven.rega.prerendering.FacadeRequestData;
 import be.kuleuven.rega.prerendering.PreRendering;
 import be.kuleuven.rega.url.UrlManipulator;
 import be.kuleuven.rega.webapp.widgets.GoogleChartWidget;
+import be.kuleuven.rega.webapp.widgets.PPlacerForm;
 import be.kuleuven.rega.webapp.widgets.WBarChartMine;
 import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
 import be.kuleuven.rega.webapp.widgets.WDownloadResource;
-import be.kuleuven.rega.webapp.widgets.WImageSDRMine;
 import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
 import be.kuleuven.rega.webapp.widgets.WTreeDownloaderForm;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
 import eu.webtoolkit.jwt.WApplication;
+import eu.webtoolkit.jwt.WColor;
 import eu.webtoolkit.jwt.WComboBox;
 import eu.webtoolkit.jwt.WCssTextRule;
 import eu.webtoolkit.jwt.WDialog;
@@ -58,12 +61,12 @@ public class GraphWebApplication extends WApplication {
 	private char csvDelimitor = ';';
 	private FacadeRequestData facadeRequestData;
 	private PPlacer pplacer;
+	private JobScheduler jobScheduler;
 	
 	private String treeRenderLocation = "";
 	private String clusterRenderLocation = "";
 	private String csvRenderLocation = "";
 	private String treeViewRenderLocation = "";
-	private String sdrLocation = "";
 	
 	private boolean showNAData = false;
 
@@ -78,16 +81,15 @@ public class GraphWebApplication extends WApplication {
 		this.csvRenderLocation = settings.getXmlPath();
 		this.treeViewRenderLocation = settings.getTreeviewPath();
 		this.metaDataFile = new File(settings.getMetaDataFile());
-		this.sdrLocation = settings.getRGraphsPath();
 		this.showNAData = settings.getShowNAData();
 		
 		this.setCSS();
 		
-		facadeRequestData = new FacadeRequestData(new PreRendering(treeRenderLocation, clusterRenderLocation, csvRenderLocation, treeViewRenderLocation));
+		facadeRequestData = new FacadeRequestData(new PreRendering(treeRenderLocation, clusterRenderLocation, csvRenderLocation, treeViewRenderLocation), settings.getPhyloTree());
 //			jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree"));
 //			Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 //			facadeRequestData = new FacadeRequestData(tree, new File("/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv"), new DistanceCalculateFromTree());
-		
+		jobScheduler = new JobScheduler();
 		WVBoxLayout rootLayout = new WVBoxLayout(this.getRoot());
 		WTemplate header = createHeader();
 		rootLayout.addWidget(header);
@@ -98,7 +100,7 @@ public class GraphWebApplication extends WApplication {
 		try {
 			graphWidget = new GraphWidget(facadeRequestData);
 			HashMap<String, Integer> countries = null;
-			countries = facadeRequestData.readCsv(graphWidget.getCluster().getRoot().getId(), "COUNTRY_OF_ORIGIN", showNAData);
+			countries = facadeRequestData.readCsv(graphWidget.getCluster().getRoot().getId(), settings.getVisualizeGeography(), showNAData);
 			wGroupBoxGoogleMapWidget = getGoogleChartWGroupBox(countries,null,null);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -122,21 +124,21 @@ public class GraphWebApplication extends WApplication {
 			}
 		});
 		
-		WPushButton sdrButton = new WPushButton("SDR");
-		sdrButton.clicked().addListener(this, new Signal.Listener() {
+		WPushButton pplaceButton = new WPushButton("PPlacer");
+		pplaceButton.clicked().addListener(this, new Signal.Listener() {
 			public void trigger() {
-		        showSDR();
+		        showPPlacer();
 		    }
 		});
-		sdrButton.setDisabled(true);
+//		sdrButton.setDisabled(true);
 		
 //		graphWidget.setMaximumSize(new WLength(100.0, Unit.Percentage), new WLength(100.0, Unit.Percentage));
 		graphWidget.setMinimumSize(new WLength(300.0, Unit.Pixel), new WLength(100.0, Unit.Percentage));
 		wPushButton.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(15));
-		sdrButton.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(15));
+		pplaceButton.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(15));
 		//TODO: Change this exact value
 		wHBoxLayout.addWidget(wPushButton);
-		wHBoxLayout.addWidget(sdrButton);
+		wHBoxLayout.addWidget(pplaceButton);
 //		wHBoxLayout.addWidget(exportSequencesButton);
 		wVBoxLayoutGraphWidget.addLayout(wHBoxLayout);
 		wVBoxLayoutGraphWidget.addWidget(graphWidget);
@@ -199,7 +201,7 @@ public class GraphWebApplication extends WApplication {
 	
 	public void mouseWentOver(WMouseEvent wMouseEvent, WCircleNode wCircleNode) {
 		this.setGoogleChart(wCircleNode.getNode().getId());
-		this.updateStatisticGraph(wBarChartMine, wCircleNode.getNode().getId());
+		this.updateStatisticGraph(wBarChartMine, wCircleNode.getNode().getId(), wCircleNode.getColor());
 	}
 
 	public void mouseWentOut(WMouseEvent wMouseEvent, WCircleNode wCircleNode) {
@@ -216,7 +218,7 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	private void setGoogleChart(int nodeId) {
-		HashMap<String, Integer> countries = facadeRequestData.readCsv(nodeId, "COUNTRY_OF_ORIGIN", showNAData);
+		HashMap<String, Integer> countries = facadeRequestData.readCsv(nodeId, settings.getVisualizeGeography(), showNAData);
 		this.googleChartWidget.setCountries(countries);
 		this.googleChartWidget.setRegion("");
 		this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
@@ -224,11 +226,13 @@ public class GraphWebApplication extends WApplication {
 	
 	private void setStatisticGraph(WBarChartMine wBarChartMine, int nodeId) {
 		if(wComboBoxMetadata != null)
+			wBarChartMine.setSecondBarColor(WColor.white);
 			wBarChartMine.setData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText(), showNAData));
 	}
 	
-	private void updateStatisticGraph(WBarChartMine wBarChartMine, int nodeId) {
+	private void updateStatisticGraph(WBarChartMine wBarChartMine, int nodeId, Color clusterColor) {
 		if(wComboBoxMetadata != null)
+			wBarChartMine.setSecondBarColor(new WColor(clusterColor.getRed(), clusterColor.getGreen(), clusterColor.getBlue()));
 			wBarChartMine.updateData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText(), showNAData));
 	}
 	
@@ -244,13 +248,13 @@ public class GraphWebApplication extends WApplication {
 	    final WDownloadResource wDownloadResource = new WDownloadResource(dialog.getContents(), "cluster_" + UrlManipulator.getId(WApplication.getInstance().getInternalPath()), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), GraphicFormat.PDF);
 	    wDownloadResource.setDispositionType(DispositionType.Attachment);
 	    button.setLink(new WLink(wDownloadResource));
-
+	    button.disable();
+	    
 	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
 	    WTreeDownloaderForm wTreeDownloader = new WTreeDownloaderForm(dialog, wDownloadResource, button, cancel);
 	    dialog.getContents().addWidget(wTreeDownloader.getWidget());
 	    
 	    dialog.rejectWhenEscapePressed();
-	    
 	    
 	    cancel.clicked().addListener(dialog,
 	            new Signal1.Listener<WMouseEvent>() {
@@ -261,12 +265,10 @@ public class GraphWebApplication extends WApplication {
 	    dialog.show();
 	}
 	
-	private final void showSDR() {
-		final WDialog dialog = new WDialog("SDR - Second Derivative");
-		WImageSDRMine wImageSDRMine = new WImageSDRMine(sdrLocation, UrlManipulator.getId(WApplication.getInstance().getInternalPath()), true);
-		WImageSDRMine wImageSDRMine2 = new WImageSDRMine(sdrLocation, UrlManipulator.getId(WApplication.getInstance().getInternalPath()), false);
-	    dialog.getContents().addWidget(wImageSDRMine.getWidget());
-	    dialog.getContents().addWidget(wImageSDRMine2.getWidget());
+	private final void showPPlacer() {
+		final WDialog dialog = new WDialog("PPlace your sequence");
+	    final PPlacerForm PPlacerForm = new PPlacerForm(dialog);
+		dialog.getContents().addWidget(PPlacerForm.getWidget());
 	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
 	    dialog.rejectWhenEscapePressed();
 	    cancel.clicked().addListener(dialog,
@@ -276,6 +278,20 @@ public class GraphWebApplication extends WApplication {
 	                }
 	            });
 	    dialog.show();
+	    WPushButton pplace = new WPushButton("Start", dialog.getContents());
+	    pplace.clicked().addListener(dialog,
+	            new Signal1.Listener<WMouseEvent>() {
+	                public void trigger(WMouseEvent e1) {
+	                	if(PPlacerForm.isFormValid()) {
+		                	System.out.println(PPlacerForm.getUploadedFile().getAbsolutePath());
+		                    jobScheduler.addPPlacerJob(settings.getScriptFolder(), settings.getPhyloTree(), settings.getAlignmentLocation(),
+		                    		PPlacerForm.getUploadedFile().getAbsolutePath(), settings.getLogfileLocation(), PPlacerForm.getEmail());
+		                    dialog.reject();
+	                	} else {
+	                		
+	                	}
+	                }
+	            });
 	}
 	
 	private void setCSS() {
@@ -388,20 +404,20 @@ public class GraphWebApplication extends WApplication {
 				}
 			});
 			wComboBoxMetadata.changed().trigger();
-			wComboBoxMetadata.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(20));
+			wComboBoxMetadata.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(25));
 			WGroupBox wgroupboxMetadata = new WGroupBox();
 			wgroupboxMetadata.setStyleClass("label");
 			WText metadataLabel = new WText("Select attribute: ");
 			wgroupboxMetadata.addWidget(metadataLabel);
-			metadataLabel.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(20));
+			wgroupboxMetadata.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(25));
 			wgroupboxMetadata.addWidget(wComboBoxMetadata);
 			wvBoxLayoutChart.addWidget(wgroupboxMetadata);
 			wvBoxLayoutChart.setStretchFactor(wgroupboxMetadata, 0);
 		}
 		
 		
-		wvBoxLayoutChart.addLayout(wBarChartMine.getLayout());
-		wvBoxLayoutChart.setStretchFactor(wBarChartMine.getLayout(), 1);
+		wvBoxLayoutChart.addWidget(wBarChartMine.getWidget());
+		wvBoxLayoutChart.setStretchFactor(wBarChartMine.getWidget(), 1);
 		return wvBoxLayout;
 	}
 	
