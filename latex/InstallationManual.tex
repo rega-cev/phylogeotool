@@ -51,27 +51,53 @@ Installation Reference Manual} % Subtitle
 
 \section{Installation}
 
-\subsection{Prerequisites}
+\subsection{Using pre-built JAR files}
+If you don't want to perform a manual installation, you can skip the following sections and proceed to section \ref{sec:jars}.
+
+
+\subsection{Prerequisites for building your own}
 
 \subsubsection*{Java}
 Download and install the newest Java Development Kit (JDK) from \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
 The current version of PhyloGeoTool was built using JDK 1.8.0\_31.
+For example, on Ubuntu Linux, Oracle Java 8 can be installed as follows (although OpenJDK should work just fine):
+\begin{verbatim} 
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+\end{verbatim}
 
 \subsubsection*{Tomcat}
 Download and install the latest Tomcat version from \url{http://tomcat.apache.org}.
+For example:
+\begin{verbatim}
+sudo apt-get update
+sudo apt-get install tomcat7
+\end{verbatim}
 
 \subsubsection*{Github}
 Download the code from \url{https://github.com/rega-cev/phylogeotool/}. 
 The project is currently still private. 
 During the trial period you can send an email to \href{mailto:phylogeotool@kuleuven.be}  {phylogeotool@kuleuven.be} with your Github account name to get read rights on the project.
+Git is readily available on most operating systems; if not, it can be installed as follows:
+\begin{verbatim}
+sudo apt-get install git-all
+\end{verbatim}
 
 \subsubsection*{Ant}
 Download and install the newest Ant version from \url{http://ant.apache.org/} as we will use it to build our project.
-The current version of PhyloGeoTool was built using Ant 1.9.4
+The current version of PhyloGeoTool was built using Ant 1.9.4.
+Ant can be installed as follows:
+\begin{verbatim}
+sudo apt-get install ant
+\end{verbatim}
 
-\subsubsection*{Phylogenetic tree} %GB: we also need a phylogenetic tree to deploy the application, right? Or to at least perform the distance matrix calculations and such? So what format should this tree be in? Can it be a time-stamped tree, i.e. with heterochronous taxa? Can it be rooted or unrooted?
+\subsubsection*{Phylogenetic tree}
+A rooted binary phylogenetic tree in either Nexus or Newick format, which may or may not be time-stamped.
 
-
+\subsubsection*{CSV file}
+A comma-separated value (CSV) file, containing an ID column that contains IDs that match the taxa names of the provided phylogenetic tree.
+Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as location, birth year, subtype, ethnic group, \ldots
 
 \subsection{Building the project}
 
@@ -80,12 +106,19 @@ The current version of PhyloGeoTool was built using Ant 1.9.4
 We here outline the various steps necessary for a successful build of the project.
 The build process here is described as it was performed on an Ubuntu 14.04 LTS (Trusty Tahr) installation.
 \begin{itemize}
-\item Go the the following directory:
-\item In that directory, you should see the following files:
-\item \ldots
+\item Create an empty directory
+\item {In that directory, clone the git repository: 
+\begin{verbatim}
+git clone https://github.com/rega-cev/phylogeotool/
+cd phylogeotool
+ant
+\end{verbatim}
+}
+\item This build process generates a phylogeotool-01.war in the dist directory. Copy this file to the webapps folder of Tomcat. This enables browser access to a localhost version of the PhyloGeoTool.
 \end{itemize}
 
 \section{Data preparation}
+\label{sec:jars}
 After the project has been built successfully, different jar files can be found in the dist folder. 
 Their function is explained in the sections below.
 
