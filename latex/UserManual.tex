@@ -127,9 +127,11 @@ When the 'View Tree' button on top of the circular phylogenetic tree representat
 In addition to the visualisation of the tree, export options are available. The user can select if he/she wants the tree to be coloured, if the node tips should be shown and in which format the tree will be exported. 
 
 \subsection{PPlacer}
-Explanation of the PPlacer here. Not enough relevant data yet. Should be added here. \citep{Matsen2010}
+pplacer is a software package for phylogenetic placement and subsequent visualization \citep{Matsen2010}.
+Phylogenetic placement allows to insert/place unknown query sequences onto an existing phylogenetic tree via a reference alignment and uses techniques from likelihood-based phylogenetic inference to do so.
+As such, pplacer features calculation of the posterior probability of the placement on an edge, which is a statistically rigorous way of quantifying uncertainty on an edge-by-edge basis.
 
-Using PPLacer, additional sequences can be added to a previously reconstructed phylogenetic tree.
+PhyloGeoTool focuses on using pplacer to position additional sequences onto a previously reconstructed phylogenetic tree.
 To do so, select PPlacer in the clustering window; there are two ways to add a new sequence to the tree:
 \begin{itemize}
 \item Paste the nucleotide sequence you'd like to add in the presented window.
