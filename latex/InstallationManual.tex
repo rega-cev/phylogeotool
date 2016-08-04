@@ -50,21 +50,41 @@ Installation Reference Manual} % Subtitle
 \newpage
 
 \section{Installation}
+
 \subsection{Prerequisites}
+
 \subsubsection*{Java}
 Download and install the newest Java Development Kit (JDK) from \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
-The current version of the tool was build on JDK 1.8.0\_31.
+The current version of PhyloGeoTool was built on JDK 1.8.0\_31.
+
 \subsubsection*{Tomcat}
-Download and install the newest Tomcat version from \url{http://tomcat.apache.org}.
+Download and install the latest Tomcat version from \url{http://tomcat.apache.org}.
+
 \subsubsection*{Github}
-Download the code from \url{https://github.com/rega-cev/phylogeotool/}. The project is currently still private. During the trial period you can send an email to \href{mailto:phylogeotool@kuleuven.be}  {phylogeotool@kuleuven.be} with your Github account name to get read rights on the project.
+Download the code from \url{https://github.com/rega-cev/phylogeotool/}. 
+The project is currently still private. 
+During the trial period you can send an email to \href{mailto:phylogeotool@kuleuven.be}  {phylogeotool@kuleuven.be} with your Github account name to get read rights on the project.
+
 \subsubsection*{Ant}
 Download and install the newest Ant version from \url{http://ant.apache.org/} as we will use it to build our project.
-The current version of the tool was build with Ant 1.9.4
+The current version of PhyloGeoTool was built with Ant 1.9.4
 %------------------------------------------------
 
+\subsection{Building the project}
+
+\subsubsection{Linux}
+
+We here outline the various steps necessary for a successful build of the project.
+The build process here is described as it was performed on an Ubuntu 14.04 LTS (Trusty Tahr) installation.
+\begin{itemize}
+\item Go the the following directory:
+\item \ldots
+\end{itemize}
+
 \section{Data preparation}
-After building the code, different jar files can be found in the dist folder. Their function is explained here.
+After the project has been built successfully, different jar files can be found in the dist folder. 
+Their function is explained in the sections below.
+
 \subsection{DistanceMatrix.jar}
 Tool to create a distance matrix based on the phylogenetic tree that will be used in the PhyloGeoTool.
 \\
