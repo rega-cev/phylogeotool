@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 
 import be.kuleuven.rega.phylogeotool.core.Cluster;
+import be.kuleuven.rega.phylogeotool.settings.Settings;
 import be.kuleuven.rega.phylogeotool.tools.ColorClusters;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.WFileResource;
@@ -44,7 +45,7 @@ public class WDownloadResource extends WFileResource {
 		BufferedOutputStream output;
 		try {
 			output = new BufferedOutputStream(response.getOutputStream());
-			ColorClusters.prepareFullTreeView(cluster, graphicFormat, output, 2, colorTree, showTips);
+			ColorClusters.prepareFullTreeView(Settings.getInstance().getPhyloTree(), cluster, graphicFormat, output, 2, colorTree, showTips);
 			output.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
