@@ -13,81 +13,84 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import be.kuleuven.rega.phylogeotool.tools.Sequence;
+
 import com.opencsv.CSVParser;
 
 public class CsvUtils {
-//	private final static String ID = "ID";
-//	private final static String PATIENT_ID = "PATIENT_ID";
+	private final static String ID = "ID";
+	private final static String PATIENT_ID = "PATIENT_ID";
 //	private final static String SAMPLE_ID = "sample_id";
 //	private final static String VIRAL_ISOLATE_ID = "sample_date";
 //	private final static String VIRAL_ISOLATE_ID = "viral_isolate_ii";
-//	private final static String SAMPLE_DATE = "SAMPLE_DATE";
+	private final static String SAMPLE_DATE = "SAMPLE_DATE";
 //	private final static String DATASET = "dataset";
-//	private final static String NUCLEOTIDES = "NUCLEOTIDES";
-//	private final static String COUNTRY_OF_ORIGIN_ISO = "COUNTRY_OF_ORIGIN_ISO";
-//	private final static String COUNTRY_OF_ORIGIN_EN = "COUNTRY_OF_ORIGIN_EN";
-//	private final static String COUNTRY_OF_INFECTION_ISO = "COUNTRY_OF_INFECTION_ISO";
-//	private final static String COUNTRY_OF_INFECTION_EN = "COUNTRY_OF_INFECTION_EN";
-//	
-//	private final static String YEAR_OF_BIRTH = "YEAR_OF_BIRTH";
-//	private final static String GENDER = "GENDER";
-//	private final static String ETHNIC_GROUP = "ETHNIC_GROUP";
-//	private final static String RISK_GROUP = "RISK_GROUP";
-//	private final static String GENE_REGION = "GENE_REGION";
+	private final static String NUCLEOTIDES = "NUCLEOTIDES";
+	private final static String COUNTRY_OF_ORIGIN_ISO = "COUNTRY_OF_ORIGIN_ISO";
+	private final static String COUNTRY_OF_ORIGIN_EN = "COUNTRY_OF_ORIGIN_EN";
+	private final static String COUNTRY_OF_INFECTION_ISO = "COUNTRY_OF_INFECTION_ISO";
+	private final static String COUNTRY_OF_INFECTION_EN = "COUNTRY_OF_INFECTION_EN";
+	
+	private final static String YEAR_OF_BIRTH = "YEAR_OF_BIRTH";
+	private final static String GENDER = "GENDER";
+	private final static String ETHNIC_GROUP = "ETHNIC_GROUP";
+	private final static String RISK_GROUP = "RISK_GROUP";
+	private final static String GENE_REGION = "GENE_REGION";
 	
 
-//	public static List<Sequence> readCsv(File csv, char delimitor, String dateFormat) throws IOException {
-//		List<Sequence> sequences = new ArrayList<Sequence>();
-//
-//		CSVParser parser = new CSVParser(delimitor);
-//
-//		BufferedReader br = new BufferedReader(new FileReader(csv));
-//		try {
-//			String line = br.readLine();
-//			String[] header = parser.parseLine(line);
-//
-//			line = br.readLine();
-//			while (line != null) {
-//				String[] row = parser.parseLine(line);
-//				DateFormat df = new SimpleDateFormat(dateFormat);
-//
-//				try {
-//					Date d = null;
-//					String sampleDate = row[indexOf(header, SAMPLE_DATE)];
-//					
-//					if (!sampleDate.equals(""))
-//						d = df.parse(sampleDate);
-//
-////					Sequence s = new Sequence(row[indexOf(header, ID)], row[indexOf(header, PATIENT_ID)], VIRAL_ISOLATE_ID)], d,
-////							row[indexOf(header, DATASET)], row[indexOf(header, NUCLEOTIDES)], row[indexOf(header, COUNTRY_OF_ORIGIN)]);
-//					
-////					Sequence s = new Sequence(row[indexOf(header, ID)], row[indexOf(header, PATIENT_ID)], row[indexOf(header, VIRAL_ISOLATE_ID)], d,
-////							"", row[indexOf(header, NUCLEOTIDES)], "");
-//					
-////					Sequence s = new Sequence(row[indexOf(header, ID)], row[indexOf(header, PATIENT_ID)], d, row[indexOf(header, NUCLEOTIDES)], 
-////							row[indexOf(header, COUNTRY_OF_ORIGIN)], row[indexOf(header, YEAR_OF_BIRTH)], row[indexOf(header, COUNTRY_OF_INFECTION)], row[indexOf(header, GENDER)], 
-////							row[indexOf(header, ETHNIC_GROUP)], row[indexOf(header, RISK_GROUP)]);
-//					
+	public static List<Sequence> readCsv(File csv, char delimitor, String dateFormat) throws IOException {
+		List<Sequence> sequences = new ArrayList<Sequence>();
+
+		CSVParser parser = new CSVParser(delimitor);
+
+		BufferedReader br = new BufferedReader(new FileReader(csv));
+		try {
+			String line = br.readLine();
+			String[] header = parser.parseLine(line);
+
+			line = br.readLine();
+			while (line != null) {
+				String[] row = parser.parseLine(line);
+				DateFormat df = new SimpleDateFormat(dateFormat);
+
+				try {
+					Date d = null;
+					String sampleDate = row[indexOf(header, SAMPLE_DATE)];
+					
+					if (!sampleDate.equals(""))
+						d = df.parse(sampleDate);
+
+//					Sequence s = new Sequence(row[indexOf(header, ID)], row[indexOf(header, PATIENT_ID)], VIRAL_ISOLATE_ID)], d,
+//							row[indexOf(header, DATASET)], row[indexOf(header, NUCLEOTIDES)], row[indexOf(header, COUNTRY_OF_ORIGIN)]);
+					
+//					Sequence s = new Sequence(row[indexOf(header, ID)], row[indexOf(header, PATIENT_ID)], row[indexOf(header, VIRAL_ISOLATE_ID)], d,
+//							"", row[indexOf(header, NUCLEOTIDES)], "");
+					
 //					Sequence s = new Sequence(row[indexOf(header, ID)], row[indexOf(header, PATIENT_ID)], d, row[indexOf(header, NUCLEOTIDES)], 
-//							row[indexOf(header, COUNTRY_OF_ORIGIN_ISO)], row[indexOf(header, COUNTRY_OF_ORIGIN_EN)], row[indexOf(header, YEAR_OF_BIRTH)], 
-//							row[indexOf(header, COUNTRY_OF_INFECTION_ISO)], row[indexOf(header, COUNTRY_OF_INFECTION_EN)], row[indexOf(header, GENDER)], 
-//							row[indexOf(header, ETHNIC_GROUP)], row[indexOf(header, RISK_GROUP)], row[indexOf(header, GENE_REGION)]);
-//					
-//					sequences.add(s);
-//
-//					line = br.readLine();
-//				} catch (ParseException e) {
-//					e.printStackTrace();
-//					System.out.println(row[indexOf(header, PATIENT_ID)]);
-//					System.exit(0);
-//				}
-//			}
-//		} finally {
-//			br.close();
-//		}
-//
-//		return sequences;
-//	}
+//							row[indexOf(header, COUNTRY_OF_ORIGIN)], row[indexOf(header, YEAR_OF_BIRTH)], row[indexOf(header, COUNTRY_OF_INFECTION)], row[indexOf(header, GENDER)], 
+//							row[indexOf(header, ETHNIC_GROUP)], row[indexOf(header, RISK_GROUP)]);
+					
+					System.out.println(row[indexOf(header, ID)]);
+					Sequence s = new Sequence(row[indexOf(header, ID)], row[indexOf(header, PATIENT_ID)], d, row[indexOf(header, NUCLEOTIDES)], 
+							row[indexOf(header, COUNTRY_OF_ORIGIN_ISO)], row[indexOf(header, COUNTRY_OF_ORIGIN_EN)], row[indexOf(header, YEAR_OF_BIRTH)], 
+							row[indexOf(header, COUNTRY_OF_INFECTION_ISO)], row[indexOf(header, COUNTRY_OF_INFECTION_EN)], row[indexOf(header, GENDER)], 
+							row[indexOf(header, ETHNIC_GROUP)], row[indexOf(header, RISK_GROUP)], row[indexOf(header, GENE_REGION)]);
+					
+					sequences.add(s);
+
+					line = br.readLine();
+				} catch (ParseException e) {
+					e.printStackTrace();
+					System.out.println(row[indexOf(header, PATIENT_ID)]);
+					System.exit(0);
+				}
+			}
+		} finally {
+			br.close();
+		}
+
+		return sequences;
+	}
 //	
 //	public static List<Sequence> readCsvFasta(File csv, char delimitor) throws IOException {
 //		List<Sequence> sequences = new ArrayList<Sequence>();
@@ -126,35 +129,35 @@ public class CsvUtils {
 		return index;
 	}
 //
-//	public static void writeSequencesToCSV(File outputFile, List<Sequence> sequences, char delimitor) throws IOException {
-//		FileWriter fw = null;
-//		int id = 1;
-//		try {
-//			fw = new FileWriter(outputFile);
-////			fw.write(ID.toString() + ',' + PATIENT_ID.toString() + ',' + VIRAL_ISOLATE_ID.toString() + ',' + DATASET.toString() + ',' + NUCLEOTIDES.toString()
-////					+ ',' + SAMPLE_DATE.toString() + ',' + COUNTRY_OF_ORIGIN.toString());
-//			
-////			fw.write(ID.toString() + ',' + PATIENT_ID.toString() + ',' + VIRAL_ISOLATE_ID.toString() + ',' + NUCLEOTIDES.toString()
-////					+ ',' + SAMPLE_DATE.toString());
-//			
-//			fw.write("ID" + delimitor + PATIENT_ID.toString() + delimitor + YEAR_OF_BIRTH.toString() + delimitor + GENDER.toString() + delimitor + 
-//					COUNTRY_OF_ORIGIN_ISO.toString() + delimitor + COUNTRY_OF_ORIGIN_EN.toString() + delimitor +
-//					COUNTRY_OF_INFECTION_ISO.toString() + delimitor + COUNTRY_OF_INFECTION_EN.toString()  + delimitor +
-//					ETHNIC_GROUP.toString() + delimitor + RISK_GROUP.toString() + delimitor + SAMPLE_DATE.toString() + delimitor + 
-//					GENE_REGION.toString() + delimitor + NUCLEOTIDES.toString());
-//			
-//			fw.write('\n');
-//			for (Sequence s : sequences) {
-//				fw.write(Integer.toString(id++) + delimitor);
-//				fw.write(s.asCsvEUResist());
-//				fw.write('\n');
-//			}
-//			fw.close();
-//		} finally {
-//			if (fw != null)
-//				fw.close();
-//		}
-//	}
+	public static void writeSequencesToCSV(File outputFile, List<Sequence> sequences, char delimitor) throws IOException {
+		FileWriter fw = null;
+		int id = 1;
+		try {
+			fw = new FileWriter(outputFile);
+//			fw.write(ID.toString() + ',' + PATIENT_ID.toString() + ',' + VIRAL_ISOLATE_ID.toString() + ',' + DATASET.toString() + ',' + NUCLEOTIDES.toString()
+//					+ ',' + SAMPLE_DATE.toString() + ',' + COUNTRY_OF_ORIGIN.toString());
+			
+//			fw.write(ID.toString() + ',' + PATIENT_ID.toString() + ',' + VIRAL_ISOLATE_ID.toString() + ',' + NUCLEOTIDES.toString()
+//					+ ',' + SAMPLE_DATE.toString());
+			
+			fw.write("ID" + delimitor + PATIENT_ID.toString() + delimitor + YEAR_OF_BIRTH.toString() + delimitor + GENDER.toString() + delimitor + 
+					COUNTRY_OF_ORIGIN_ISO.toString() + delimitor + COUNTRY_OF_ORIGIN_EN.toString() + delimitor +
+					COUNTRY_OF_INFECTION_ISO.toString() + delimitor + COUNTRY_OF_INFECTION_EN.toString()  + delimitor +
+					ETHNIC_GROUP.toString() + delimitor + RISK_GROUP.toString() + delimitor + SAMPLE_DATE.toString() + delimitor + 
+					GENE_REGION.toString() + delimitor + NUCLEOTIDES.toString());
+			
+			fw.write('\n');
+			for (Sequence s : sequences) {
+				fw.write(Integer.toString(id++) + delimitor);
+				fw.write(s.asCsvEUResist());
+				fw.write('\n');
+			}
+			fw.close();
+		} finally {
+			if (fw != null)
+				fw.close();
+		}
+	}
 //
 //	public static double[][] textToMatrix(File csv) throws IOException {
 //		CSVParser parser = new CSVParser();
@@ -280,8 +283,8 @@ public class CsvUtils {
 			line = br.readLine();
 			while (line != null) {
 				String[] row = parser.parseLine(line);
-//				String id = row[indexOf(header, "ID")];
-				String id = row[indexOf(header, "SAMPLE_ID")].concat("_").concat(row[indexOf(header, "PATIENT_ID")]);
+				String id = row[indexOf(header, "ID")];
+//				String id = row[indexOf(header, "SAMPLE_ID")].concat("_").concat(row[indexOf(header, "PATIENT_ID")]);
 				if(ids.contains(id)) {
 					
 					String value = row[indexOf(header, key)];
