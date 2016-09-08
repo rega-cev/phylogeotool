@@ -52,12 +52,16 @@ Installation Reference Manual} % Subtitle
 \section{Installation}
 
 \subsection{Using pre-built JAR files}
-If you don't want to perform a manual installation, you can skip the following sections and proceed to section \ref{sec:jars}.
+If you don't want to build the JARs/WAR from source, you can skip the following sections and proceed to section \ref{sec:jars}.
+%PL: is a building from source really in its place in this document?
+%PL: I would just explain how to install the jars, and refer to a BUILD file that explains how to build the jars?
 
 
 \subsection{Prerequisites for building your own}
 
 \subsubsection*{Java}
+Just require Java 7 here?\\
+
 Download and install the newest Java Development Kit (JDK) from \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
 The current version of PhyloGeoTool was built using JDK 1.8.0\_31.
 For example, on Ubuntu Linux, Oracle Java 8 can be installed as follows (although OpenJDK should work just fine):
@@ -68,6 +72,8 @@ sudo apt-get install oracle-java8-installer
 \end{verbatim}
 
 \subsubsection*{Tomcat}
+%PL: this is not a prerequisite for building your own jars, this is confusing.
+%PL: I would really focus on installing in this doc, not on Building.
 Download and install the latest Tomcat version from \url{http://tomcat.apache.org}.
 For example:
 \begin{verbatim}
@@ -93,11 +99,14 @@ sudo apt-get install ant
 \end{verbatim}
 
 \subsubsection*{Phylogenetic tree}
+%PL: again, this is not a prerequisite for building your own jars, this is confusing.
 A rooted binary phylogenetic tree in either Nexus or Newick format, which may or may not be time-stamped.
 
 \subsubsection*{CSV file}
-A comma-separated value (CSV) file, containing an ID column that contains IDs that match the taxa names of the provided phylogenetic tree.
-Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as location, birth year, subtype, ethnic group, \ldots
+%PL: again, this is not a prerequisite for building your own jars, this is confusing.
+A comma-separated value (CSV) file, containing an ID column that contains IDs that correspond to the taxa names of the provided phylogenetic tree.
+Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as geographic location, virus genotype/subtype, patient attributes (age, ethnicity), \ldots
+%PL: since the geographic location is interpreted to build up the map, I would think the application needs to know which column is providing info for this. Is this done by using a fixed name? If so mention it here.
 
 \subsection{Building the project}
 
@@ -125,26 +134,27 @@ Their function is explained in the sections below.
 \subsection{DistanceMatrix.jar}
 %GB: Is this mandatory? Why do we need to do this? Would be nice to explain here.
 This jar file contains a tool to create a distance matrix based on the phylogenetic tree that will be used in the PhyloGeoTool.
-DistanceMatrix.jar takes the following input values:
-\begin{itemize}
-\item /path/to/phylogenetic.tree: Link to the phylogenetic tree to be used in the PhyloGeoTool. %GB: what is this phylo.tree? What format should it be in? Should it have a specific extension?
-\item /path/to/distance\_matrix: Link to the location where the distance matrix can be written. Make sure you have write privileges in the provided directory.
-\end{itemize}
-For example, the following command uses DistanceMatrix.jar to generate a distance matrix from a previously reconstructed phylogenetic tree: %GB: add example command
-
+DistanceMatrix.jar uses one input file, a phylogenetic tree to be used in the PhyloGeoTool, and will output the distance matrix that is derived from the phylogenetic tree. %GB: what is this phylo.tree? What format should it be in? Should it have a specific extension?
+For example, the following command uses DistanceMatrix.jar to generate a distance matrix from a previously reconstructed phylogenetic tree in Newick format: 
+java -jar DistanceMatrix.jar tree.newick distances.csv
+%is the distance matrix a CSV file?
 
 \subsection{PreRender.jar}
 %GB: Does this step somehow require the distance matrix computed in the previous section?
-Before any data can be shown to the user, a lot of calculations are done at the back end. 
-To speed up the visualization process, most of those calculations can be done up front.
+%PL: yes
+A major goal of the PhyloGeoTool is to cluster the tree index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree. However, this computation can be performed before the installation of the web-tool, using PreRender.jar, allowing the web-tool to render both clusters and annotationas instantaneously.
 
-PreRender.jar is a multithreaded application, meaning that it performs best on any Java version > 7. 
-Older Java versions do not support our implementation of multithreading and should hence not be used.
+
+%PL: This is all too technical, just require Java 7 for everything (I changed that too), and this needs no explenation.
+%PreRender.jar is a multithreaded application, meaning that it performs best on any Java version > 7. 
+%Older Java versions do not support our implementation of multithreading and should hence not be used.
 PreRender.jar takes the following input files: %GB: are all of these mandatory or are some of these optional?
+%PL: please change the command such that you only need to provide one directory, where all the subdirectories can be created (tree, clusters, csv, figtree).
+%PL: This is much easier to use and to explain here.
 \begin{itemize}
 \item /path/to.phylogenetic.tree: Link to the phylogenetic tree used in the PhyloGeoTool.
 \item /path/to/csvFile: Link to the csv file that connects nodes in the tool to attributes. Note: The id in the csv file has to be the same as the id of the nodes in the tree.
-\item /path/to/distance\_matrix: Link to the distance matrix that was generated from this tree.
+\item /path/to/distance\_matrix: Link to the distance matrix that was generated from this tree. % PL: refer to the previous section
 \item /path/to/folder\_xml\_tree: Link to the folder where this jar can write its resulting tree files.
 \item /path/to/folder\_xml\_clusters: Link to the folder where this jar can write its resulting cluster files.
 \item /path/to/folder\_xml\_csv: Link to the folder where this jar can write its resulting csv files.
@@ -153,7 +163,7 @@ PreRender.jar takes the following input files: %GB: are all of these mandatory o
 
 For example, the following command uses PreRender.jar to \ldots: %GB: add example command
 %GB: and now what? Are we done here? Shall we show what the user should see now and what he/she can do next?
-
+%PL: the web application needs to know which files to use right? is this configured in an XML?
 
 \section{Load the visualization}
 
