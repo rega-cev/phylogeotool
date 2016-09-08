@@ -1,6 +1,7 @@
 package be.kuleuven.rega.prerendering;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -342,7 +343,9 @@ public class PreRendering {
 			DirectoryStream<Path> dirStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(folderLocationCsvs));
 //			System.out.println(new File(folderLocationCsvs + File.separator + clusterId + ".xml"));
 			if(folderLocationCsvs != null && !folderLocationCsvs.equals("") && dirStream.iterator().hasNext()) {
-				Document doc = dBuilder.parse(new File(folderLocationCsvs + File.separator + clusterId + ".xml"));
+				File file = new File(folderLocationCsvs + File.separator + clusterId + ".xml");
+				FileInputStream fileInputStream = new FileInputStream(file);
+				Document doc = dBuilder.parse(fileInputStream);
 				NodeList nList = doc.getElementsByTagName(key);
 				for (int temp = 0; temp < nList.getLength(); temp++) {
 					org.w3c.dom.Node nNode = nList.item(temp);
@@ -358,6 +361,11 @@ public class PreRendering {
 //						System.out.println("ID : " + eElement.getAttribute("id"));
 //						System.out.println("Value : " + eElement.getTextContent());
 					}
+				}
+				try {
+					fileInputStream.close();
+				} catch(IOException ioException) {
+					System.err.println("Exception: The fileInputStream in PreRendering.readCsv was already closed.");
 				}
 			}
 		} catch (SAXException e) {
