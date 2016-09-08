@@ -232,8 +232,7 @@ public class GraphWebApplication extends WApplication {
 	
 	private void updateStatisticGraph(WBarChartMine wBarChartMine, int nodeId, Color clusterColor) {
 		if(wComboBoxMetadata != null)
-			wBarChartMine.setSecondBarColor(new WColor(clusterColor.getRed(), clusterColor.getGreen(), clusterColor.getBlue()));
-			wBarChartMine.updateData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText(), showNAData));
+			wBarChartMine.updateData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText(), showNAData), new WColor(clusterColor.getRed(), clusterColor.getGreen(), clusterColor.getBlue()));
 	}
 	
 	private final void showDialog() {

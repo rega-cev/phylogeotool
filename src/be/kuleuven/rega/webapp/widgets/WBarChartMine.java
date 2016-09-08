@@ -27,6 +27,7 @@ public class WBarChartMine {
 	private WStandardItemModel fullDatasetModel = null;
 	private WStandardPaletteMine wStandardPaletteMine = null;
 	private int maxValue = 0;
+	private WStandardItemModel model;
 	
 	private final int MAX_LABEL_LENGTH = 11;
 	
@@ -38,6 +39,7 @@ public class WBarChartMine {
 		chart.setMinimumSize(new WLength(120), new WLength(140));
 		chart.setPlotAreaPadding(0, EnumSet.of(Side.Top));
 		chart.setPlotAreaPadding(10, EnumSet.of(Side.Left));
+		model = new WStandardItemModel();
 	}
 	
 	public WCartesianChart getWidget() {
@@ -48,19 +50,22 @@ public class WBarChartMine {
 		int maxViews = 5;
 		maxValue = 0;
 		
+		if(model != null) {
+			model.clear();
+			model.insertColumns(model.getColumnCount(), 2);
+			model.setHeaderData(0, new WString("Property"));
+			model.setHeaderData(1, new WString("Full Dataset"));
+		}
+		
 		if(fullDataSet != null) {
 			Map<String,Integer> sorted_map = sortMap(fullDataSet);
 			this.fullDataset = sorted_map;
 			
-			WStandardItemModel model = new WStandardItemModel();
-			model.insertColumns(model.getColumnCount(), 2);
 			if(sorted_map.size() > maxViews) {
 				model.insertRows(model.getRowCount(), (maxViews + 1));
 			} else {
 				model.insertRows(model.getRowCount(), fullDataSet.keySet().size());
 			}
-			model.setHeaderData(0, new WString("Property"));
-			model.setHeaderData(1, new WString("Full Dataset"));
 			
 			int j = 0;
 			int totalValues = 0;
@@ -99,23 +104,25 @@ public class WBarChartMine {
 		}
 	}
 	
-	public void updateData(Map<String,Integer> node) {
+	public void updateData(Map<String,Integer> node, WColor wColor) {
 		int maxViews = 5;
-		maxValue = 0;
 		
 		if(node != null) {
 			Map<String,Integer> sorted_map = sortMap(node);
 			
-			WStandardItemModel model = new WStandardItemModel();
-			model.insertColumns(model.getColumnCount(), 3);
+			if(model != null) {
+				model.clear();
+				model.insertColumns(model.getColumnCount(), 3);
+				model.setHeaderData(0, new WString("Property"));
+				model.setHeaderData(1, new WString("Full Dataset"));
+				model.setHeaderData(2, new WString("Hovered Node"));
+			}
+			
 			if(this.fullDataset.size() > maxViews) {
 				model.insertRows(model.getRowCount(), maxViews + 1);
 			} else {
 				model.insertRows(model.getRowCount(), this.fullDataset.keySet().size());
 			}
-			model.setHeaderData(0, new WString("Property"));
-			model.setHeaderData(1, new WString("Hovered Node"));
-			model.setHeaderData(2, new WString("Full Dataset"));
 			
 			int j = 0;
 			int totalValues = 0;
@@ -134,17 +141,17 @@ public class WBarChartMine {
 				
 				if(sorted_map.containsKey(label)) {
 					// Because we need to recalculate "full dataset" part
-					model.setData(j, 2, (fullDataset.get(label) - sorted_map.get(label)));
+					model.setData(j, 1, (fullDataset.get(label) - sorted_map.get(label)));
 					if(fullDataset.get(label) > maxValue) {
 						maxValue = fullDataset.get(label);
 					}
 				} else {
-					model.setData(j, 2, fullDataset.get(label));
+					model.setData(j, 1, fullDataset.get(label));
 				}
 				totalValuesSet += fullDataset.get(label);
 				if(++j >= maxViews) {
 					model.setData(j, 0, new WString("Other"));
-					model.setData(j, 2, totalValues - totalValuesSet);
+					model.setData(j, 1, totalValues - totalValuesSet);
 					if((totalValues - totalValuesSet) > maxValue) {
 						maxValue = totalValues - totalValuesSet;
 					}
@@ -161,25 +168,26 @@ public class WBarChartMine {
 			
 			int i = 0;
 			for(Map.Entry<String, Integer> entry:fullDataset.entrySet()) {
-				System.out.println("Value: " + model.getData(i, 0));
+//				System.out.println("Value: " + model.getData(i, 0));
 				if(sorted_map.containsKey(model.getData(i, 0))) {
-					model.setData(i, 1, sorted_map.get(model.getData(i, 0)));
+					model.setData(i, 2, sorted_map.get(model.getData(i, 0)));
 					totalValuesSet += sorted_map.get(model.getData(i, 0));
 				} else {
-					model.setData(i, 1, 0);
+					model.setData(i, 2, 0);
 				}
 				
 				if(++i >= maxViews) {
 					model.setData(i, 0, new WString("Other"));
 					// Because we need to recalculate "other" part
-					model.setData(i, 2, (Integer)model.getData(i, 2) - (totalValues - totalValuesSet));
-					if((Integer)model.getData(i, 2) - (totalValues - totalValuesSet) > maxValue) {
-						maxValue = (Integer)model.getData(i, 2) - (totalValues - totalValuesSet);
+					model.setData(i, 1, (Integer)model.getData(i, 1) - (totalValues - totalValuesSet));
+					if((Integer)model.getData(i, 1) - (totalValues - totalValuesSet) > maxValue) {
+						maxValue = (Integer)model.getData(i, 1) - (totalValues - totalValuesSet);
 					}
-					model.setData(i, 1, totalValues - totalValuesSet);
+					model.setData(i, 2, totalValues - totalValuesSet);
 					break;
 				}
 			}
+			this.setSecondBarColor(wColor);
 			this.updateChart(model, chart);
 		}
 	}
@@ -203,7 +211,7 @@ public class WBarChartMine {
 		WFont legendFont = wCartesianChart.getLegendFont();
 		legendFont.setSize(new WLength(15));
 		wCartesianChart.setLegendStyle(legendFont, wCartesianChart.getLegendBorder(), wCartesianChart.getLegendBackground());
-		for (int column = 1; column < model.getColumnCount(); ++column) {
+		for (int column = model.getColumnCount() - 1; column > 0; --column) {
 			WDataSeries series = new WDataSeries(column, SeriesType.BarSeries);
 			series.setStacked(true);
 			series.setShadow(new WShadow(3, 3, new WColor(0, 0, 0, 127), 3));
@@ -237,5 +245,4 @@ public class WBarChartMine {
 	public void setSecondBarColor(WColor wColor) {
 		this.wStandardPaletteMine.setSecondColor(wColor);
 	}
-
 }

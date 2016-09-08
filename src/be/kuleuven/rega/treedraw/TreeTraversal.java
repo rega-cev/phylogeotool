@@ -148,7 +148,7 @@ public class TreeTraversal {
 	}
 	
 	public static int nodeLevel(Node root, Node node, int nodeLevel) {
-		if(node.equals(root)) {
+		if(node != null && node.equals(root)) {
 			return nodeLevel;
 		} else {
 			return nodeLevel(root, node.getParent(), ++nodeLevel);
