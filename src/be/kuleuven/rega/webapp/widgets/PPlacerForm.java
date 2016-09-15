@@ -11,27 +11,30 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import eu.webtoolkit.jwt.AlignmentFlag;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
-import eu.webtoolkit.jwt.WContainerWidget;
 import eu.webtoolkit.jwt.WDate;
 import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WFileResource;
 import eu.webtoolkit.jwt.WFileUpload;
-import eu.webtoolkit.jwt.WHBoxLayout;
 import eu.webtoolkit.jwt.WLabel;
 import eu.webtoolkit.jwt.WLength;
 import eu.webtoolkit.jwt.WLineEdit;
+import eu.webtoolkit.jwt.WPushButton;
 import eu.webtoolkit.jwt.WRegExpValidator;
+import eu.webtoolkit.jwt.WTable;
 import eu.webtoolkit.jwt.WText;
 import eu.webtoolkit.jwt.WTextArea;
-import eu.webtoolkit.jwt.WVBoxLayout;
 import eu.webtoolkit.jwt.WValidator;
 import eu.webtoolkit.jwt.WWidget;
 
 public class PPlacerForm {
-	private WContainerWidget container = new WContainerWidget();
-	private WVBoxLayout wvBoxLayout = new WVBoxLayout();
+	
+	private WTable table = null;
+	
+//	private WContainerWidget container = new WContainerWidget();
+//	private WVBoxLayout wvBoxLayout = new WVBoxLayout();
 	private WDialog dialog;
 	private WTextArea textArea;
 	private File uploadedFile = null;
@@ -39,26 +42,54 @@ public class PPlacerForm {
 	private WText out = new WText();
 	
 	public PPlacerForm(WDialog dialog) {
-		this.dialog = dialog;
-		dialog.setWidth(new WLength(500));
-		container.setLayout(wvBoxLayout);
-		this.fileUpload(wvBoxLayout);
-		this.textArea(wvBoxLayout);
-		this.emailTextArea(wvBoxLayout);
-		wvBoxLayout.addWidget(out);
+		dialog.setWidth(new WLength(630));
+		
+		table = new WTable(dialog.getContents());
+		table.addStyleClass("tablePPlacer", true);
+		table.setHeaderCount(1);
+	    table.setWidth(new WLength("100%"));
+	    table.setStyleClass("tableDialog");
+	    
+	    WLabel nucleotideSeqLabel = new WLabel("Nucleotide sequence");
+//	    nucleotideSeqLabel.setStyleClass("bold");
+//	    nucleotideSeqLabel.setBuddy(textArea);
+	    table.getElementAt(1, 1).addWidget(nucleotideSeqLabel);
+	    this.textArea(table);
+	    
+	    WLabel uploadFastaFileLabel = new WLabel("Upload fasta file");
+//	    uploadFastaFileLabel.setStyleClass("bold");
+	    table.getElementAt(2, 1).addWidget(uploadFastaFileLabel);
+	    this.fileUpload(table);
+	    this.emailTextArea(table);
+	}
+	
+	public void addStartButton(WPushButton button) {
+		button.setWidth(new WLength(60));
+		table.getElementAt(4, 2).addWidget(button);
+	}
+	
+	public void addCancelButton(WPushButton cancel) {
+		cancel.setWidth(new WLength(60));
+		table.getElementAt(4, 2).addWidget(cancel);
+		table.getElementAt(4, 2).setContentAlignment(AlignmentFlag.AlignRight);
 	}
 
-	public void fileUpload(WVBoxLayout wvBoxLayout) {
+	public void fileUpload(WTable wTable) {
 		final WFileUpload fileUpload = new WFileUpload();
-		WHBoxLayout whBoxLayout = new WHBoxLayout();
+		fileUpload.setToolTip("Please select a fasta file containing sequences in fasta format");
+//		WHBoxLayout whBoxLayout = new WHBoxLayout();
 		fileUpload.setMargin(new WLength(10), EnumSet.of(Side.Right));
-		whBoxLayout.addWidget(fileUpload);
+//		whBoxLayout.addWidget(fileUpload);
 //		final WPushButton uploadButton = new WPushButton("Upload");
 //		uploadButton.setMargin(new WLength(10), EnumSet.of(Side.Left, Side.Right));
 //		whBoxLayout.addWidget(uploadButton);
 		final WText out = new WText();
-		wvBoxLayout.addLayout(whBoxLayout);
-		wvBoxLayout.addWidget(out);
+//		whBoxLayout.addWidget(out);
+//		wvBoxLayout.addLayout(whBoxLayout);
+//		wvBoxLayout.addWidget(out);
+		
+		table.getElementAt(2, 2).addWidget(fileUpload);
+		
 //		uploadButton.clicked().addListener(dialog, new Signal.Listener() {
 //			public void trigger() {
 //				if(!fileUpload.getSpoolFileName().equals("")) {
@@ -113,11 +144,11 @@ public class PPlacerForm {
 		});
 	}
 
-	public void textArea(WVBoxLayout wvBoxLayout) {
+	public void textArea(WTable table) {
 		textArea = new WTextArea();
-		textArea.setColumns(80);
+		textArea.setColumns(70);
 		textArea.setRows(5);
-		textArea.setPlaceholderText("Upload a nucleotide sequence that you'd want to PPlace in the tree.");
+		textArea.setPlaceholderText("Upload or enter a nucleotide sequence in fasta format that you'd want to PPlace in the tree.");
 //		textArea.disable();
 		final WText out = new WText("<p></p>");
 		out.addStyleClass("help-block");
@@ -126,16 +157,16 @@ public class PPlacerForm {
 				out.setText("<p>Text area changed at " + WDate.getCurrentDate().toString() + ".</p>");
 			}
 		});
-		wvBoxLayout.addWidget(textArea);
+		table.getElementAt(1, 2).addWidget(textArea);
 	}
 	
-	public void emailTextArea(WVBoxLayout wvBoxLayout) {
-		WHBoxLayout whBoxLayout = new WHBoxLayout();
+	public void emailTextArea(WTable table) {
 		WLabel wLabel = new WLabel("E-mail");
-		whBoxLayout.addWidget(wLabel);
+//		wLabel.setStyleClass("bold");
+		table.getElementAt(3, 1).addWidget(wLabel);
+		email.setWidth(new WLength(300));
 		email.setPlaceholderText("Enter your email address.");
-		whBoxLayout.addWidget(email);
-		wvBoxLayout.addLayout(whBoxLayout);
+		table.getElementAt(3, 2).addWidget(email);
 		WRegExpValidator emailValidator = new WRegExpValidator("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}");
 		email.setValidator(emailValidator);
 	}
@@ -153,7 +184,7 @@ public class PPlacerForm {
 	}
 
 	public WWidget getWidget() {
-		return this.container;
+		return this.table;
 	}
 
 	public boolean isFormValid() {

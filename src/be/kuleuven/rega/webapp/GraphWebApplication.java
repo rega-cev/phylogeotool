@@ -139,7 +139,7 @@ public class GraphWebApplication extends WApplication {
 		        showPPlacer();
 		    }
 		});
-//		sdrButton.setDisabled(true);
+//		pplaceButton.setDisabled(true);
 		
 //		graphWidget.setMaximumSize(new WLength(100.0, Unit.Percentage), new WLength(100.0, Unit.Percentage));
 		graphWidget.setMinimumSize(new WLength(300.0, Unit.Pixel), new WLength(100.0, Unit.Percentage));
@@ -275,10 +275,14 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	private final void showPPlacer() {
-		final WDialog dialog = new WDialog("PPlace your sequence");
+		final WDialog dialog = new WDialog("Phylogenetic placement of your sequence");
 	    final PPlacerForm PPlacerForm = new PPlacerForm(dialog);
-		dialog.getContents().addWidget(PPlacerForm.getWidget());
-	    WPushButton cancel = new WPushButton("Exit", dialog.getContents());
+		
+//		WGroupBox wGroupBox = new WGroupBox();
+//		wGroupBox.setStyleClass("nostyle");
+//		WHBoxLayout whBoxLayout = new WHBoxLayout();
+		
+	    WPushButton cancel = new WPushButton("Exit");
 	    dialog.rejectWhenEscapePressed();
 	    cancel.clicked().addListener(dialog,
 	            new Signal1.Listener<WMouseEvent>() {
@@ -287,7 +291,7 @@ public class GraphWebApplication extends WApplication {
 	                }
 	            });
 	    dialog.show();
-	    WPushButton pplace = new WPushButton("Start", dialog.getContents());
+	    WPushButton pplace = new WPushButton("Start");
 	    pplace.clicked().addListener(dialog,
 	            new Signal1.Listener<WMouseEvent>() {
 	                public void trigger(WMouseEvent e1) {
@@ -301,6 +305,15 @@ public class GraphWebApplication extends WApplication {
 	                	}
 	                }
 	            });
+
+	    PPlacerForm.addStartButton(pplace);
+	    PPlacerForm.addCancelButton(cancel);
+	    dialog.getContents().addWidget(PPlacerForm.getWidget());
+	    
+//	    whBoxLayout.addWidget(pplace);
+//	    whBoxLayout.addWidget(cancel);
+//		wGroupBox.setLayout(whBoxLayout);
+//		dialog.getContents().addWidget(wGroupBox);
 	}
 	
 	private void setCSS() {
