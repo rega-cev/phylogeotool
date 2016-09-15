@@ -195,7 +195,7 @@ public class WBarChartMine {
 	private void updateChart(WStandardItemModel model, WCartesianChart wCartesianChart) {
 		wCartesianChart.setModel(model);
 		wCartesianChart.setXSeriesColumn(0);
-		wCartesianChart.setLegendEnabled(true);
+//		wCartesianChart.setLegendEnabled(true);
 //		wCartesianChart.getAxis(Axis.XAxis).setLabelAngle(315);
 //		wCartesianChart.getAxis(Axis.XAxis).setLabelAngle(15);
 		WFont wFont = wCartesianChart.getAxis(Axis.XAxis).getLabelFont();
@@ -208,9 +208,9 @@ public class WBarChartMine {
 //		wCartesianChart.setLegendLocation(LegendLocation.LegendOutside, Side.Bottom, AlignmentFlag.AlignBottom);
 		wCartesianChart.setPlotAreaPadding(50, EnumSet.of(Side.Left));
 		wCartesianChart.setPlotAreaPadding(150, EnumSet.of(Side.Right));
-		WFont legendFont = wCartesianChart.getLegendFont();
-		legendFont.setSize(new WLength(15));
-		wCartesianChart.setLegendStyle(legendFont, wCartesianChart.getLegendBorder(), wCartesianChart.getLegendBackground());
+//		WFont legendFont = wCartesianChart.getLegendFont();
+//		legendFont.setSize(new WLength(15));
+//		wCartesianChart.setLegendStyle(legendFont, wCartesianChart.getLegendBorder(), wCartesianChart.getLegendBackground());
 		for (int column = model.getColumnCount() - 1; column > 0; --column) {
 			WDataSeries series = new WDataSeries(column, SeriesType.BarSeries);
 			series.setStacked(true);
@@ -218,6 +218,7 @@ public class WBarChartMine {
 			wCartesianChart.addSeries(series);
 		}
 		wCartesianChart.setMargin(WLength.Auto, EnumSet.of(Side.Left, Side.Right));
+		wCartesianChart.setOffsets(0);
 //		wCartesianChart.resize(new WLength(120), new WLength(120));
 	}
 	
