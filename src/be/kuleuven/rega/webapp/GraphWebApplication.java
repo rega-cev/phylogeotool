@@ -24,6 +24,7 @@ import be.kuleuven.rega.webapp.widgets.PPlacerForm;
 import be.kuleuven.rega.webapp.widgets.WBarChartMine;
 import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
 import be.kuleuven.rega.webapp.widgets.WDownloadResource;
+import be.kuleuven.rega.webapp.widgets.WExportTreeForm;
 import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
 import be.kuleuven.rega.webapp.widgets.WTreeDownloaderForm;
 import eu.webtoolkit.jwt.Side;
@@ -246,24 +247,26 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	private final void showDialog() {
-	    final WDialog dialog = new WDialog("Tree");
+	    final WDialog dialog = new WDialog("Visualize Tree");
 //	    WFigTreeMine wFigTreeMine = new WFigTreeMine(facadeRequestData.getJeblTree(), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())));
 	    WImageTreeMine wImageTreeMine = new WImageTreeMine(treeViewRenderLocation, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 //	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
 	    WPushButton cancel = new WPushButton("Exit");
 	    
-	    WPushButton button = new WPushButton("Create", dialog.getContents());
+	    WPushButton buttonCallDialog = new WPushButton("Export", dialog.getContents());
 
-	    final WDownloadResource wDownloadResource = new WDownloadResource(dialog.getContents(), "cluster_" + UrlManipulator.getId(WApplication.getInstance().getInternalPath()), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), GraphicFormat.PDF);
-	    wDownloadResource.setDispositionType(DispositionType.Attachment);
-	    button.setLink(new WLink(wDownloadResource));
-	    button.disable();
-	    
 	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
-	    WTreeDownloaderForm wTreeDownloader = new WTreeDownloaderForm(dialog, wDownloadResource, button, cancel);
+	    WTreeDownloaderForm wTreeDownloader = new WTreeDownloaderForm(dialog, buttonCallDialog, cancel);
 	    dialog.getContents().addWidget(wTreeDownloader.getWidget());
 	    
 	    dialog.rejectWhenEscapePressed();
+	    
+	    buttonCallDialog.clicked().addListener(dialog, 
+	    		new Signal1.Listener<WMouseEvent>() {
+            public void trigger(WMouseEvent e1) {
+            	showExportTreeDialog();
+            }
+        });
 	    
 	    cancel.clicked().addListener(dialog,
 	            new Signal1.Listener<WMouseEvent>() {
@@ -272,6 +275,31 @@ public class GraphWebApplication extends WApplication {
 	                }
 	            });
 	    dialog.show();
+	}
+	
+	private final void showExportTreeDialog() {
+		final WDialog dialog = new WDialog("Export Tree");
+		
+		final WDownloadResource wDownloadResource = new WDownloadResource(dialog.getContents(), "cluster_" + UrlManipulator.getId(WApplication.getInstance().getInternalPath()), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), GraphicFormat.PDF);
+		WPushButton button = new WPushButton("Export");
+		
+		wDownloadResource.setDispositionType(DispositionType.Attachment);
+		button.setLink(new WLink(wDownloadResource));
+		
+		WPushButton cancel = new WPushButton("Cancel");
+		cancel.clicked().addListener(dialog,
+				new Signal1.Listener<WMouseEvent>() {
+			public void trigger(WMouseEvent e1) {
+				dialog.reject();
+			}
+		});
+		
+		WExportTreeForm wExportTreeForm = new WExportTreeForm(dialog, wDownloadResource, button, cancel);
+		
+		dialog.rejectWhenEscapePressed();
+		dialog.getContents().addWidget(wExportTreeForm.getWidget());
+		
+		dialog.show();
 	}
 	
 	private final void showPPlacer() {
