@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
 import be.kuleuven.rega.webapp.widgets.WDownloadResource;
 import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
 import be.kuleuven.rega.webapp.widgets.WTreeDownloaderForm;
+import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
 import eu.webtoolkit.jwt.WApplication;
@@ -91,12 +93,17 @@ public class GraphWebApplication extends WApplication {
 //			facadeRequestData = new FacadeRequestData(tree, new File("/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv"), new DistanceCalculateFromTree());
 		jobScheduler = new JobScheduler();
 		WVBoxLayout rootLayout = new WVBoxLayout(this.getRoot());
+		// Added for design
+		rootLayout.setContentsMargins(2, 0, 2, 2);
+		rootLayout.setSpacing(-6);
 		WTemplate header = createHeader();
+		header.setMargin(-2, EnumSet.of(Side.Right, Side.Left));
 		rootLayout.addWidget(header);
 		rootLayout.setStretchFactor(header, 0);
 		
 		WHBoxLayout bodyLayout = new WHBoxLayout();
-
+		// Added for design
+		bodyLayout.setSpacing(2);
 		try {
 			graphWidget = new GraphWidget(facadeRequestData);
 			HashMap<String, Integer> countries = null;
@@ -111,7 +118,9 @@ public class GraphWebApplication extends WApplication {
 		rootLayout.setStretchFactor(bodyLayout, 1);
 		
 		WGroupBox wGroupBoxGraphWidget = new WGroupBox();
+		wGroupBoxGraphWidget.setPadding(new WLength(0));
 		wGroupBoxGraphWidget.setStyleClass("card");
+		wGroupBoxGraphWidget.setMargin(0);
 		WVBoxLayout wVBoxLayoutGraphWidget = new WVBoxLayout(wGroupBoxGraphWidget);
 		bodyLayout.addWidget(wGroupBoxGraphWidget);
 		
@@ -186,7 +195,8 @@ public class GraphWebApplication extends WApplication {
 		resources.use("/be/kuleuven/rega/webapp/resources");
 		this.setLocalizedStrings(resources);
 		this.useStyleSheet(new WLink("style/euresist/euresist.css"));
-		wTemplate.bindString("server", "http://engine.euresist.org");
+//		wTemplate.bindString("server", "http://engine.euresist.org");
+		wTemplate.bindString("server", new WLink("style/euresist").getUrl());
 		return wTemplate;
 	}
 
@@ -296,7 +306,9 @@ public class GraphWebApplication extends WApplication {
 	private void setCSS() {
 		this.getStyleSheet().addRule(new WCssTextRule("body", "background-color: #BEBEBE"));
 		this.getStyleSheet().addRule(new WCssTextRule(".label", "background: #FFFFFF;margin-left: 0px; margin-top: 0px;border: 0px;"));
-		this.getStyleSheet().addRule(new WCssTextRule(".card", "background: #FFFFFF;margin-left: 0px; margin-top: 0px; border: 0px;box-shadow: 5px 0px 15px #444444;"));
+		this.getStyleSheet().addRule(new WCssTextRule(".card", "background: #FFFFFF;margin-left: 0px; margin-top: 0px; border: 0px"));
+		this.getStyleSheet().addRule(new WCssTextRule(".nostyle", "margin-left: 0px; margin-top: 0px; border: 0px"));
+		this.getStyleSheet().addRule(new WCssTextRule(".tableDialog", "font-weight: bold; margin-top: -15px; margin-left: -15px; border-spacing: 10px 10px; border-collapse: separate"));
 	}
 	
 //	private final void showReport(List<String> ids, List<String> headersToShow) {
@@ -350,6 +362,8 @@ public class GraphWebApplication extends WApplication {
 	
 	private WLayout getGoogleChartWGroupBox(final HashMap<String, Integer> countries, String region, HashMap<String, Integer> hashMapTemp) throws IOException {
 		WVBoxLayout wvBoxLayout = new WVBoxLayout();
+		// Added for design
+		wvBoxLayout.setSpacing(2);
 		wComboBoxRegions = new WComboBoxRegions();
 		wComboBoxRegions.changed().addListener(this, new Signal.Listener() {
 			public void trigger() {
