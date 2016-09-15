@@ -197,7 +197,7 @@ public class GraphWebApplication extends WApplication {
 		this.setLocalizedStrings(resources);
 		this.useStyleSheet(new WLink("style/euresist/euresist.css"));
 //		wTemplate.bindString("server", "http://engine.euresist.org");
-		wTemplate.bindString("server", new WLink("style/euresist").getUrl());
+		wTemplate.bindString("server", new WLink("../style/euresist").getUrl());
 		return wTemplate;
 	}
 
