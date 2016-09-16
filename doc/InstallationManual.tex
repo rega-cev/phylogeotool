@@ -57,7 +57,9 @@ If you don't want to build the JARs/WAR from source, you can skip the following 
 %GB: YES, it's an installation manual
 %PL: I would just explain how to install the jars, and refer to a BUILD file that explains how to build the jars?
 %GB: only referring to a build file requires even more knowledge than listing the steps here; we have to keep the fully detailed installation instructions, but can precede it by listing the main steps only.
-
+%PL: With the BUILD file, I meant the build *documentation* file, that explains how to build the source code.
+%PL: We could then keep the installation file about installing, and refer to this BUILD doc file from the installation manual.
+%PL: But adding a section with details on how the build is performed, is also OK to me. 
 
 \subsection{Prerequisites for building your own}
 
@@ -78,6 +80,7 @@ sudo apt-get install oracle-java8-installer
 %PL: this is not a prerequisite for building your own jars, this is confusing.
 %PL: I would really focus on installing in this doc, not on Building.
 %GB: as I said before, we can first present a short installation manual, but we must keep the detailed installation steps; I'm certainly NOT going to answer a bunch of e-mail asking for detailed instructions over and over again
+%PL: I agree to that, and I never meant that we should omit this information, I believe we had a miscommuniction concerning what I referred to as BUILD file (this is how the build doc file was named in several projects I worked on) 
 Download and install the latest Tomcat version from \url{http://tomcat.apache.org}.
 For example:
 \begin{verbatim}
@@ -162,6 +165,8 @@ PreRender.jar takes the following input files:
 \item /path/to/folder\_figtree: Link to the folder where this jar can write its resulting figtree representations.
 \end{itemize}
 %GB: do the folders above already have to exist? if not, will they be created automatically?
+%PL: I don't think they are, so I think Ewout should change PreRender that it just accepts one directory, and if the sub-dirs are not there yet, creates them.
+%PL: PS, if the dirs are there already, I would suggest giving a warning, rather than happily overwriting the content of the sub-dirs. 
 
 For example, the following command uses PreRender.jar to perform all the necessary clustering steps (which can be time-consuming) so that the PhyloGeoTool doesn't have to perform these at run time: 
 \begin{verbatim}
@@ -182,6 +187,16 @@ touch global-conf.xml
 
 %GB: we should simply provide an example config file on github, which can easily be downloaded and adjusted
 %GB: or perhaps a simple tool that consists of a series of file choosers to automatically generate the config file (AFTER WE SUBMIT)
+%PL: I agree, the simple file should be linked to from the installation manual I think?
+
+%PL: using a root account to run stuff with is generally considered bad practice, having this in our example is probably not a good idea? Use the user phylogeo?
+
+%PL: Also, is it necessary to configure each of these directories (xml,tree,cluster,image,...) explicitely, why not 1 directory, where a set of sub-dirs is created in?
+%PL: If you would like to keep all these separate options, I don't really mind, but I it should be possible with just 1 directory, this is much less work for the installer.
+%PL: It will also make the reader of this documentation focus on the options that actually have an effect on the behaviour of the tool.
+
+%PL: Also, does the notation ~/blabla works in Java?
+%PL: If so, I would use it here, since it is less Mac specific. I guess a lot of possible installation will be done on GNU/Linu ... 
 Edit the global-conf.xml file to correctly set up all the necessary paths, example content of global-conf.xml is shown here (assuming that all the data resides in subfolders of /Users/root/Documents/phylogeotool/):
 \begin{verbatim}
 <?xml version="1.0" encoding="UTF-8"?>
