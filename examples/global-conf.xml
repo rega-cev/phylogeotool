@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phylogeotool-settings>
+  <!-- configPath
+     Root directory containing the pre rendered files in subdirectories such as given to PreRender.jar
+   -->
+  <property name="configPath">
+    /Users/phylogeo/Documents/Configs
+  </property>
+
+  <!-- metadataFile
+   Pointer to the location of the csv file containing all the information on the individual sequences.
+  -->
+  <property name="metadataFile">
+   /Users/phylogeo/Documents/Configs/metadataFile.csv
+  </property>
+
+  <!-- phyloTreeFile
+   Pointer to the location of the phylogenetic tree file.
+  -->
+  <property name="phyloTreeFile">
+   /Users/phylogeo/Documents/Configs/phylo.tree
+  </property>
+
+  <!-- alignmentFile
+   Pointer to the location of the alignment file that was used to build the phylogenetic tree used in this tool
+   This is only needed in case PPlacing should be supported in the tool
+  -->
+  <property name="alignmentFile">
+    /Users/phylogeo/Documents/Configs/alignment.fasta
+  </property>
+  
+  <!-- logFile
+   Pointer to the logfile file that was returned by the tree building program to build the phylogenetic tree used in this tool
+   This is only needed in case PPlacer should be supported in the tool
+  -->
+  <property name="logFile">
+    /Users/phylogeo/Documents/Configs/logFile.log
+  </property>
+
+  <!-- scriptFolder
+   Pointer to the location of the shell scripts that are used to to initiate the PPlacer
+   This folder contains init.sh, place.sh
+  -->
+  <property name="scriptFolder">
+    /Users/phylogeo/Documents/PPlacer
+  </property>
+
+
+  <!-- showNAData 
+   Include Non Assigned (NA) data in the graphs
+  -->
+  <property name="showNAData">
+    false
+  </property>
+  
+  <!-- visualizeGeography 
+   Fill in the field that has to be visualized on the map in the tool.
+  -->
+  <property name="visualizeGeography">
+  	COUNTRY_OF_ORIGIN_EN
+  </property>
+
+  <!-- 
+   Color codes used for the google chart
+  -->
+  <property name="colorCodes">
+    <chart name="datalessregion">#FFFFFF</chart>
+    <chart name="backgroundcolor">#FFFFFF</chart>    
+    <chart name="colorAxis">#e9e9e9,red</chart>
+  </property>
+</phylogeotool-settings>
