@@ -54,13 +54,18 @@ Installation Reference Manual} % Subtitle
 \subsection{Using pre-built JAR files}
 If you don't want to build the JARs/WAR from source, you can skip the following sections and proceed to section \ref{sec:jars}.
 %PL: is a building from source really in its place in this document?
+%GB: YES, it's an installation manual
 %PL: I would just explain how to install the jars, and refer to a BUILD file that explains how to build the jars?
-
+%GB: only referring to a build file requires even more knowledge than listing the steps here; we have to keep the fully detailed installation instructions, but can precede it by listing the main steps only.
+%PL: With the BUILD file, I meant the build *documentation* file, that explains how to build the source code.
+%PL: We could then keep the installation file about installing, and refer to this BUILD doc file from the installation manual.
+%PL: But adding a section with details on how the build is performed, is also OK to me. 
 
 \subsection{Prerequisites for building your own}
 
 \subsubsection*{Java}
 Just require Java 7 here?\\
+%GB: edit this next time
 
 Download and install the newest Java Development Kit (JDK) from \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
 The current version of PhyloGeoTool was built using JDK 1.8.0\_31.
@@ -74,6 +79,8 @@ sudo apt-get install oracle-java8-installer
 \subsubsection*{Tomcat}
 %PL: this is not a prerequisite for building your own jars, this is confusing.
 %PL: I would really focus on installing in this doc, not on Building.
+%GB: as I said before, we can first present a short installation manual, but we must keep the detailed installation steps; I'm certainly NOT going to answer a bunch of e-mail asking for detailed instructions over and over again
+%PL: I agree to that, and I never meant that we should omit this information, I believe we had a miscommuniction concerning what I referred to as BUILD file (this is how the build doc file was named in several projects I worked on) 
 Download and install the latest Tomcat version from \url{http://tomcat.apache.org}.
 For example:
 \begin{verbatim}
@@ -99,18 +106,16 @@ sudo apt-get install ant
 \end{verbatim}
 
 \subsubsection*{Phylogenetic tree}
-%PL: again, this is not a prerequisite for building your own jars, this is confusing.
 A rooted binary phylogenetic tree in either Nexus or Newick format, which may or may not be time-stamped.
 
 \subsubsection*{CSV file}
-%PL: again, this is not a prerequisite for building your own jars, this is confusing.
 A comma-separated value (CSV) file, containing an ID column that contains IDs that correspond to the taxa names of the provided phylogenetic tree.
 Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as geographic location, virus genotype/subtype, patient attributes (age, ethnicity), \ldots
 %PL: since the geographic location is interpreted to build up the map, I would think the application needs to know which column is providing info for this. Is this done by using a fixed name? If so mention it here.
 
-\subsection{Building the project}
+\subsection{Building the project - Ubuntu Linux}
 
-\subsubsection{Ubuntu Linux}
+\subsubsection{Clone the git repository}
 
 We here outline the various steps necessary for a successful build of the project.
 The build process here is described as it was performed on an Ubuntu 14.04 LTS (Trusty Tahr) installation.
@@ -122,37 +127,36 @@ git clone https://github.com/rega-cev/phylogeotool/
 cd phylogeotool
 ant
 \end{verbatim}
+\item This build process generates a phylogeotool-01.war, DistanceMatrix.jar and PreRender.jar in the dist directory.
 }
-\item This build process generates a phylogeotool-01.war in the dist directory. Copy this file to the webapps folder of Tomcat. This enables browser access to a localhost version of the PhyloGeoTool.
 \end{itemize}
 
-\section{Data preparation}
-\label{sec:jars}
-After the project has been built successfully, different jar files can be found in the dist folder. 
-Their function is explained in the sections below.
-
-\subsection{DistanceMatrix.jar}
+\subsubsection{DistanceMatrix.jar}
 %GB: Is this mandatory? Why do we need to do this? Would be nice to explain here.
 This jar file contains a tool to create a distance matrix based on the phylogenetic tree that will be used in the PhyloGeoTool.
 DistanceMatrix.jar uses one input file, a phylogenetic tree to be used in the PhyloGeoTool, and will output the distance matrix that is derived from the phylogenetic tree. %GB: what is this phylo.tree? What format should it be in? Should it have a specific extension?
-For example, the following command uses DistanceMatrix.jar to generate a distance matrix from a previously reconstructed phylogenetic tree in Newick format: 
+For example, the following command uses DistanceMatrix.jar to generate a distance matrix (to be stored in a file called distances.csv in the command below) from a previously reconstructed phylogenetic tree in Newick format: 
+\begin{verbatim}
 java -jar DistanceMatrix.jar tree.newick distances.csv
+\end{verbatim}
 %is the distance matrix a CSV file?
 
-\subsection{PreRender.jar}
+\subsubsection{PreRender.jar}
 %GB: Does this step somehow require the distance matrix computed in the previous section?
 %PL: yes
-A major goal of the PhyloGeoTool is to cluster the tree index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree. However, this computation can be performed before the installation of the web-tool, using PreRender.jar, allowing the web-tool to render both clusters and annotationas instantaneously.
-
+A major goal of the PhyloGeoTool is to cluster the tree index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree. 
+However, this computation can be performed before the installation of the web-tool, using PreRender.jar, allowing the web-tool to render both clusters and annotations instantaneously.
 
 %PL: This is all too technical, just require Java 7 for everything (I changed that too), and this needs no explenation.
 %PreRender.jar is a multithreaded application, meaning that it performs best on any Java version > 7. 
 %Older Java versions do not support our implementation of multithreading and should hence not be used.
-PreRender.jar takes the following input files: %GB: are all of these mandatory or are some of these optional?
+PreRender.jar takes the following input files: 
+%GB: are all of these mandatory or are some of these optional?
 %PL: please change the command such that you only need to provide one directory, where all the subdirectories can be created (tree, clusters, csv, figtree).
 %PL: This is much easier to use and to explain here.
+%GB: I agree; will do during next writing session with Ewout
 \begin{itemize}
-\item /path/to.phylogenetic.tree: Link to the phylogenetic tree used in the PhyloGeoTool.
+\item /path/to/phylogenetic.tree: Link to the phylogenetic tree used in the PhyloGeoTool.
 \item /path/to/csvFile: Link to the csv file that connects nodes in the tool to attributes. Note: The id in the csv file has to be the same as the id of the nodes in the tree.
 \item /path/to/distance\_matrix: Link to the distance matrix that was generated from this tree. % PL: refer to the previous section
 \item /path/to/folder\_xml\_tree: Link to the folder where this jar can write its resulting tree files.
@@ -160,12 +164,166 @@ PreRender.jar takes the following input files: %GB: are all of these mandatory o
 \item /path/to/folder\_xml\_csv: Link to the folder where this jar can write its resulting csv files.
 \item /path/to/folder\_figtree: Link to the folder where this jar can write its resulting figtree representations.
 \end{itemize}
+%GB: do the folders above already have to exist? if not, will they be created automatically?
+%PL: I don't think they are, so I think Ewout should change PreRender that it just accepts one directory, and if the sub-dirs are not there yet, creates them.
+%PL: PS, if the dirs are there already, I would suggest giving a warning, rather than happily overwriting the content of the sub-dirs. 
 
-For example, the following command uses PreRender.jar to \ldots: %GB: add example command
-%GB: and now what? Are we done here? Shall we show what the user should see now and what he/she can do next?
-%PL: the web application needs to know which files to use right? is this configured in an XML?
+For example, the following command uses PreRender.jar to perform all the necessary clustering steps (which can be time-consuming) so that the PhyloGeoTool doesn't have to perform these at run time: 
+\begin{verbatim}
+java -jar PreRender.jar phylogenetic.tree csvFile 
+distance\_matrix folder\_xml\_tree folder\_xml\_clusters 
+folder\_xml\_csv folder\_figtree
+\end{verbatim}
 
-\section{Load the visualization}
+
+\subsubsection{Create a config file}
+
+In the /etc folder, create a directory `phylogeotool', which is the default location for the config file:
+\begin{verbatim}
+sudo mkdir phylogeotool
+cd phylogeotool
+touch global-conf.xml
+\end{verbatim}
+
+%GB: we should simply provide an example config file on github, which can easily be downloaded and adjusted
+%GB: or perhaps a simple tool that consists of a series of file choosers to automatically generate the config file (AFTER WE SUBMIT)
+%PL: I agree, the simple file should be linked to from the installation manual I think?
+
+%PL: using a root account to run stuff with is generally considered bad practice, having this in our example is probably not a good idea? Use the user phylogeo?
+
+%PL: Also, is it necessary to configure each of these directories (xml,tree,cluster,image,...) explicitely, why not 1 directory, where a set of sub-dirs is created in?
+%PL: If you would like to keep all these separate options, I don't really mind, but I it should be possible with just 1 directory, this is much less work for the installer.
+%PL: It will also make the reader of this documentation focus on the options that actually have an effect on the behaviour of the tool.
+
+%PL: Also, does the notation ~/blabla works in Java?
+%PL: If so, I would use it here, since it is less Mac specific. I guess a lot of possible installation will be done on GNU/Linu ... 
+Edit the global-conf.xml file to correctly set up all the necessary paths, example content of global-conf.xml is shown here (assuming that all the data resides in subfolders of /Users/root/Documents/phylogeotool/):
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<phylogeotool-settings>
+  <!-- xmlPath
+     Directory containing the xml files and pre-rendered csv data,
+     located in this project's xml/ directory.
+   -->
+  <property name="xmlPath">
+    /Users/root/Documents/phylogeotool/xml
+  </property>
+
+  <!-- treePath
+     Directory containing the xml representation of the full tree,
+     located in this project's tree/ directory.
+   -->
+  <property name="treePath">
+    /Users/root/Documents/phylogeotool/tree
+  </property>
+  
+  <!-- clusterPath
+   Directory containing the xml files and pre-rendered clusters, 
+   located in this project's xml/ directory.
+  -->
+  <property name="clusterPath">
+    /Users/root/Documents/phylogeotool/clusters
+  </property>
+  
+  <!-- fullTreeImagesPath
+   Directory containing the xml files and pre-rendered full tree 
+   images, located in this projects xml/ directory.
+  -->   
+  <property name="fullTreeImagesPath">
+    /Users/root/Documents/phylogeotool/treeview
+  </property>
+
+  <!-- metadataFile
+   Pointer to the location of the csv file containing all the 
+   information on the individual sequences.
+  -->
+  <property name="metadataFile">
+   /Users/root/Documents/phylogeotool/information.csv
+  </property>
+
+  <!-- phyloTreeFile
+   Pointer to the location of the phylogenetic tree file.
+  -->
+  <property name="phyloTreeFile">
+   /Users/root/Documents/phylogeotool/phylogenetic.tree
+  </property>
+
+  <!-- alignmentFile
+   Pointer to the location of the alignment file that was used 
+   to build the phylogenetic tree used in this tool.
+  -->
+  <property name="alignmentFile">
+    /Users/root/Documents/phylogeotool/alignment.fasta
+  </property>
+  
+  <!-- logFile
+   Pointer to the logfile file that was returned by the tree 
+   building program to build the phylogenetic tree used in 
+   this tool.
+   %GB: this is not clear
+  -->
+  <property name="logFile">
+    /Users/root/Documents/phylogeotool/logfile.log
+  </property>
+
+  <!-- scriptFolder
+   Pointer to the location of the shell scripts that are used 
+   to initiate PPlacer.
+   %GB: where do these files come from? do they come with PPlacer?
+   This folder contains init.sh and place.sh.
+  -->
+  <property name="scriptFolder">
+    /Users/roott/Documents/pplacer_newTry
+  </property>
+
+
+  <!-- showNAData 
+   Include Non Assigned (NA) data in the graphs.
+  -->
+  <property name="showNAData">
+    false
+  </property>
+  
+  <!-- visualizeGeography 
+   Fill in the field that has to be visualized on the 
+   map in the tool.
+  -->
+  <property name="visualizeGeography">
+  	COUNTRY_OF_ORIGIN_EN
+  </property>
+
+  <!-- 
+   Color codes used for the google chart
+  -->
+  <property name="colorCodes">
+    <chart name="datalessregion">#FFFFFF</chart>
+    <chart name="backgroundcolor">#FFFFFF</chart>    
+    <chart name="colorAxis">#e9e9e9,red</chart>
+  </property>
+</phylogeotool-settings>
+\end{verbatim}
+
+
+\subsubsection{Start tomcat server and load phylogeotool}
+
+Copy the phylogeotool-01.war to the webapps folder of Tomcat and start Tomcat:
+\begin{verbatim}
+sudo cp phylogeotool-01.war /var/lib/tomcat7/webapps/
+cd /var/lib/tomcat7/
+sudo service tomcat7 restart
+\end{verbatim}
+This enables browser access to a localhost version of the PhyloGeoTool.
+Open a browser and enter the following URL: \url{http://localhost:8080/phylogeotool/PhyloGeoTool}.
+The browser should show something similar to Figure \ref{fig:01}.
+
+
+\begin{figure}[!htbp]
+\includegraphics[scale=0.19]{images/defaultScreenshot.png}
+\caption{Screenshot of the PhyloGeoTool application when the application is started for the first time.}
+\label{fig:01} 
+\end{figure}
+
+
 
 
 
