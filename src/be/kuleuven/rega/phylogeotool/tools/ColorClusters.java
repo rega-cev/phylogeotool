@@ -25,6 +25,7 @@ import jebl.evolution.trees.Tree;
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import be.kuleuven.rega.phylogeotool.io.write.NexusExporter;
+import be.kuleuven.rega.phylogeotool.settings.Settings;
 import be.kuleuven.rega.prerendering.PreRendering;
 
 import com.itextpdf.text.DocumentException;
@@ -44,14 +45,12 @@ public class ColorClusters {
 	public static void main(String[] args) {
 
 		String treeLocation = null;
-		String clusterLocation = null;
-		String treeviewLocation = null;
+		String configPath = null;
 		int minimumClusterSize = 2;
 
 		if (args.length > 2) {
 			treeLocation = args[0];
-			clusterLocation = args[1];
-			treeviewLocation = args[2];
+			configPath = args[1];
 			
 			ReadTree.setJeblTree(treeLocation);
 			ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
@@ -63,21 +62,21 @@ public class ColorClusters {
 		ColorClusters colorClusters = new ColorClusters();
 		// colorClusters.colorCluster(treeLocation, clusterLocation,
 		// treeviewLocation, minimumClusterSize);
-		colorClusters.colorClusterExportPNG(treeLocation, clusterLocation, treeviewLocation, minimumClusterSize);
+		colorClusters.colorClusterExportPNG(treeLocation, configPath, minimumClusterSize);
 		// colorClusters.colorClusterExportGIF(treeLocation, treeviewLocation);
 	}
 
-	private void colorClusterExportNexus(String treeLocation, String clustersLocation, String treeviewLocation, int minimumClusterSize) {
+	private void colorClusterExportNexus(String treeLocation, String configPath, int minimumClusterSize) {
 		try {
 			Tree jeblTree = ReadTree.readTree(new FileReader(treeLocation));
-			PreRendering preRendering = new PreRendering("", clustersLocation, "", treeviewLocation);
-			File clusters = new File(clustersLocation);
+			PreRendering preRendering = new PreRendering(configPath);
+			File clusters = new File(Settings.getClusterPath(configPath));
 			File[] files = clusters.listFiles();
 			Cluster currentCluster = null;
 			for (int i = 0; i <= 1; i++) {
 				if (files[i].getName().contains(".xml")) {
 					currentCluster = preRendering.getClusterFromXML(files[i].getName().split(".")[0]);
-					NexusExporter.export(currentCluster, jeblTree, new FileWriter(new File(treeviewLocation + File.separator + files[i].getName().split(".")[0]
+					NexusExporter.export(currentCluster, jeblTree, new FileWriter(new File(configPath + File.separator + "treeview" + File.separator + files[i].getName().split(".")[0]
 							+ ".nexus")), minimumClusterSize, true);
 				} else {
 					System.err.println(files[i].getName() + " is not a nexus file.");
@@ -90,16 +89,16 @@ public class ColorClusters {
 		}
 	}
 
-	private void colorClusterExportPNG(String treeLocation, String clustersLocation, String treeviewLocation, int minimumClusterSize) {
-		PreRendering preRendering = new PreRendering("", clustersLocation, "", treeviewLocation);
-		File clusters = new File(clustersLocation);
+	private void colorClusterExportPNG(String treeLocation, String configPath, int minimumClusterSize) {
+		PreRendering preRendering = new PreRendering(configPath);
+		File clusters = new File(Settings.getClusterPath(configPath));
 		File[] files = clusters.listFiles();
 		Cluster currentCluster = null;
 
 		// Generate Default Drawing
 		currentCluster = preRendering.getClusterFromXML("3363");
 		try {
-			prepareFullTreeView(treeLocation, currentCluster, GraphicFormat.PDF, new FileOutputStream(new File(treeviewLocation + File.separator + "default")),
+			prepareFullTreeView(treeLocation, currentCluster, GraphicFormat.PDF, new FileOutputStream(new File(Settings.getTreeviewPath(configPath) + File.separator + "default")),
 					minimumClusterSize, false, false);
 
 //			for (int i = 0; i < files.length; i++) {
@@ -109,7 +108,7 @@ public class ColorClusters {
 //					if (currentCluster.getTree().getAllParents(currentCluster.getRoot()).size() < 20) {
 //						prepareFullTreeView(treeLocation, currentCluster, GraphicFormat.PNG, new FileOutputStream(new File(treeviewLocation + File.separator
 //								+ files[i].getName().split("\\.")[0] + ".png")), minimumClusterSize, true, false);
-			prepareFullTreeView(treeLocation, currentCluster, GraphicFormat.PDF, new FileOutputStream(new File(treeviewLocation + File.separator
+			prepareFullTreeView(treeLocation, currentCluster, GraphicFormat.PDF, new FileOutputStream(new File(Settings.getTreeviewPath(configPath) + File.separator
 					+ "3363.pdf")), minimumClusterSize, true, false);
 //					} else {
 //						System.err.println("Cluster too far away from root to color");

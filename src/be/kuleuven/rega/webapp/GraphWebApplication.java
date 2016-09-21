@@ -66,10 +66,11 @@ public class GraphWebApplication extends WApplication {
 	private PPlacer pplacer;
 	private JobScheduler jobScheduler;
 	
-	private String treeRenderLocation = "";
-	private String clusterRenderLocation = "";
-	private String csvRenderLocation = "";
-	private String treeViewRenderLocation = "";
+//	private String treeRenderLocation = "";
+//	private String clusterRenderLocation = "";
+//	private String csvRenderLocation = "";
+//	private String treeViewRenderLocation = "";
+	private String configPath = "";
 	
 	private boolean showNAData = false;
 
@@ -79,16 +80,17 @@ public class GraphWebApplication extends WApplication {
 		super(env);
 		setTitle("PhyloGeoTool");
 		this.settings = Settings.getInstance(null);
-		this.treeRenderLocation = settings.getTreePath();
-		this.clusterRenderLocation = settings.getClusterPath();
-		this.csvRenderLocation = settings.getXmlPath();
-		this.treeViewRenderLocation = settings.getTreeviewPath();
+//		this.treeRenderLocation = settings.getTreePath();
+		this.configPath = settings.getConfigPath();
+//		this.clusterRenderLocation = settings.getClusterPath();
+//		this.csvRenderLocation = settings.getXmlPath();
+//		this.treeViewRenderLocation = settings.getTreeviewPath();
 		this.metaDataFile = new File(settings.getMetaDataFile());
 		this.showNAData = settings.getShowNAData();
 		
 		this.setCSS();
 		
-		facadeRequestData = new FacadeRequestData(new PreRendering(treeRenderLocation, clusterRenderLocation, csvRenderLocation, treeViewRenderLocation), settings.getPhyloTree());
+		facadeRequestData = new FacadeRequestData(new PreRendering(configPath), settings.getPhyloTree());
 //			jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree"));
 //			Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 //			facadeRequestData = new FacadeRequestData(tree, new File("/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv"), new DistanceCalculateFromTree());
@@ -249,7 +251,7 @@ public class GraphWebApplication extends WApplication {
 	private final void showDialog() {
 	    final WDialog dialog = new WDialog("Visualize Tree");
 //	    WFigTreeMine wFigTreeMine = new WFigTreeMine(facadeRequestData.getJeblTree(), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())));
-	    WImageTreeMine wImageTreeMine = new WImageTreeMine(treeViewRenderLocation, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
+	    WImageTreeMine wImageTreeMine = new WImageTreeMine(settings.getTreeviewPath(), UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 //	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
 	    WPushButton cancel = new WPushButton("Exit");
 	    
@@ -347,8 +349,11 @@ public class GraphWebApplication extends WApplication {
 	private void setCSS() {
 		this.getStyleSheet().addRule(new WCssTextRule("body", "background-color: #BEBEBE"));
 		this.getStyleSheet().addRule(new WCssTextRule(".label", "background: #FFFFFF;margin-left: 0px; margin-top: 0px;border: 0px;"));
+//		this.getStyleSheet().addRule(new WCssTextRule(".card", "background: #FFFFFF;margin-left: 0px; margin-top: 0px; border: 0px;box-shadow: 5px 0px 15px #444444;"));
+//		this.getStyleSheet().addRule(new WCssTextRule(".card", "background: #FFFFFF;margin-left: 0px; margin-top: 0px; border: 0px;box-shadow: 5px 0px 5px #444444;"));
 		this.getStyleSheet().addRule(new WCssTextRule(".card", "background: #FFFFFF;margin-left: 0px; margin-top: 0px; border: 0px"));
 		this.getStyleSheet().addRule(new WCssTextRule(".nostyle", "margin-left: 0px; margin-top: 0px; border: 0px"));
+//		this.getStyleSheet().addRule(new WCssTextRule(".tableDialog", "font-weight: bold; border-spacing: 10px 10px; border-collapse: separate"));
 		this.getStyleSheet().addRule(new WCssTextRule(".tableDialog", "margin-top: -15px; margin-left: -15px; border-spacing: 10px 10px; border-collapse: separate"));
 	}
 	

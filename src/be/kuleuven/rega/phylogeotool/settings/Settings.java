@@ -36,20 +36,32 @@ public class Settings {
 		parseConfFile(f);
 	}
 	
+	public String getConfigPath() {
+		return configPath;
+	}
+	
+	public static String getXmlPath(String configPath) {
+		return configPath + File.separator + "xml";
+	}
+	
 	public String getXmlPath() {
-		return xmlPath;
+		return configPath + File.separator + "xml";
 	}
 
-	public String getTreePath() {
-		return treePath;
+	public static String getClusterPath(String configPath) {
+		return configPath + File.separator + "clusters";
 	}
 	
 	public String getClusterPath() {
-		return clusterPath;
+		return configPath + File.separator + "clusters";
 	}
 
+	public static String getTreeviewPath(String configPath) {
+		return configPath + File.separator + "treeview";
+	}
+	
 	public String getTreeviewPath() {
-		return treeviewPath;
+		return configPath + File.separator + "treeview";
 	}
 	
 	public String getMetaDataFile() {
@@ -113,10 +125,7 @@ public class Settings {
 		return this.columnsToExport;
 	}
 	
-	private String xmlPath;
-	private String treePath;
-	private String clusterPath;
-	private String treeviewPath;
+	private String configPath;
 	private String metaDataFile;
 	private String phyloTreeFile;
 	private String alignmentLocation;
@@ -147,14 +156,8 @@ public class Settings {
         String name;
         for (Element e : children) {
             name = e.getAttributeValue("name");
-            if (name.equals("xmlPath")) {
-            	xmlPath = e.getValue().trim();
-            } else if(name.equals("treePath")) {
-            	treePath = e.getValue().trim();
-            } else if(name.equals("clusterPath")) {
-            	clusterPath = e.getValue().trim();
-            } else if(name.equals("fullTreeImagesPath")) {
-            	treeviewPath = e.getValue().trim();
+            if (name.equals("configPath")) {
+            	configPath = e.getValue().trim();
             } else if(name.equals("metadataFile")) {
             	metaDataFile = e.getValue().trim();
             } else if(name.equals("phyloTreeFile")) {
