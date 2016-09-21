@@ -28,7 +28,6 @@ public class ReadTree {
 	// TODO: Improve the code to distinguish between method that stores the tree and one that creates new tree
 	public static void setJeblTree(String locationJeblTree) {
 		if(jeblTree == null) {
-			System.err.println("Reading Jebl Tree");
 //			Settings settings = Settings.getInstance();
 			try {
 				jeblTree = readTree(new FileReader(new File(locationJeblTree)));

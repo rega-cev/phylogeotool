@@ -2,6 +2,7 @@ package be.kuleuven.rega.webapp.widgets;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import eu.webtoolkit.jwt.AlignmentFlag;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
+import eu.webtoolkit.jwt.TextFormat;
 import eu.webtoolkit.jwt.WDate;
 import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WFileResource;
@@ -50,14 +52,15 @@ public class PPlacerForm {
 	    table.setWidth(new WLength("100%"));
 	    table.setStyleClass("tableDialog");
 	    
-	    WLabel nucleotideSeqLabel = new WLabel("Nucleotide sequence");
+	    WLabel nucleotideSeqLabel = new WLabel("<b>Nucleotide sequence</b>");
+	    nucleotideSeqLabel.setTextFormat(TextFormat.XHTMLText);
 //	    nucleotideSeqLabel.setStyleClass("bold");
 //	    nucleotideSeqLabel.setBuddy(textArea);
 	    table.getElementAt(1, 1).addWidget(nucleotideSeqLabel);
 	    this.textArea(table);
 	    
-	    WLabel uploadFastaFileLabel = new WLabel("Upload fasta file");
-//	    uploadFastaFileLabel.setStyleClass("bold");
+	    WLabel uploadFastaFileLabel = new WLabel("<b>Upload fasta file</b>");
+	    uploadFastaFileLabel.setTextFormat(TextFormat.XHTMLText);
 	    table.getElementAt(2, 1).addWidget(uploadFastaFileLabel);
 	    this.fileUpload(table);
 	    this.emailTextArea(table);
@@ -65,13 +68,13 @@ public class PPlacerForm {
 	
 	public void addStartButton(WPushButton button) {
 		button.setWidth(new WLength(60));
-		table.getElementAt(4, 2).addWidget(button);
+		table.getElementAt(4, 3).addWidget(button);
 	}
 	
 	public void addCancelButton(WPushButton cancel) {
 		cancel.setWidth(new WLength(60));
-		table.getElementAt(4, 2).addWidget(cancel);
-		table.getElementAt(4, 2).setContentAlignment(AlignmentFlag.AlignRight);
+		table.getElementAt(4, 3).addWidget(cancel);
+		table.getElementAt(4, 3).setContentAlignment(AlignmentFlag.AlignRight);
 	}
 
 	public void fileUpload(WTable wTable) {
@@ -89,6 +92,7 @@ public class PPlacerForm {
 //		wvBoxLayout.addWidget(out);
 		
 		table.getElementAt(2, 2).addWidget(fileUpload);
+		table.getElementAt(2, 3).addWidget(out);
 		
 //		uploadButton.clicked().addListener(dialog, new Signal.Listener() {
 //			public void trigger() {
@@ -118,7 +122,7 @@ public class PPlacerForm {
 					}
 					textArea.setText(stringBuffer.toString());
 				} catch (IOException e) {
-					e.printStackTrace();
+					out.setText("File format not recognised as fasta file");
 				}
 //				uploadButton.enable();
 				
@@ -157,15 +161,17 @@ public class PPlacerForm {
 				out.setText("<p>Text area changed at " + WDate.getCurrentDate().toString() + ".</p>");
 			}
 		});
+		table.getElementAt(1, 2).setColumnSpan(2);
 		table.getElementAt(1, 2).addWidget(textArea);
 	}
 	
 	public void emailTextArea(WTable table) {
-		WLabel wLabel = new WLabel("E-mail");
-//		wLabel.setStyleClass("bold");
+		WLabel wLabel = new WLabel("<b>E-mail</b>");
+		wLabel.setTextFormat(TextFormat.XHTMLText);
 		table.getElementAt(3, 1).addWidget(wLabel);
 		email.setWidth(new WLength(300));
 		email.setPlaceholderText("Enter your email address.");
+		table.getElementAt(3, 2).setColumnSpan(2);
 		table.getElementAt(3, 2).addWidget(email);
 		WRegExpValidator emailValidator = new WRegExpValidator("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}");
 		email.setValidator(emailValidator);

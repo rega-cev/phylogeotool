@@ -197,7 +197,7 @@ public class GraphWebApplication extends WApplication {
 		this.setLocalizedStrings(resources);
 		this.useStyleSheet(new WLink("style/euresist/euresist.css"));
 //		wTemplate.bindString("server", "http://engine.euresist.org");
-		wTemplate.bindString("server", new WLink("../style/euresist").getUrl());
+		wTemplate.bindString("server", new WLink("style/euresist").getUrl());
 		return wTemplate;
 	}
 
@@ -349,7 +349,7 @@ public class GraphWebApplication extends WApplication {
 		this.getStyleSheet().addRule(new WCssTextRule(".label", "background: #FFFFFF;margin-left: 0px; margin-top: 0px;border: 0px;"));
 		this.getStyleSheet().addRule(new WCssTextRule(".card", "background: #FFFFFF;margin-left: 0px; margin-top: 0px; border: 0px"));
 		this.getStyleSheet().addRule(new WCssTextRule(".nostyle", "margin-left: 0px; margin-top: 0px; border: 0px"));
-		this.getStyleSheet().addRule(new WCssTextRule(".tableDialog", "font-weight: bold; margin-top: -15px; margin-left: -15px; border-spacing: 10px 10px; border-collapse: separate"));
+		this.getStyleSheet().addRule(new WCssTextRule(".tableDialog", "margin-top: -15px; margin-left: -15px; border-spacing: 10px 10px; border-collapse: separate"));
 	}
 	
 //	private final void showReport(List<String> ids, List<String> headersToShow) {
