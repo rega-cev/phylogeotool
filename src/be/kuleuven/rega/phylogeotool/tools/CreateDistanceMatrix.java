@@ -61,16 +61,19 @@ public class CreateDistanceMatrix {
 	
 	public void init(String treeLocation) throws FileNotFoundException {
 		jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader(treeLocation));
-//		System.out.println(((SimpleRootedTree) jeblTree).getNodes().size());
-//		System.out.println(((SimpleRootedTree) jeblTree).getChildren(((SimpleRootedTree) jeblTree).getRootNode()));
 		tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
+		
+		if(jeblTree.getTaxa().size() != tree.getLeaves().size()) {
+			System.err.println("Phylogenetic tree not accepted.");
+			System.err.println("Please check tree structure for polytomies");
+			System.exit(0);
+		}
 		
 		int index = 0;
 		for (Node leaf : tree.getLeaves()) {
 			leafs.add(leaf);
 			translatedNodeNames.put(leaf.getLabel(), index++);
 		}
-//		System.out.println("Size: " + translatedNodeNames.keySet().size());
 	}
 	
 	public void createDistanceMatrix(String distanceMatrixLocation, DistanceInterface distanceInterface) throws IOException {
