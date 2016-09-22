@@ -45,38 +45,38 @@ public class ColorClusters {
 	public static void main(String[] args) {
 
 		String treeLocation = null;
-		String configPath = null;
+		String basePath = null;
 		int minimumClusterSize = 2;
 
 		if (args.length > 2) {
 			treeLocation = args[0];
-			configPath = args[1];
+			basePath = args[1];
 			
 			ReadTree.setJeblTree(treeLocation);
 			ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
 		} else {
-			System.err.println("java -jar ColorClusters.jar phylo.tree clusterLocation treeviewLocation");
+			System.err.println("java -jar ColorClusters.jar phylo.tree basePath");
 			System.exit(0);
 		}
 
 		ColorClusters colorClusters = new ColorClusters();
 		// colorClusters.colorCluster(treeLocation, clusterLocation,
 		// treeviewLocation, minimumClusterSize);
-		colorClusters.colorClusterExportPNG(treeLocation, configPath, minimumClusterSize);
+		colorClusters.colorClusterExportPNG(treeLocation, basePath, minimumClusterSize);
 		// colorClusters.colorClusterExportGIF(treeLocation, treeviewLocation);
 	}
 
-	private void colorClusterExportNexus(String treeLocation, String configPath, int minimumClusterSize) {
+	private void colorClusterExportNexus(String treeLocation, String basePath, int minimumClusterSize) {
 		try {
 			Tree jeblTree = ReadTree.readTree(new FileReader(treeLocation));
-			PreRendering preRendering = new PreRendering(configPath);
-			File clusters = new File(Settings.getClusterPath(configPath));
+			PreRendering preRendering = new PreRendering(basePath);
+			File clusters = new File(Settings.getClusterPath(basePath));
 			File[] files = clusters.listFiles();
 			Cluster currentCluster = null;
 			for (int i = 0; i <= 1; i++) {
 				if (files[i].getName().contains(".xml")) {
 					currentCluster = preRendering.getClusterFromXML(files[i].getName().split(".")[0]);
-					NexusExporter.export(currentCluster, jeblTree, new FileWriter(new File(configPath + File.separator + "treeview" + File.separator + files[i].getName().split(".")[0]
+					NexusExporter.export(currentCluster, jeblTree, new FileWriter(new File(basePath + File.separator + "treeview" + File.separator + files[i].getName().split(".")[0]
 							+ ".nexus")), minimumClusterSize, true);
 				} else {
 					System.err.println(files[i].getName() + " is not a nexus file.");
@@ -122,9 +122,9 @@ public class ColorClusters {
 		}
 	}
 
-	private void colorClusterExportGIF(String treeLocation, String treeviewLocation) {
+	private void colorClusterExportGIF(String treeLocation, String basePath) {
 		// jeblTree = ReadTree.readTree(new FileReader(treeLocation));
-		File nexusTrees = new File(treeviewLocation);
+		File nexusTrees = new File(Settings.getTreeviewPath(basePath));
 		File[] files = nexusTrees.listFiles();
 		for (int i = 0; i <= 1; i++) {
 			if (files[i].getName().contains(".nexus")) {
@@ -137,7 +137,7 @@ public class ColorClusters {
 				args[5] = "320";
 				args[6] = treeLocation;
 				// System.out.println(files[i].getName().split("\\.")[0]);
-				args[7] = treeviewLocation + File.separator + files[i].getName().split("\\.")[0] + ".svg";
+				args[7] = Settings.getTreeviewPath(basePath) + File.separator + files[i].getName().split("\\.")[0] + ".svg";
 				FigTreeApplication.main(args);
 			} else {
 				System.err.println(files[i].getName() + " is not a nexus file.");

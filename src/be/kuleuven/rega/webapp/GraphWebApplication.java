@@ -70,7 +70,7 @@ public class GraphWebApplication extends WApplication {
 //	private String clusterRenderLocation = "";
 //	private String csvRenderLocation = "";
 //	private String treeViewRenderLocation = "";
-	private String configPath = "";
+	private String basePath = "";
 	
 	private boolean showNAData = false;
 
@@ -81,7 +81,7 @@ public class GraphWebApplication extends WApplication {
 		setTitle("PhyloGeoTool");
 		this.settings = Settings.getInstance(null);
 //		this.treeRenderLocation = settings.getTreePath();
-		this.configPath = settings.getConfigPath();
+		this.basePath = settings.getBasePath();
 //		this.clusterRenderLocation = settings.getClusterPath();
 //		this.csvRenderLocation = settings.getXmlPath();
 //		this.treeViewRenderLocation = settings.getTreeviewPath();
@@ -90,7 +90,7 @@ public class GraphWebApplication extends WApplication {
 		
 		this.setCSS();
 		
-		facadeRequestData = new FacadeRequestData(new PreRendering(configPath), settings.getPhyloTree());
+		facadeRequestData = new FacadeRequestData(new PreRendering(basePath), settings.getPhyloTree());
 //			jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree"));
 //			Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 //			facadeRequestData = new FacadeRequestData(tree, new File("/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv"), new DistanceCalculateFromTree());

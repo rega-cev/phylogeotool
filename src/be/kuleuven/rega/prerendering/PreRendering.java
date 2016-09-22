@@ -47,7 +47,7 @@ import figtree.application.GraphicFormat;
 public class PreRendering {
 
 	private XStream xStream = null;
-	private static String configPath;
+	private static String basePath;
 	public final static int CONTROL_PALETTE_WIDTH = 200;
 	public static enum ID {
 		LEAFID, NODEID
@@ -62,11 +62,11 @@ public class PreRendering {
 		this.xStream.omitField(Cluster.class, "tree");
 		this.xStream.omitField(Cluster.class, "root");
 		this.xStream.omitField(Cluster.class, "boundaries");
-		setConfigPath(folderPhyloRenderLocation);
+		setBasePath(folderPhyloRenderLocation);
 	}
 	
-	private static void setConfigPath(String configPath) {
-		PreRendering.configPath = configPath;
+	private static void setBasePath(String basePath) {
+		PreRendering.basePath = basePath;
 	}
 	
 //	public void writeJeblTreeToXML(jebl.evolution.trees.Tree tree) {
@@ -97,7 +97,7 @@ public class PreRendering {
 		String xml = xStream.toXML(cluster);
 		FileWriter fileWriter = null;
 		try {
-			fileWriter = new FileWriter(new File(Settings.getClusterPath(configPath) + File.separator + cluster.getRoot().getId() + ".xml"));
+			fileWriter = new FileWriter(new File(Settings.getClusterPath(basePath) + File.separator + cluster.getRoot().getId() + ".xml"));
 			fileWriter.write(xml);
 			fileWriter.close();
 		} catch (IOException e) {
@@ -109,7 +109,7 @@ public class PreRendering {
 		Cluster cluster = null;
 //			byte[] encoded = Files.readAllBytes(Paths.get(folderLocation + File.separator + clusterId + ".xml"));
 //			newTree = (Tree)xStream.fromXML(new String(encoded));
-		cluster = (Cluster)xStream.fromXML(new File(Settings.getClusterPath(configPath) + File.separator + clusterId + ".xml"));
+		cluster = (Cluster)xStream.fromXML(new File(Settings.getClusterPath(basePath) + File.separator + clusterId + ".xml"));
 //		Tree tree = getTreeFromXML("1");
 		Tree tree = ReadTree.getTreeDrawTree();
 		return new Cluster(tree, cluster.getRootId(), cluster.getBoundariesIds());
@@ -119,7 +119,7 @@ public class PreRendering {
 		Cluster cluster = null;
 //			byte[] encoded = Files.readAllBytes(Paths.get(folderLocation + File.separator + clusterId + ".xml"));
 //			newTree = (Tree)xStream.fromXML(new String(encoded));
-		cluster = (Cluster)xStream.fromXML(new File(Settings.getClusterPath(configPath) + File.separator + clusterId + ".xml"));
+		cluster = (Cluster)xStream.fromXML(new File(Settings.getClusterPath(basePath) + File.separator + clusterId + ".xml"));
 		return new Cluster(tree, cluster.getRootId(), cluster.getBoundariesIds());
 	}
 	
@@ -168,7 +168,7 @@ public class PreRendering {
 				this.prepareCSV(cluster.getRoot().getId(), tree.getLeaves(cluster.getRoot()), csvLocation, showNA);
 				System.err.println("XML details written to file");
 //				NexusExporter.export(cluster, jeblTree, new FileWriter(new File(this.folderLocationTreeView + File.separator + cluster.getRoot().getId() + ".nexus")), minimumClusterSize, true);
-				ColorClusters.prepareFullTreeView(treeLocation, cluster, GraphicFormat.PNG, new FileOutputStream(new File(Settings.getTreeviewPath(configPath) + File.separator + cluster.getRoot().getId() + ".png")), minimumClusterSize, true, false);
+				ColorClusters.prepareFullTreeView(treeLocation, cluster, GraphicFormat.PNG, new FileOutputStream(new File(Settings.getTreeviewPath(basePath) + File.separator + cluster.getRoot().getId() + ".png")), minimumClusterSize, true, false);
 				System.err.println("Image written to file");
 				
 				List<Node> nodesList = cluster.getBoundaries();
@@ -248,7 +248,7 @@ public class PreRendering {
 		try {
 			csvReader = new CSVReader(new FileReader(new File(csvLocation)), ';');
 			String[] header = csvReader.readNext();
-			FileWriter fileWriter = new FileWriter(new File(Settings.getXmlPath(configPath) + File.separator + clusterId + ".xml"));
+			FileWriter fileWriter = new FileWriter(new File(Settings.getXmlPath(basePath) + File.separator + clusterId + ".xml"));
 			fileWriter.write("<xml>" + "\n");
 			for(String key:header) {
 				if(!key.equalsIgnoreCase("id")) {
@@ -339,10 +339,10 @@ public class PreRendering {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			DirectoryStream<Path> dirStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(Settings.getXmlPath(configPath)));
+			DirectoryStream<Path> dirStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(Settings.getXmlPath(basePath)));
 //			System.out.println(new File(folderLocationCsvs + File.separator + clusterId + ".xml"));
-			if(Settings.getXmlPath(configPath) != null && !Settings.getXmlPath(configPath).equals("") && dirStream.iterator().hasNext()) {
-				File file = new File(Settings.getXmlPath(configPath) + File.separator + clusterId + ".xml");
+			if(Settings.getXmlPath(basePath) != null && !Settings.getXmlPath(basePath).equals("") && dirStream.iterator().hasNext()) {
+				File file = new File(Settings.getXmlPath(basePath) + File.separator + clusterId + ".xml");
 				FileInputStream fileInputStream = new FileInputStream(file);
 				Document doc = dBuilder.parse(fileInputStream);
 				NodeList nList = doc.getElementsByTagName(key);
@@ -397,20 +397,20 @@ public class PreRendering {
 			treeLocation = args[0];
 			csvLocation = args[1];
 			distanceMatrixLocation = args[2];
-			configPath = args[3];
+			basePath = args[3];
 			
 			ReadTree.setJeblTree(treeLocation);
 			ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
 			
-			checkFoldersEmpty(configPath);
+			checkFoldersEmpty(basePath);
 		} else {
 			System.err.println("You need to have a java -version > 7");
-			System.err.println("java -jar PreRendering.jar phylo.tree csvFile distance.matrix folderXMLClusters folderXMLCsv folderFigtreeRep");
+			System.err.println("java -jar PreRendering.jar phylo.tree csvFile distance.matrix basePath");
 			System.exit(0);
 		}
 		
 //		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/Configs/Portugal/tree","/Users/ewout/Documents/phylogeo/Configs/Portugal/clusters", "/Users/ewout/Documents/phylogeo/Configs/Portugal/xml", "/Users/ewout/Documents/phylogeo/Configs/Portugal/treeview", "/Users/ewout/Documents/phylogeo/Configs/Portugal/leafIds", "/Users/ewout/Documents/phylogeo/Configs/Portugal/nodeIds");
-		PreRendering preRendering = new PreRendering(configPath);
+		PreRendering preRendering = new PreRendering(basePath);
 		
 		try {
 //			preRendering.preRender("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree", "/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv", "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.portugal.txt");

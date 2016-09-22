@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phylogeotool-settings>
-  <!-- configPath
+  <!-- basePath
      Root directory containing the pre rendered files in subdirectories such as given to PreRender.jar
    -->
-  <property name="configPath">
+  <property name="basePath">
     /Users/phylogeo/Documents/Configs
   </property>
 

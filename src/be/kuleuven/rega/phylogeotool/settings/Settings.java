@@ -36,32 +36,32 @@ public class Settings {
 		parseConfFile(f);
 	}
 	
-	public String getConfigPath() {
-		return configPath;
+	public String getBasePath() {
+		return basePath;
 	}
 	
-	public static String getXmlPath(String configPath) {
-		return configPath + File.separator + "xml";
+	public static String getXmlPath(String basePath) {
+		return basePath + File.separator + "xml";
 	}
 	
 	public String getXmlPath() {
-		return configPath + File.separator + "xml";
+		return basePath + File.separator + "xml";
 	}
 
-	public static String getClusterPath(String configPath) {
-		return configPath + File.separator + "clusters";
+	public static String getClusterPath(String basePath) {
+		return basePath + File.separator + "clusters";
 	}
 	
 	public String getClusterPath() {
-		return configPath + File.separator + "clusters";
+		return basePath + File.separator + "clusters";
 	}
 
-	public static String getTreeviewPath(String configPath) {
-		return configPath + File.separator + "treeview";
+	public static String getTreeviewPath(String basePath) {
+		return basePath + File.separator + "treeview";
 	}
 	
 	public String getTreeviewPath() {
-		return configPath + File.separator + "treeview";
+		return basePath + File.separator + "treeview";
 	}
 	
 	public String getMetaDataFile() {
@@ -125,7 +125,7 @@ public class Settings {
 		return this.columnsToExport;
 	}
 	
-	private String configPath;
+	private String basePath;
 	private String metaDataFile;
 	private String phyloTreeFile;
 	private String alignmentLocation;
@@ -156,8 +156,8 @@ public class Settings {
         String name;
         for (Element e : children) {
             name = e.getAttributeValue("name");
-            if (name.equals("configPath")) {
-            	configPath = e.getValue().trim();
+            if (name.equals("basePath")) {
+            	basePath = e.getValue().trim();
             } else if(name.equals("metadataFile")) {
             	metaDataFile = e.getValue().trim();
             } else if(name.equals("phyloTreeFile")) {
