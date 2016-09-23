@@ -38,6 +38,7 @@ import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WEnvironment;
 import eu.webtoolkit.jwt.WGroupBox;
 import eu.webtoolkit.jwt.WHBoxLayout;
+import eu.webtoolkit.jwt.WLabel;
 import eu.webtoolkit.jwt.WLayout;
 import eu.webtoolkit.jwt.WLength;
 import eu.webtoolkit.jwt.WLength.Unit;
@@ -71,6 +72,7 @@ public class GraphWebApplication extends WApplication {
 //	private String csvRenderLocation = "";
 //	private String treeViewRenderLocation = "";
 	private String basePath = "";
+	private WLabel treeLevel;
 	
 	private boolean showNAData = false;
 
@@ -144,16 +146,23 @@ public class GraphWebApplication extends WApplication {
 		});
 //		pplaceButton.setDisabled(true);
 		
+		treeLevel = new WLabel("Level: ");
+		treeLevel.setText(treeLevel.getText() + String.valueOf(graphWidget.getPreviousClusterID()));
+
 //		graphWidget.setMaximumSize(new WLength(100.0, Unit.Percentage), new WLength(100.0, Unit.Percentage));
 		graphWidget.setMinimumSize(new WLength(300.0, Unit.Pixel), new WLength(100.0, Unit.Percentage));
 		wPushButton.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(15));
 		pplaceButton.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(15));
+//		treeLevel.setMaximumSize(new WLength(1.0, Unit.Pixel), new WLength(15));
+//		treeLevel.setWidth(new WLength(30.0));
 		//TODO: Change this exact value
 		wHBoxLayout.addWidget(wPushButton);
+//		wHBoxLayout.addWidget(treeLevel);
 		wHBoxLayout.addWidget(pplaceButton);
 //		wHBoxLayout.addWidget(exportSequencesButton);
 		wVBoxLayoutGraphWidget.addLayout(wHBoxLayout);
 		wVBoxLayoutGraphWidget.addWidget(graphWidget);
+		wVBoxLayoutGraphWidget.addWidget(treeLevel);
 		wVBoxLayoutGraphWidget.setStretchFactor(wHBoxLayout, 0);
 		wVBoxLayoutGraphWidget.setStretchFactor(graphWidget, 1);
 		
@@ -204,7 +213,7 @@ public class GraphWebApplication extends WApplication {
 	}
 
 	public void clicked(WMouseEvent wMouseEvent, Node node, WCircleNode wCircleNode) {
-		graphWidget.setCluster(node.getId());
+		graphWidget.setCluster(node.getId(), treeLevel, -1);
 		mouseWentOut(null, wCircleNode);
 		
 		this.setGoogleChart(wCircleNode.getNode().getId());
@@ -225,7 +234,24 @@ public class GraphWebApplication extends WApplication {
 	
 	public void pathChanged() {
 		int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
-		graphWidget.setCluster(id);
+
+		/*
+		 *  deeper == -1 -> User went deeper in the tree (further away from root)
+		 *  deeper == 0  -> No level change (refreshed page? ...)
+		 *  deeper == 1  -> User went higher in the tree (more towards root)
+		 */
+		int deeper = 0;
+		// User went up in the tree
+		if (id < graphWidget.getPreviousClusterID()) {
+			deeper = 1;
+		// User stayed at the same level
+		} else if(id == graphWidget.getPreviousClusterID()) {
+			deeper = 0;
+		// User went down in the tree
+		} else {
+			deeper = -1;
+		}
+		graphWidget.setCluster(id, treeLevel, deeper);
 		setGoogleChart(id);
 		setStatisticGraph(this.wBarChartMine, id);
 	}

@@ -33,6 +33,7 @@ import be.kuleuven.rega.treedraw.TreeTraversal;
 import be.kuleuven.rega.url.UrlManipulator;
 import eu.webtoolkit.jwt.WAbstractArea;
 import eu.webtoolkit.jwt.WApplication;
+import eu.webtoolkit.jwt.WLabel;
 import eu.webtoolkit.jwt.WPaintDevice;
 import eu.webtoolkit.jwt.WPaintedWidget;
 import eu.webtoolkit.jwt.WPainter;
@@ -46,6 +47,9 @@ public class GraphWidget extends WPaintedWidget {
 	private PPlacer pplacer;
 	private int width;
 	private int height;
+	
+	private int previousClusterID = 0;
+	private int breadCrumb = 0;
 	
 	// TODO: We need to get rid of the reference to GraphWebApplication
 	public GraphWidget(FacadeRequestData facadeRequestData) throws IOException {
@@ -99,6 +103,14 @@ public class GraphWidget extends WPaintedWidget {
 
 	public void setCluster(Cluster cluster) {
 		this.cluster = cluster;
+	}
+	
+	public int getPreviousClusterID() {
+		return previousClusterID;
+	}
+
+	public void setPreviousClusterID(int previousClusterID) {
+		this.previousClusterID = previousClusterID;
 	}
 
 	//TODO: Method is called twice due to the addition of the view tree button on top
@@ -281,7 +293,14 @@ public class GraphWidget extends WPaintedWidget {
 //		return NexusExporter.export(this.getTree(), this.getTreeClustered());
 //	}
 	
-	public void setCluster(int id) {
+	/**
+	 * @param id
+	 * @param deeper
+	 *  deeper == -1 -> User went deeper in the tree (further away from root)
+	 *  deeper == 0  -> No level change (refreshed page? ...)
+	 *  deeper == 1  -> User went higher in the tree (more towards root)
+	 */
+	public void setCluster(int id, WLabel treeLevel, int deeper) {
 //		Tree tempTree = kMedoidsToPhylo.getGraph(this.fullTree, node, nrClusters);
 		String nodeId = Integer.toString(id);
 //		Tree tempTree = preRendering.getTreeFromXML(nodeId);
@@ -290,6 +309,12 @@ public class GraphWidget extends WPaintedWidget {
 		//TODO: check if pplacer is part of link
 		WApplication.getInstance().setInternalPath("/root_" + nodeId);
 //		WApplication.getInstance().getInternalPath();
+		switch(deeper) {
+			case -1: treeLevel.setText("Level: " + ++breadCrumb);break;
+			case 0:  treeLevel.setText("Level: " + breadCrumb);break;
+			case 1:  treeLevel.setText("Level: " + --breadCrumb);break;
+		}
+		this.setPreviousClusterID(id);
 		update();
 	}
 	
