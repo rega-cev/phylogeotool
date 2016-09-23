@@ -39,7 +39,7 @@ public class PPlacingJob implements Job {
 	public String createTempDirs(String pplacer_scripts_location) {
 		String args[] = {pplacer_scripts_location + File.separator + "init.sh"};
 		
-		StreamGobbler streamGobbler = runProcess(args);
+		StreamGobbler streamGobbler = StreamGobbler.runProcess(args);
 		System.out.println(streamGobbler.getLastLine());
 		return streamGobbler.getLastLine();
 	}
@@ -50,36 +50,8 @@ public class PPlacingJob implements Job {
 	public String doPPlacing(String pplacer_scripts_location, String tmpDir, String treeFile, String alignmentFile, String sequenceFile, String logFile) {
 		String args[] = {pplacer_scripts_location + File.separator + "place.sh", tmpDir, treeFile, alignmentFile, sequenceFile, logFile};
 		
-		StreamGobbler streamGobbler = runProcess(args);
+		StreamGobbler streamGobbler = StreamGobbler.runProcess(args);
 		System.out.println(streamGobbler.getLastLine());
 		return tmpDir + File.separator + "sequences.tog.tre";
-	}
-	
-	private StreamGobbler runProcess(String args[]) {
-		Runtime rt = Runtime.getRuntime();
-		try {
-			System.out.println("Process: " + args[0]);
-			Process process = rt.exec(args);
-			// any error message?
-            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "ERROR");            
-            
-            // any output?
-            StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), "OUTPUT");
-                
-            // kick them off
-            errorGobbler.start();
-            outputGobbler.start();
-                                    
-            // any error???
-            int exitVal = process.waitFor();
-            System.out.println("Exit value: " + exitVal);
-
-            return outputGobbler;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 }

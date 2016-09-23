@@ -14,6 +14,7 @@ import be.kuleuven.rega.form.MyComboBox;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
 import be.kuleuven.rega.phylogeotool.pplacer.PPlacer;
+import be.kuleuven.rega.phylogeotool.pplacer.StreamGobbler;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
 import be.kuleuven.rega.prerendering.FacadeRequestData;
@@ -190,14 +191,33 @@ public class GraphWebApplication extends WApplication {
 	
 	public GraphWebApplication(WEnvironment wEnvironment, String pplacerId) {
 		this(wEnvironment);
-		String tmpDir = System.getProperty("java.io.tmpdir");
-		if(Files.notExists(FileSystems.getDefault().getPath(tmpDir), LinkOption.NOFOLLOW_LINKS)) {
-			System.err.println("Tmp directory does not exist! Please set the TEMP environment variable.");
-		} else if(pplacerId != null) {
-			String location = tmpDir + File.separator + "pplacer." + pplacerId;
-			List<String> pplacedIds = PPlacer.getPPlacerIds(location);
-			this.pplacer = new PPlacer(location + File.separator + "sequences.tog.tre", pplacedIds);
-			graphWidget.setPPlacer(pplacer);
+//		String tmpDir = System.getProperty("java.io.tmpdir");
+//		if(Files.notExists(FileSystems.getDefault().getPath(tmpDir), LinkOption.NOFOLLOW_LINKS)) {
+//			System.err.println("Tmp directory does not exist! Please set the TEMP environment variable.");
+//		} else if(pplacerId != null) {
+//			String location = tmpDir + File.separator + "pplacer." + pplacerId;
+//			List<String> pplacedIds = PPlacer.getPPlacerIds(location);
+//			this.pplacer = new PPlacer(location + File.separator + "sequences.tog.tre", pplacedIds);
+//			graphWidget.setPPlacer(pplacer);
+//		}
+		
+		if(pplacerId != null && !pplacerId.equals("")) {
+			if(Files.notExists(FileSystems.getDefault().getPath(settings.getScriptFolder() + File.separator + "init.sh"), LinkOption.NOFOLLOW_LINKS)) {
+				System.err.println("File init.sh does not exists at: " + settings.getScriptFolder() + File.separator + "init.sh");
+			} else {
+				String args[] = {settings.getScriptFolder() + File.separator + "init.sh", pplacerId};
+				StreamGobbler streamGobbler = StreamGobbler.runProcess(args);
+				System.out.println("PPlacer tree loaded from: " + streamGobbler.getLastLine());
+				String location = streamGobbler.getLastLine();
+				
+				if(Files.notExists(FileSystems.getDefault().getPath(location + File.separator + "sequences.tog.tre"), LinkOption.NOFOLLOW_LINKS)) {
+					System.err.println("PPlaced tree with id: " + pplacerId + " could not be found at " + location + File.separator + "sequences.tog.tre");
+				} else {
+					List<String> pplacedIds = PPlacer.getPPlacerIds(location);
+					this.pplacer = new PPlacer(location + File.separator + "sequences.tog.tre", pplacedIds);
+					graphWidget.setPPlacer(pplacer);
+				}
+			}
 		}
 	}
 	

@@ -1,13 +1,6 @@
 package be.kuleuven.rega.webapp;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Point;
-import java.awt.RadialGradientPaint;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -181,7 +174,7 @@ public class GraphWidget extends WPaintedWidget {
 //				System.out.println(pplacer.clusterContainsPPlacerSequence(facadeRequestData.getCluster(Integer.toString(wCircle.getNode().getId()))));
 //			}
 //			System.out.println(facadeRequestData.getCluster(Integer.toString(wCircle.getNode().getId())));
-			if(pplacer != null && pplacer.clusterContainsPPlacerSequence(facadeRequestData.getCluster(Integer.toString(wCircle.getNode().getId())))) {
+//			if(pplacer != null && pplacer.clusterContainsPPlacerSequence(facadeRequestData.getCluster(Integer.toString(wCircle.getNode().getId())))) {
 //				System.out.println("Here: " + Integer.toString(wCircle.getNode().getId()));
 //				graphics.drawString("pplaced", wCircle.getCenterX() + wCircle.getRadius() + 5, wCircle.getCenterY());
 //				graphics.drawRect(wCircle.getCenterX() - wCircle.getRadius(), wCircle.getCenterY() - wCircle.getRadius(), wCircle.getRadius()*2, wCircle.getRadius()*2);
@@ -213,10 +206,10 @@ public class GraphWidget extends WPaintedWidget {
 //				graphics.drawRoundRect(100, 100, 20, 30, 20, 30);
 //				graphics.drawArc(50, 60, 30, 20, 230, 160);
 				
-				System.out.println("Here");
-				java.awt.Shape shapeTemp = null;
-		        
-		        float origAlpha = 1.0f;
+//				System.out.println("Here");
+//				java.awt.Shape shapeTemp = null;
+//		        
+//		        float origAlpha = 1.0f;
 //		        Composite origComposite = graphics.getComposite();
 //		        if (origComposite instanceof AlphaComposite) {
 //		            AlphaComposite origAlphaComposite = (AlphaComposite)origComposite;
@@ -283,7 +276,7 @@ public class GraphWidget extends WPaintedWidget {
 //
 //		        graphics.fill(shapeTemp);
 //		        graphics.setTransform(transformations.poll());
-			}
+//			}
         }
 			
 	}

@@ -33,4 +33,32 @@ public class StreamGobbler extends Thread {
 	public String getLastLine() {
 		return lines.get(lines.size() - 1);
 	}
+	
+	public static StreamGobbler runProcess(String args[]) {
+		Runtime rt = Runtime.getRuntime();
+		try {
+			System.out.println("Process: " + args[0]);
+			Process process = rt.exec(args);
+			// any error message?
+            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "ERROR");            
+            
+            // any output?
+            StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), "OUTPUT");
+                
+            // kick them off
+            errorGobbler.start();
+            outputGobbler.start();
+                                    
+            // any error???
+            int exitVal = process.waitFor();
+            System.out.println("Exit value: " + exitVal);
+
+            return outputGobbler;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
