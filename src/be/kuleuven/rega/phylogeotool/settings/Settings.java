@@ -117,6 +117,10 @@ public class Settings {
 		return showNAData;
 	}
 	
+	public boolean getPPlacerSupport() {
+		return pplacerSupport;
+	}
+	
 	public String getVisualizeGeography() {
 		return visualizeGeography;
 	}
@@ -136,6 +140,7 @@ public class Settings {
 	private String datalessRegionColor;
 	private String backgroundcolor;
 	private String[] colorAxis;
+	private boolean pplacerSupport;
 	private List<String> columnsToExport;
 	
     @SuppressWarnings("unchecked")
@@ -170,8 +175,10 @@ public class Settings {
             	scriptFolder = e.getValue().trim();
             } else if(name.equals("visualizeGeography")) {
             	visualizeGeography = e.getValue().trim();
-            }else if(name.equals("showNAData")) {
+            } else if(name.equals("showNAData")) {
             	showNAData = Boolean.parseBoolean(e.getValue().trim());
+            } else if(name.equals("pplacer_support")) {
+            	pplacerSupport = Boolean.parseBoolean(e.getValue().trim());
             } else if(name.equals("colorCodes")) {
             	List<Element> colorProperties = e.getChildren();
             	String colorPropertyName;

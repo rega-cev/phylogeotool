@@ -140,13 +140,15 @@ public class GraphWebApplication extends WApplication {
 		});
 		
 		WPushButton pplaceButton = new WPushButton("PPlacer");
-		pplaceButton.clicked().addListener(this, new Signal.Listener() {
-			public void trigger() {
-		        showPPlacer();
-		    }
-		});
-//		pplaceButton.setDisabled(true);
-		
+		if(settings.getPPlacerSupport()) {
+			pplaceButton.clicked().addListener(this, new Signal.Listener() {
+				public void trigger() {
+			        showPPlacer();
+			    }
+			});
+		} else {
+			pplaceButton.setDisabled(true);
+		}
 		treeLevel = new WLabel("Level: ");
 		treeLevel.setText(treeLevel.getText() + String.valueOf(graphWidget.getPreviousClusterID()));
 
@@ -202,21 +204,25 @@ public class GraphWebApplication extends WApplication {
 //		}
 		
 		if(pplacerId != null && !pplacerId.equals("")) {
-			if(Files.notExists(FileSystems.getDefault().getPath(settings.getScriptFolder() + File.separator + "init.sh"), LinkOption.NOFOLLOW_LINKS)) {
-				System.err.println("File init.sh does not exists at: " + settings.getScriptFolder() + File.separator + "init.sh");
-			} else {
-				String args[] = {settings.getScriptFolder() + File.separator + "init.sh", pplacerId};
-				StreamGobbler streamGobbler = StreamGobbler.runProcess(args);
-				System.out.println("PPlacer tree loaded from: " + streamGobbler.getLastLine());
-				String location = streamGobbler.getLastLine();
-				
-				if(Files.notExists(FileSystems.getDefault().getPath(location + File.separator + "sequences.tog.tre"), LinkOption.NOFOLLOW_LINKS)) {
-					System.err.println("PPlaced tree with id: " + pplacerId + " could not be found at " + location + File.separator + "sequences.tog.tre");
+			if(settings.getPPlacerSupport()) {
+				if(Files.notExists(FileSystems.getDefault().getPath(settings.getScriptFolder() + File.separator + "init.sh"), LinkOption.NOFOLLOW_LINKS)) {
+					System.err.println("File init.sh does not exists at: " + settings.getScriptFolder() + File.separator + "init.sh");
 				} else {
-					List<String> pplacedIds = PPlacer.getPPlacerIds(location);
-					this.pplacer = new PPlacer(location + File.separator + "sequences.tog.tre", pplacedIds);
-					graphWidget.setPPlacer(pplacer);
+					String args[] = {settings.getScriptFolder() + File.separator + "init.sh", pplacerId};
+					StreamGobbler streamGobbler = StreamGobbler.runProcess(args);
+					System.out.println("PPlacer tree loaded from: " + streamGobbler.getLastLine());
+					String location = streamGobbler.getLastLine();
+					
+					if(Files.notExists(FileSystems.getDefault().getPath(location + File.separator + "sequences.tog.tre"), LinkOption.NOFOLLOW_LINKS)) {
+						System.err.println("PPlaced tree with id: " + pplacerId + " could not be found at " + location + File.separator + "sequences.tog.tre");
+					} else {
+						List<String> pplacedIds = PPlacer.getPPlacerIds(location);
+						this.pplacer = new PPlacer(location + File.separator + "sequences.tog.tre", pplacedIds);
+						graphWidget.setPPlacer(pplacer);
+					}
 				}
+			} else {
+				System.err.println("PPlacer not supported. If you want to support PPlacer, please toggle PPlacer support on in your global-conf.xml file");
 			}
 		}
 	}
@@ -371,13 +377,15 @@ public class GraphWebApplication extends WApplication {
 	    pplace.clicked().addListener(dialog,
 	            new Signal1.Listener<WMouseEvent>() {
 	                public void trigger(WMouseEvent e1) {
-	                	if(PPlacerForm.isFormValid()) {
-		                	System.out.println(PPlacerForm.getUploadedFile().getAbsolutePath());
-		                    jobScheduler.addPPlacerJob(settings.getScriptFolder(), settings.getPhyloTree(), settings.getAlignmentLocation(),
+	                	if(settings.getPPlacerSupport()) {
+	                		if(PPlacerForm.isFormValid()) {
+	                			System.out.println(PPlacerForm.getUploadedFile().getAbsolutePath());
+	                			jobScheduler.addPPlacerJob(settings.getScriptFolder(), settings.getPhyloTree(), settings.getAlignmentLocation(),
 		                    		PPlacerForm.getUploadedFile().getAbsolutePath(), settings.getLogfileLocation(), PPlacerForm.getEmail());
-		                    dialog.reject();
+	                			dialog.reject();
+	                		}
 	                	} else {
-	                		
+	                		System.err.println("PPlacer not supported. If you want to support PPlacer, please toggle PPlacer support on in your global-conf.xml file");
 	                	}
 	                }
 	            });
