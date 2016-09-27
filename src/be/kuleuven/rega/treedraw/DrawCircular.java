@@ -101,12 +101,11 @@ public class DrawCircular extends Draw {
 				Rectangle boundingBox = new Rectangle((int) (polarToEucledianX(map.get(cluster.getRoot()).getX(), map.get(cluster.getRoot()).getTheta()) * factor + moveRight - circleWidth / 2), (int) (polarToEucledianY(map.get(cluster.getRoot()).getX(), map.get(cluster.getRoot()).getTheta()) * factor + moveDown - circleWidth / 2), circleWidth, circleWidth);
 				
 				if(clustersWithPPlacerSeq.contains(edge.getNode2())) {
-					graphics.setStroke(new BasicStroke(3));
+					graphics.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{2,2}, 0));
 				}
 				graphics.draw(new Arc2D.Double(boundingBox, 360 - Math.toDegrees(map.get(edge.getNode1()).getTheta()), Math.toDegrees(map.get(edge.getNode1()).getTheta()) - Math.toDegrees(map.get(edge.getNode2()).getTheta()), Arc2D.Double.OPEN));
 				graphics.draw(new Line2D.Double(corner, end));
 				graphics.setStroke(new BasicStroke(1));
-				
 //				graphics.drawString(Integer.toString(edge.getNode2().getId()), (int)map.get(edge.getNode2()).getX(), (int)map.get(edge.getNode2()).getY());
 			} else if (shape == Shape.RADIAL) {
 				graphics.draw(new Line2D.Double(map.get(edge.getNode1()).getX() * factor + moveRight, map.get(edge.getNode1()).getY() * factor + moveDown, map.get(edge.getNode2()).getX() * factor + moveRight, map.get(edge.getNode2()).getY() * factor + moveDown));
@@ -131,8 +130,7 @@ public class DrawCircular extends Draw {
 				// If you want the circle to be surrounded
 				if(clustersWithPPlacerSeq.contains(edge.getNode2())) {
 					graphics.setColor(Color.black);
-					graphics.setStroke(new BasicStroke(3));
-				} else {
+					graphics.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{2,2}, 0));				} else {
 					graphics.setColor(graphics.getColor().darker());
 				}
 //				graphics.setStroke(new BasicStroke(5));
