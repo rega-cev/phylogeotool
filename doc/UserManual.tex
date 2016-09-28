@@ -5,8 +5,6 @@
 \usepackage{hyperref}
 \usepackage{float}
 
- \usepackage{natbib}
-
 \usepackage{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Required for accented characters
 \linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
@@ -128,7 +126,7 @@ When the 'View Tree' button (located on top of the clustered phylogeny panel) is
 In addition to the visualisation of the tree, export options are available. The user can select if he/she wants the tree to be coloured, if the node tips should be shown and in which format the tree will be exported. From this window, the tree can be exported into various formats (PDF, SVG, NEXUS and PNG) by clicking on the 'Export' button. Note that the files in the NEXUS format can be visualized in programs such as FigTree (TODO: add link to figtree).  
 
 \subsection{Automated phylogenetic placement of your sequences}
-Phylogenetic placement enables the placement of unknown query sequences onto an existing phylogenetic tree, without the need to re-compute the entire phylogeny (which is a time-consuming process, especially when a large number of sequences is involved). In PhyloGeoTool, we use phylogenetic placement to position new sequences onto the cluster phylogeny, in a reasonable amount of times (i.e. minutes). We implement this placement using the well-known pplacer software package \citep{Matsen2010} (TODO: should we mention the type of score we use? likelihood-based/posterior-based?).\\
+Phylogenetic placement enables the placement of unknown query sequences onto an existing phylogenetic tree, without the need to re-compute the entire phylogeny (which is a time-consuming process, especially when a large number of sequences is involved). In PhyloGeoTool, we use phylogenetic placement to position new sequences onto the cluster phylogeny, in a reasonable amount of times (i.e. minutes). We implement this placement using the well-known pplacer software package \cite{Matsen2010} (TODO: should we mention the type of score we use? likelihood-based/posterior-based?).\\
 To place your sequences on the cluster phylogeny, click the 'Phylo-place' button in the clustering window. A window (TODO: add ref to figure) will popup that enables you to place your sequences. There are two ways to add a new sequence to the tree:
 \begin{itemize}
 \item Paste your sequence in the 'Nucleotide sequence' field
@@ -138,7 +136,7 @@ Currently, we only support the submission of 1 sequence at a time.
 
 \section{Example: exploring a large HIV-1 dataset}
 
-As mentioned earler, we host a publically available instance of the PhyloGeoTool that used all HIV-1 data that is available within the EuResist Integrated Data Base \citep{Zazzi2012}. 
+As mentioned earler, we host a publically available instance of the PhyloGeoTool that used all HIV-1 data that is available within the EuResist Integrated Data Base \cite{Zazzi2012}. 
 This database contains virus genotypes, clinical responses and epidemiological markers of more than 66.000 patients from 12 different countries.
 We made a YouTube video available where all features we discussed earlier are demonstrated using the EuResist PhyloGeoTool instance: (TODO: add video). \\
 
@@ -149,7 +147,8 @@ Video scenario:\\
  - we should do an export in NEXUS format and open this in FigTree \\
  - when phylo-placing, go down to the level where the placement was done\\
  - when phylo-placing, I don't think it is necessary to show the upload, simply pasting the sequence in the field is OK \\
-\bibliographystyle{natbib}%%%%natbib.sty
-\bibliography{References}%%%refs.bib
+
+\bibliographystyle{plain}
+\bibliography{References}
 
 \end{document}
