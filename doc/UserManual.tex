@@ -52,7 +52,7 @@ User Reference Manual} % Subtitle
 \newpage
 
 This document provides additional information on how to use an instance of the PhyloGeoTool. Most users will access a publically (or privately) accessible instance of the PhyloGeoTool. An example of a publically available instance of the PhyloGeoTool that aims to serve a large HIV cohort can be found at \url{http://regatools.med.kuleuven.be/phylogeotool/PhyloGeoTool}.\\
-It is however also possible to install your own instance of the PhyloGeoTool, for this, we refer you to the installation manual (TODO: add link).
+It is however also possible to install your own instance of the PhyloGeoTool, for this, we refer to the installation manual (TODO: add link).
 
 \section{Getting started}
 
@@ -64,7 +64,7 @@ TODO: explaining what instances are all about, is easier if you can mention more
 Note that any browser (Chrome, Firefox, Internet Explorer) should do, if you experience any problems with your browser, please contact us (TODO: link to the contact section).
 
 
-\section{Core user interface and functionality}
+\section{Core functionality and user interface}
 
 
 
@@ -97,7 +97,6 @@ When you click on a node in the clustered phylogeny, you will navigate to the cl
 A counter on the bottom left of the cluster panel keeps track of the depth of your navigation. As you can visit a cluster node by clicking it, you can go back to into your navigational path by using the browser 'Back' button.
 \\
 Additionally, the URL encodes the level of descent in the clustered phylogeny. An URL can thus be bookmarked or shared to go back at the exact location in the clustered phylogeny.\\ 
-TODO: is URL decoding already implemented? (see issue #31)
 
 \subsection{Select a geographic region}
 \begin{figure}[H]
@@ -129,25 +128,17 @@ When the 'View Tree' button (located on top of the clustered phylogeny panel) is
 In addition to the visualisation of the tree, export options are available. The user can select if he/she wants the tree to be coloured, if the node tips should be shown and in which format the tree will be exported. From this window, the tree can be exported into various formats (PDF, SVG, NEXUS and PNG) by clicking on the 'Export' button. Note that the files in the NEXUS format can be visualized in programs such as FigTree (TODO: add link to figtree).  
 
 \subsection{Automated phylogenetic placement of your sequences}
-Phylogenetic placement enables the placement of unknown query sequences onto an existing phylogenetic tree, without the need to re-compute the entire phylogeny (which is a time-consuming process, especially when a large number of sequences is involved). In PhyloGeoTool, we use phylogenetic placement to position new sequences onto the cluster phylogeny, in a reasonable time-frame (i.e. minutes).
-
-%pplacer is a software package for phylogenetic placement and subsequent visualization \citep{Matsen2010}.
- via a reference alignment. and uses techniques from likelihood-based phylogenetic inference to do so.
-As such, pplacer features calculation of the posterior probability of the placement on an edge, which is a statistically rigorous way of quantifying uncertainty on an edge-by-edge basis.
-
-PhyloGeoTool focuses on using pplacer to position additional sequences onto a previously reconstructed phylogenetic tree.
-To do so, select PPlacer in the clustering window; there are two ways to add a new sequence to the tree:
+Phylogenetic placement enables the placement of unknown query sequences onto an existing phylogenetic tree, without the need to re-compute the entire phylogeny (which is a time-consuming process, especially when a large number of sequences is involved). In PhyloGeoTool, we use phylogenetic placement to position new sequences onto the cluster phylogeny, in a reasonable amount of times (i.e. minutes). We implement this placement using the well-known pplacer software package \citep{Matsen2010} (TODO: should we mention the type of score we use? likelihood-based/posterior-based?).\\
+To place your sequences on the cluster phylogeny, click the 'Phylo-place' button in the clustering window. A window (TODO: add ref to figure) will popup that enables you to place your sequences. There are two ways to add a new sequence to the tree:
 \begin{itemize}
-\item Paste the nucleotide sequence you'd like to add in the presented window.
-\item Choose a Fasta file containing the nucleotide sequence using the file chooser.
-\item Fasta files containing multiple sequences are allowed up to a total of MAX sequences, which will be placed sequentially into the phylogenetic tree.
+\item Paste your sequence in the 'Nucleotide sequence' field
+\item Upload a FASTA file containing the nucleotide sequence using the file chooser.
 \end{itemize}
+Currently, we only support the submission of 1 sequence at a time.
 
+\section{Example: exploring a large HIV-1 dataset}
 
-
-\section{Example: exploring an HIV-1 data set}
-
-In this section, we provide an example application of the PhyloGeoTool on HIV-1 using data available within the EuResist Integrated Data Base \citep{Zazzi2012}. 
+As mentioned earler, we host a publically available instance of the PhyloGeoTool that used all HIV-1 data that is available within the EuResist Integrated Data Base \citep{Zazzi2012}. 
 This database contains virus genotypes, clinical responses and epidemiological markers of more than 66.000 patients from 12 different countries.
 
 \bibliographystyle{natbib}%%%%natbib.sty
