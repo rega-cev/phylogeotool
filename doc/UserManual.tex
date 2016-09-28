@@ -99,7 +99,7 @@ A counter on the bottom left of the cluster panel keeps track of the depth of yo
 Additionally, the URL encodes the level of descent in the clustered phylogeny. An URL can thus be bookmarked or shared to go back at the exact location in the clustered phylogeny.\\ 
 TODO: is URL decoding already implemented? (see issue #31)
 
-\subsection{Change region}
+\subsection{Select a geographic region}
 \begin{figure}[H]
 \centering
 \includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/change_country.PNG}
@@ -108,29 +108,31 @@ TODO: is URL decoding already implemented? (see issue #31)
 \end{figure}
 You can select your geographical region of interest in the drop down box on top of the map (see fig. \ref{fig:change_region}). 
 
-\subsubsection{Change attribute}
+\subsection{Select a sequence attribute}
 \begin{figure}[H]
 \centering
 \includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/change_attr.PNG}
 \caption{Change the attribute in the drop down box}
 \label{fig:change_attr}
 \end{figure}
-When you change the attribute by selecting a new value in the drop down box on top of the bar chart (see fig. \ref{fig:change_attr}), the chart will update and now only show data for this specific newly selected attribute.
+You can select an attribute of interest in the drop down box on top of the attribute bar chart (see fig. \ref{fig:change_attr}).
 
-\subsubsection{View Tree}
+\subsection{Visualize the phylogenetic tree}
 \begin{figure}[H]
 \centering
 \includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/view_tree.PNG}
-\caption{Tree visualization in FigTree}
+\caption{Visualizating the phylogenetic tree, colored according to the clustering scheme}
 \label{fig:view_tree}
 \end{figure}
-When the 'View Tree' button on top of the circular phylogenetic tree representation is clicked, a popup window will appear such as in fig. \ref{fig:view_tree} where the tree is shown as a radial tree such as it is represented in FigTree. The different clusters get different colours. The colours in the radial tree representation correspond to the colours in the circular tree representation.
+When the 'View Tree' button (located on top of the clustered phylogeny panel) is clicked, a popup window is shown (fig. \ref{fig:view_tree}) that visualizes the phylogeny as a radial phylogenetic tree. The colours in the radial tree correspond to the colours of the clusters in the clustered phylogeny panel.
 \\
-In addition to the visualisation of the tree, export options are available. The user can select if he/she wants the tree to be coloured, if the node tips should be shown and in which format the tree will be exported. 
+In addition to the visualisation of the tree, export options are available. The user can select if he/she wants the tree to be coloured, if the node tips should be shown and in which format the tree will be exported. From this window, the tree can be exported into various formats (PDF, SVG, NEXUS and PNG) by clicking on the 'Export' button. Note that the files in the NEXUS format can be visualized in programs such as FigTree (TODO: add link to figtree).  
 
-\subsection{PPlacer}
-pplacer is a software package for phylogenetic placement and subsequent visualization \citep{Matsen2010}.
-Phylogenetic placement allows to insert/place unknown query sequences onto an existing phylogenetic tree via a reference alignment and uses techniques from likelihood-based phylogenetic inference to do so.
+\subsection{Automated phylogenetic placement of your sequences}
+Phylogenetic placement enables the placement of unknown query sequences onto an existing phylogenetic tree, without the need to re-compute the entire phylogeny (which is a time-consuming process, especially when a large number of sequences is involved). In PhyloGeoTool, we use phylogenetic placement to position new sequences onto the cluster phylogeny, in a reasonable time-frame (i.e. minutes).
+
+%pplacer is a software package for phylogenetic placement and subsequent visualization \citep{Matsen2010}.
+ via a reference alignment. and uses techniques from likelihood-based phylogenetic inference to do so.
 As such, pplacer features calculation of the posterior probability of the placement on an edge, which is a statistically rigorous way of quantifying uncertainty on an edge-by-edge basis.
 
 PhyloGeoTool focuses on using pplacer to position additional sequences onto a previously reconstructed phylogenetic tree.
