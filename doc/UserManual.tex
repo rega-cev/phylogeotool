@@ -60,10 +60,11 @@ PhyloGeoTool implements a visual method to explore large phylogenetic trees and 
 The tool also provides the possibility to insert new virus strains into the existing phylogenetic tree, allowing users to gain insight in the placement of such new strains without the need to reconstruct the phylogeny.
 
 A particular PhyloGeoTool instance can be used by navigating the browser to the URL at which this instance has been deployed. For example, the aforementioned public HIV instance of the PhyloGeoTool is deployed at \url{http://regatools.med.kuleuven.be/phylogeotool/PhyloGeoTool}, and thus, you should navigate your browser to this exact URL.\\
+TODO: explaining what instances are all about, is easier if you can mention more than 1 instance. Perhaps Lize will have a HCV/DENV instance ready soon, that we can add here, but maybe we should both deploy the EuResist and PT tool, such that we can list them in this section.\\
 Note that any browser (Chrome, Firefox, Internet Explorer) should do, if you experience any problems with your browser, please contact us (TODO: link to the contact section).
 
 
-\subsection{Basic functionality}
+\section{Core user interface and functionality}
 
 
 
@@ -71,45 +72,41 @@ Note that any browser (Chrome, Firefox, Internet Explorer) should do, if you exp
 \begin{figure}[H]
 \centering
 \includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/initial_view.PNG}
-\caption{Initial view of the PhyloGeoTool. By default, the panel on the upper left shows a geographical distribution of the sequences in the tree; the lower left panel shows a bar chart for a selected attribute; and the right panel shows a top-level view of the clustering of the tree, as determined by our clustering algorithm (see the main manuscript).}
+\caption{Start and main view of the PhyloGeoTool. By default, the panel on the upper left shows a map that depics the geographical distribution of the sequences of the relevant phylogeny, the lower left panel shows bar chart that depicts the value distribution for one of the sequence attributes, and the right panel shows a top-level view of the clustering of the tree, as determined by our clustering algorithm (TODO: add reference to our paper).}
 \label{fig:initial_view}
 \end{figure}
 
-The tool is divided into different area's
+The tool is divided into different panels: 
 \begin{itemize}
-  \item Top left shows a world map where each country is colored darker as more sequences are originating from here. It also contains a drop down box where you can select the region on which you want to zoom in (e.g. Europe, North-America, \ldots).
-  \item Bottom left shows a bar chart which shows a certain attribute/characteristic from all sequences currently shown in the circular tree on the right. It also contains a drop down box where you can select the attribute/characteristic that you want to display in the bar chart. The attributes available for representation depend on the attributes given in the csv file.
-  \item On the right, initially, the best clustering of the phylogenetic tree is shown. It also contains a button to visualise the tree in FigTree format.
+  \item The top left panel shows a map where each country is colored according to a gradient, where a darker color signifies that more sequences are originating from this country. A drop down box allows you to select the geographic region on which you want to focus (e.g. Europe, North-America, \ldots).
+  \item The bottom left panel shows a bar chart which shows a certain attribute (i.e. characteristic) from all sequences currently visualized in the tree-panel on the right. A drop down box allows you to select the attribute to be plotted on the bar chart. The attributes available for selection depend on the attributes made available by the PhyloGeoTool instance.
+  \item The right panel initially shows the root of the clustered phylogeny. A button allows you to visualise the phylogenetic tree in its entirety, colored according to the clustering scheme.
 \end{itemize}
 
-\subsubsection{Hover over node in clustered tree}
+\subsubsection{Hover over node in clustered phylogeny}
 \begin{figure}[H]
 \centering
 \includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/hover_node.PNG}
-\caption{Hovering over a node in the tree}
+\caption{Hovering over a node in the cluster phylogeny}
 \label{fig:hover_node}
 \end{figure}
 
-When you hover over a node in the phylogenetic tree, the bar chart on the bottom left and the map on the top left will be updated with data coming specifically from the node you hovered over.
+When a node in the cluster phylogeny is hoovered, both the attribute bar chart and the map are updated. The attribute bar chart will be extended (i.e. extra bars) with the data that is located in the hovered cluster. The map will show the geographic distribution of the sequences found in the hovered cluster only.
 \\
-In the bar chart it'll be shown as an extra column that is added next to the already visible column.
+When you click on a node in the clustered phylogeny, you will navigate to the clustering of this particular node (i.e. you will zoom in on the node on the clustered phylogeny).
+A counter on the bottom left of the cluster panel keeps track of the depth of your navigation. As you can visit a cluster node by clicking it, you can go back to into your navigational path by using the browser 'Back' button.
 \\
-On the map it'll be shown as a new country colouring where each country is coloured based on only information coming from the hovered node.
-\\
-When you click on the node, you'll be taken deeper in the tree. A new clustering will be shown with the root being the rootnode of the cluster that you've just clicked.
-\\
-To keep track of your movement through the tree, a counter was added on the bottom left of the pane where the clusters are represented. The counter increases as you click on the nodes and decreases when you move back up on the tree using the browser 'Back' button.
-\\
-Additionally, the url changes every time you click on a node to keep track of your descend in the tree. By default the url will be similar to: \url{http://localhost:8080/phylogeotool/PhyloGeoTool/root_1}. If we click on a node it changes to a new url which you can bookmark or save. In a near future you can return to the view as you left it by using this url.
+Additionally, the URL encodes the level of descent in the clustered phylogeny. An URL can thus be bookmarked or shared to go back at the exact location in the clustered phylogeny.\\ 
+TODO: is URL decoding already implemented? (see issue #31)
 
-\subsubsection{Change region}
+\subsection{Change region}
 \begin{figure}[H]
 \centering
 \includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/change_country.PNG}
 \caption{Change the region in the drop down box}
 \label{fig:change_region}
 \end{figure}
-When you change the region by selecting a new value in the drop down box on top of the map (see fig. \ref{fig:change_region}), the world map will update and now only show information originating from this specific region.
+You can select your geographical region of interest in the drop down box on top of the map (see fig. \ref{fig:change_region}). 
 
 \subsubsection{Change attribute}
 \begin{figure}[H]
