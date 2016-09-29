@@ -1,3 +1,5 @@
+%TODO, before release, do spell-check
+
 \documentclass[a4paper, 11pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
 
 \usepackage[protrusion=true,expansion=true]{microtype} % Better typography
@@ -49,7 +51,7 @@ User Reference Manual} % Subtitle
 \tableofcontents
 \newpage
 
-This document explains how to use the PhyloGeoTool software. PhyloGeoTool is a web application that is installed at a web server, and can be accessed via a web browser. Most users will access a publically (or privately) accessible instance of the PhyloGeoTool that was already deployed on a web server. An example of a publically available instance of the PhyloGeoTool that represents a large HIV cohort (i.e. EuResist \cite{Zazzi2012}) can be found at \url{http://regatools.med.kuleuven.be/phylogeotool/PhyloGeoTool}.\\
+This document explains how to use the PhyloGeoTool software. PhyloGeoTool is a web application that is installed at a web server, and can be accessed via a web browser. Most users will access a publically accessible instance of the PhyloGeoTool that was already deployed on a web server. An example of a publically available instance of the PhyloGeoTool that represents a large HIV cohort (i.e. EuResist \cite{Zazzi2012}) can be found at \url{http://regatools.med.kuleuven.be/phylogeotool/PhyloGeoTool}.\\
 It is however also possible to install your own instance of the PhyloGeoTool, for this, we refer to the installation manual \footnote{(TODO: add link)}.
 
 \section{Getting started}
@@ -69,11 +71,11 @@ Note that any browser (Chrome, Firefox, Internet Explorer) should do, if you exp
 \begin{figure}[H]
 \centering
 \includegraphics[width=400pt, height=400pt, keepaspectratio=true]{images/initial_view.PNG}
-\caption{Start and main view of the PhyloGeoTool. The panel on the upper left shows a map that depics the geographical distribution of the sequences of the relevant phylogeny, the lower left panel shows a bar chart that depicts the value distribution for one of the sequence attributes, and the right panel shows a top-level view of the clustering of the tree, as determined by our clustering algorithm (TODO: add reference to our paper).}
+\caption{Start and main view of the PhyloGeoTool. The panel on the upper left shows a map that depicts the geographical distribution of the sequences of the relevant phylogeny, the lower left panel shows a bar chart that depicts the value distribution for one of the sequence attributes, and the right panel shows a top-level view of the clustering of the tree, as determined by our clustering algorithm (TODO: add reference to our paper).}
 \label{fig:initial_view}
 \end{figure}
 
-The tool is divided into different panels \footnote(TODO: ref to figure above): 
+The tool is divided into different panels \footnote{TODO: ref to figure above}: 
 \begin{itemize}
   \item The top left panel shows a map where each country is colored according to a gradient, where a darker color signifies that more sequences are originating from this country. A drop down box allows you to select the geographic region on which you want to focus (e.g. Europe, North-America, \ldots).
   \item The bottom left panel shows a bar chart which shows a certain attribute (i.e. characteristic) from all sequences currently visualized in the tree-panel on the right. A drop down box allows you to select the attribute to be plotted on the bar chart. The attributes available for selection depend on the attributes made available by the PhyloGeoTool instance.
