@@ -144,7 +144,7 @@ public class GraphWebApplication extends WApplication {
 			}
 		});
 		
-		WPushButton pplaceButton = new WPushButton("PPlacer");
+		WPushButton pplaceButton = new WPushButton("Phylo-place");
 		if(settings.getPPlacerSupport()) {
 			pplaceButton.clicked().addListener(this, new Signal.Listener() {
 				public void trigger() {
