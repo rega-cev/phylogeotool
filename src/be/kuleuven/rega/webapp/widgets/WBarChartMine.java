@@ -207,7 +207,8 @@ public class WBarChartMine {
 		wCartesianChart.getAxis(Axis.YAxis).setRange(0.0, maxValue);
 //		wCartesianChart.setLegendLocation(LegendLocation.LegendOutside, Side.Bottom, AlignmentFlag.AlignBottom);
 		wCartesianChart.setPlotAreaPadding(50, EnumSet.of(Side.Left));
-		wCartesianChart.setPlotAreaPadding(150, EnumSet.of(Side.Right));
+		wCartesianChart.setToolTip("White charts show the distribution of all values contained in the clusters on the right. Colored charts show the distribution of all values contained in the cluster that's been hovered over.");
+//		wCartesianChart.setPlotAreaPadding(150, EnumSet.of(Side.Right));
 //		WFont legendFont = wCartesianChart.getLegendFont();
 //		legendFont.setSize(new WLength(15));
 //		wCartesianChart.setLegendStyle(legendFont, wCartesianChart.getLegendBorder(), wCartesianChart.getLegendBackground());
