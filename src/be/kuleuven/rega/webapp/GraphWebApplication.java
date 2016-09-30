@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+
 import be.kuleuven.rega.form.MyComboBox;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
@@ -42,6 +43,7 @@ import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WEnvironment;
 import eu.webtoolkit.jwt.WGroupBox;
 import eu.webtoolkit.jwt.WHBoxLayout;
+import eu.webtoolkit.jwt.WImage;
 import eu.webtoolkit.jwt.WLabel;
 import eu.webtoolkit.jwt.WLayout;
 import eu.webtoolkit.jwt.WLength;
@@ -152,9 +154,21 @@ public class GraphWebApplication extends WApplication {
 		} else {
 			pplaceButton.setDisabled(true);
 		}
+		
+//		WHBoxLayout treeLevelHBox = new WHBoxLayout();
+		WGroupBox wGroupBox = new WGroupBox();
+		wGroupBox.setMaximumSize(new WLength(200), new WLength(15));
 		treeLevel = new WLabel("Level: ");
 		treeLevel.setText(treeLevel.getText() + String.valueOf(graphWidget.getPreviousClusterID()));
-
+		treeLevel.setMargin(7, Side.Right);
+		WImage wImage = new WImage(new WLink("images/question_mark.png"));
+		wImage.setToolTip("Use the browser back button to move up one level. Use the browser forward button to move down again.");
+		wImage.setMaximumSize(new WLength(15), new WLength(15));
+		wGroupBox.addWidget(treeLevel);
+		wGroupBox.addWidget(wImage);
+		wGroupBox.setStyleClass("card");
+//		wGroupBox.setLayout(treeLevelHBox);
+		
 //		graphWidget.setMaximumSize(new WLength(100.0, Unit.Percentage), new WLength(100.0, Unit.Percentage));
 		graphWidget.setMinimumSize(new WLength(300.0, Unit.Pixel), new WLength(100.0, Unit.Percentage));
 		wPushButton.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(15));
@@ -168,7 +182,7 @@ public class GraphWebApplication extends WApplication {
 //		wHBoxLayout.addWidget(exportSequencesButton);
 		wVBoxLayoutGraphWidget.addLayout(wHBoxLayout);
 		wVBoxLayoutGraphWidget.addWidget(graphWidget);
-		wVBoxLayoutGraphWidget.addWidget(treeLevel);
+		wVBoxLayoutGraphWidget.addWidget(wGroupBox);
 		wVBoxLayoutGraphWidget.setStretchFactor(wHBoxLayout, 0);
 		wVBoxLayoutGraphWidget.setStretchFactor(graphWidget, 1);
 		
