@@ -1,27 +1,34 @@
 package be.kuleuven.rega.webapp.widgets;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.EnumSet;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import be.kuleuven.rega.fastatools.FASTAEntry;
+import be.kuleuven.rega.fastatools.FASTAReader;
 import eu.webtoolkit.jwt.AlignmentFlag;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
+import eu.webtoolkit.jwt.Signal1;
 import eu.webtoolkit.jwt.TextFormat;
 import eu.webtoolkit.jwt.WDate;
 import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WFileResource;
 import eu.webtoolkit.jwt.WFileUpload;
+import eu.webtoolkit.jwt.WImage;
 import eu.webtoolkit.jwt.WLabel;
 import eu.webtoolkit.jwt.WLength;
 import eu.webtoolkit.jwt.WLineEdit;
+import eu.webtoolkit.jwt.WLink;
+import eu.webtoolkit.jwt.WMouseEvent;
 import eu.webtoolkit.jwt.WPushButton;
 import eu.webtoolkit.jwt.WRegExpValidator;
 import eu.webtoolkit.jwt.WTable;
@@ -63,29 +70,30 @@ public class PPlacerForm {
 	    table.getElementAt(2, 1).addWidget(uploadFastaFileLabel);
 	    this.fileUpload(table);
 	    this.emailTextArea(table);
+	    table.getElementAt(4, 2).addWidget(out);
+	    table.getElementAt(4, 2).setColumnSpan(2);
 	}
 	
 	public void addStartButton(WPushButton button) {
 		button.setWidth(new WLength(60));
-		table.getElementAt(4, 3).addWidget(button);
+		table.getElementAt(5, 3).addWidget(button);
 	}
 	
 	public void addCancelButton(WPushButton cancel) {
 		cancel.setWidth(new WLength(60));
-		table.getElementAt(4, 3).addWidget(cancel);
-		table.getElementAt(4, 3).setContentAlignment(AlignmentFlag.AlignRight);
+		table.getElementAt(5, 3).addWidget(cancel);
+		table.getElementAt(5, 3).setContentAlignment(AlignmentFlag.AlignRight);
 	}
 
 	public void fileUpload(WTable wTable) {
 		final WFileUpload fileUpload = new WFileUpload();
-		fileUpload.setToolTip("Please select a fasta file containing sequences in fasta format");
+		fileUpload.setToolTip("Please select a fasta file containing your sequence in fasta format");
 //		WHBoxLayout whBoxLayout = new WHBoxLayout();
 		fileUpload.setMargin(new WLength(10), EnumSet.of(Side.Right));
 //		whBoxLayout.addWidget(fileUpload);
 //		final WPushButton uploadButton = new WPushButton("Upload");
 //		uploadButton.setMargin(new WLength(10), EnumSet.of(Side.Left, Side.Right));
 //		whBoxLayout.addWidget(uploadButton);
-		final WText out = new WText();
 //		whBoxLayout.addWidget(out);
 //		wvBoxLayout.addLayout(whBoxLayout);
 //		wvBoxLayout.addWidget(out);
@@ -113,31 +121,15 @@ public class PPlacerForm {
 			public void trigger() {
 				out.setText("File upload is finished.");
 				WFileResource wFileResource = new WFileResource("text/plain", fileUpload.getSpoolFileName());
-				try {
-					List<String> lines = Files.readAllLines(Paths.get(wFileResource.getFileName()),StandardCharsets.UTF_8);
-					StringBuffer stringBuffer = new StringBuffer();
-					for (String line : lines) {
-						stringBuffer.append(line + "\n");
-					}
-					textArea.setText(stringBuffer.toString());
-				} catch (IOException e) {
-					out.setText("File format not recognised as fasta file");
-				}
-//				uploadButton.enable();
 				
-				Path path = null;
 				try {
-					path = Files.createTempDirectory("pplacer");
-					if (wFileResource != null) {
-						File newFileName = new File(path + File.separator + "sequences.fasta");
-						File oldFileName = new File(wFileResource.getFileName());
-						if(oldFileName.exists())
-							FileUtils.moveFile(oldFileName, newFileName);
-							uploadedFile = newFileName;
-					}
-				} catch (IOException e) {
+					FASTAReader fastaReader = FASTAReader.getInstance(wFileResource.getFileName());
+					checkWTextArea(fastaReader);
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
+
+//				uploadButton.enable();
 			}
 		});
 		fileUpload.fileTooLarge().addListener(dialog, new Signal.Listener() {
@@ -158,6 +150,14 @@ public class PPlacerForm {
 		textArea.changed().addListener(dialog, new Signal.Listener() {
 			public void trigger() {
 				out.setText("<p>Text area changed at " + WDate.getCurrentDate().toString() + ".</p>");
+				InputStream stream = new ByteArrayInputStream(textArea.getText().getBytes(StandardCharsets.UTF_8));
+				try {
+					FASTAReader fastaReader = FASTAReader.getInstance(stream);
+					checkWTextArea(fastaReader);
+					stream.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		table.getElementAt(1, 2).setColumnSpan(2);
@@ -176,8 +176,8 @@ public class PPlacerForm {
 		email.setValidator(emailValidator);
 	}
 
-	public File getUploadedFile() {
-		return this.uploadedFile;
+	public String getFastaSequence() {
+		return textArea.getText();
 	}
 	
 	public String getEmail() {
@@ -195,14 +195,71 @@ public class PPlacerForm {
 	public boolean isFormValid() {
 		if (!email.getText().equals("") && email.validate() == WValidator.State.Valid) {
 			if(textArea.getText() != null && !textArea.getText().equals("")) {
-				return true;
+				if(StringUtils.countMatches(textArea.getText(), ">") == 1) {
+					return true;
+				} else {
+					out.setText("<font color=\"red\">Please upload a fasta file or paste sequence in fasta format in text area.</font>");
+					return false;
+				}
 			} else {
-				out.setText("Please upload a file.");
+				out.setText("<font color=\"red\">Please upload a fasta file or paste sequence in fasta format in text area.</font>");
 				return false;
 			}
 		} else {
-			out.setText("Email address is not valid. Please correct.");
+			out.setText("<font color=\"red\">Email address is not valid. Please correct.</font>");
 			return false;
+		}
+	}
+	
+	private void checkWTextArea(FASTAReader fastaReader) {
+		try {
+			FASTAEntry fastaEntry;
+			int counter = 0;
+			int maxSequences = 1;
+			textArea.setText("");
+			while((fastaEntry = fastaReader.readNext()) != null) {
+				counter++;
+				if(counter <= maxSequences) {
+					String textAreaText = textArea.getText();
+					if(counter > 1) {
+						textAreaText = textAreaText + "\n";
+					}
+					textArea.setText(textAreaText + fastaEntry.getHeaderLine().replaceAll(" ", "_") + "\n" + fastaEntry.getSequence());
+				} else {
+					WDialog wDialog = new WDialog("Warning");
+					
+					WTable wTable = new WTable(wDialog.getContents());
+					wTable.addStyleClass("tablePPlacer", true);
+					wTable.setHeaderCount(1);
+					wTable.setWidth(new WLength("100%"));
+					wTable.setStyleClass("tableDialog");
+					
+					WImage wImage = new WImage(new WLink("images/warning.png"));
+					wImage.setWidth(new WLength(50));
+					wImage.setHeight(new WLength(50));
+					
+					wTable.getElementAt(1, 1).addWidget(wImage);
+					wTable.getElementAt(1, 1).setRowSpan(2);
+					
+					wTable.getElementAt(1, 2).addWidget(new WText("Your fasta file contained more than one sequence."));
+					wTable.getElementAt(2, 2).addWidget(new WText("Only the first sequence will be used."));
+					WPushButton wPushButton = new WPushButton("OK");
+					wPushButton.setWidth(new WLength(75));
+					wPushButton.clicked().addListener(dialog,
+				            new Signal1.Listener<WMouseEvent>() {
+		                public void trigger(WMouseEvent e1) {
+		                	wDialog.reject();
+		                }
+		            });
+					wTable.getElementAt(3, 2).addWidget(wPushButton);
+					wTable.getElementAt(3, 2).setContentAlignment(AlignmentFlag.AlignCenter);
+					wDialog.setPopup(true);
+					wDialog.rejectWhenEscapePressed();
+					wDialog.show();
+				}
+			}
+		} catch (Exception e) {
+			out.setText("File format not recognised as fasta file");
 		}
 	}
 }

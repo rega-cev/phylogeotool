@@ -2,14 +2,17 @@ package be.kuleuven.rega.webapp;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import be.kuleuven.rega.form.MyComboBox;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
@@ -379,9 +382,22 @@ public class GraphWebApplication extends WApplication {
 	                public void trigger(WMouseEvent e1) {
 	                	if(settings.getPPlacerSupport()) {
 	                		if(PPlacerForm.isFormValid()) {
-	                			System.out.println(PPlacerForm.getUploadedFile().getAbsolutePath());
+	            				Path path = null;
+	            				File pplacerFile = null;
+								try {
+									path = Files.createTempDirectory("pplacer");
+									pplacerFile = new File(path + File.separator + "sequences.fasta");
+									FileWriter fileWriter = new FileWriter(pplacerFile);
+									System.out.println(PPlacerForm.getFastaSequence());
+									fileWriter.write(PPlacerForm.getFastaSequence());
+									fileWriter.close();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+	            				
+	                			System.out.println(pplacerFile.getAbsolutePath());
 	                			jobScheduler.addPPlacerJob(settings.getScriptFolder(), settings.getPhyloTree(), settings.getAlignmentLocation(),
-		                    		PPlacerForm.getUploadedFile().getAbsolutePath(), settings.getLogfileLocation(), PPlacerForm.getEmail());
+	                					pplacerFile.getAbsolutePath(), settings.getLogfileLocation(), PPlacerForm.getEmail());
 	                			dialog.reject();
 	                		}
 	                	} else {
