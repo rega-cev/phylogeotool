@@ -34,7 +34,6 @@ fi
 #echo "$log_file" # log-file
 
 # Run mafft profile alignment
-perl /Users/phylogeo/Documents/scripts/fasta_subsample.pl "$alignment_file" 200 > "$tmp_dir/alignment.short.fasta"
 /usr/local/bin/mafft --add "$sequence_file" --keeplength --thread -1 "$tmp_dir/alignment.short.fasta" > "$tmp_dir/alignment.block.fasta"
 # Bring everything to one line
 sed -e 's/\(^>.*$\)/#\1#/' "$tmp_dir/alignment.block.fasta" | tr -d "\r" | tr -d "\n" | sed -e 's/$/#/' | tr "#" "\n" | sed -e '/^$/d' > "$tmp_dir/alignment.full.fasta"

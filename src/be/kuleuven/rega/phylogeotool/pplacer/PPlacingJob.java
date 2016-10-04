@@ -2,11 +2,14 @@ package be.kuleuven.rega.phylogeotool.pplacer;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.Character.Subset;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+
+import be.kuleuven.rega.fastatools.SubSample;
 
 @DisallowConcurrentExecution
 public class PPlacingJob implements Job {
@@ -49,6 +52,10 @@ public class PPlacingJob implements Job {
 	 */
 	public String doPPlacing(String pplacer_scripts_location, String tmpDir, String treeFile, String alignmentFile, String sequenceFile, String logFile) {
 		String args[] = {pplacer_scripts_location + File.separator + "place.sh", tmpDir, treeFile, alignmentFile, sequenceFile, logFile};
+		
+		// Create subset from original alignment
+		int nrSequencesSubset = 200;
+		SubSample.subSample(alignmentFile, tmpDir + File.separator + "alignment.short.fasta", nrSequencesSubset);
 		
 		StreamGobbler streamGobbler = StreamGobbler.runProcess(args);
 		System.out.println(streamGobbler.getLastLine());
