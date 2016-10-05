@@ -2,18 +2,14 @@ package be.kuleuven.rega.webapp.widgets;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.EnumSet;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.yeastrc.fasta.FASTAEntry;
+import org.yeastrc.fasta.FASTAReader;
 
-import be.kuleuven.rega.fastatools.FASTAEntry;
-import be.kuleuven.rega.fastatools.FASTAReader;
 import eu.webtoolkit.jwt.AlignmentFlag;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;

@@ -4,6 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 
+import org.yeastrc.fasta.FASTAEntry;
+import org.yeastrc.fasta.FASTAReader;
+
 public class UniqueHeaders {
 	
 	public static void main(String[] args) {

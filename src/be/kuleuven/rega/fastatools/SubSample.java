@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import org.yeastrc.fasta.FASTAEntry;
+import org.yeastrc.fasta.FASTAReader;
+
 public class SubSample {
 
 	public static void subSample(String fastaFileLocation, String subsetLocation, int nrSequences) {
