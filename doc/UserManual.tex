@@ -152,14 +152,29 @@ Note that exports in the NEXUS file format can be visualized in programs such as
 
 
 \subsection{Automated phylogenetic placement of sequences}
-Phylogenetic placement enables the placement of unknown query sequences onto an existing phylogenetic tree, without the need to re-compute the entire phylogeny (which is a time-consuming process, especially when a large number of sequences is involved). In PhyloGeoTool, we use phylogenetic placement to position new sequences onto the cluster phylogeny, in a reasonable amount of time (i.e. minutes). We implement this placement using the well-known pplacer software package \cite{Matsen2010} \footnote{(TODO: should we mention the type of score we use? likelihood-based/posterior-based?)}.
+Phylogenetic placement enables the placement of unknown query sequences onto an existing phylogenetic tree, without the need to re-compute the entire phylogeny (which is a time-consuming process, especially when a large number of sequences is involved). 
+In PhyloGeoTool, we use phylogenetic placement to position new sequences onto the phylogeny, in a reasonable amount of time (i.e. minutes). 
+We implement this placement using the well-known pplacer software package \cite{Matsen2010} \footnote{(TODO: should we mention the type of score we use? likelihood-based/posterior-based?)}.
 
-To place your sequences on the cluster phylogeny, click the 'Phylo-place' button in the clustering window. A window \footnote{(TODO: add ref to figure)} will popup that enables you to place your sequences. There are two ways to add a new sequence to the tree:
+To place your sequences on the cluster phylogeny, click the 'Phylo-place' button in the clustering window. 
+A window \footnote{(TODO: add ref to figure)} will pop up that enables you to place your sequences. 
+There are two ways to add a new sequence to the tree:
 \begin{itemize}
 \item Paste your sequence in the 'Nucleotide sequence' field
 \item Upload a FASTA file containing the nucleotide sequence using the file chooser.
 \end{itemize}
 Currently, we only support the submission of 1 sequence at a time.
+If you submit more than 1 sequence to be added to the phylogenetic tree, a warning will be generated as shown in Figure \ref{fig:pplacer-warning}.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.50]{images/pplacer-warning.png}
+\vspace{-0.25cm}
+\caption{Warning generated when trying to add more than 1 sequence to the tree using pplacer.}
+\label{fig:pplacer-warning}
+\end{figure}
+
 
 
 \section{Example: exploring a large HIV-1 dataset}
