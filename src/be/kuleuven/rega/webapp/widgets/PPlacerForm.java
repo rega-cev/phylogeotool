@@ -222,7 +222,7 @@ public class PPlacerForm {
 					}
 					textArea.setText(textAreaText + fastaEntry.getHeaderLine().replaceAll(" ", "_") + "\n" + fastaEntry.getSequence());
 				} else {
-					WDialog wDialog = new WDialog("Warning");
+					final WDialog wDialog = new WDialog("Warning");
 					
 					WTable wTable = new WTable(wDialog.getContents());
 					wTable.addStyleClass("tablePPlacer", true);
