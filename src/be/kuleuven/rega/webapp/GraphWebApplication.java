@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import be.kuleuven.rega.comparator.SortingOptions;
 import be.kuleuven.rega.form.MyComboBox;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
@@ -547,13 +548,34 @@ public class GraphWebApplication extends WApplication {
 				}
 			});
 			wComboBoxMetadata.changed().trigger();
-			wComboBoxMetadata.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(25));
+			wComboBoxMetadata.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
 			WGroupBox wgroupboxMetadata = new WGroupBox();
 			wgroupboxMetadata.setStyleClass("label");
 			WText metadataLabel = new WText("Select attribute: ");
 			wgroupboxMetadata.addWidget(metadataLabel);
-			wgroupboxMetadata.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(25));
+			wgroupboxMetadata.setMaximumSize(new WLength(100.0, Unit.Percentage), new WLength(25));
 			wgroupboxMetadata.addWidget(wComboBoxMetadata);
+			
+			WText orderLabel = new WText("Select ordering: ");
+			orderLabel.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
+			
+			WComboBox order = new WComboBox();
+			for(SortingOptions sortingOption:SortingOptions.values()) {
+				order.addItem(sortingOption.getDescription());
+			}
+			order.setValueText(SortingOptions.FREQUENCY_DESCENDING.getDescription());
+			order.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
+			order.changed().addListener(this, new Signal.Listener() {
+				public void trigger() {
+					wBarChartMine.setSortingOption(SortingOptions.getOptionByDescription(order.getValueText()));
+					int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
+					setStatisticGraph(wBarChartMine, id);
+				}
+			});
+			
+			wgroupboxMetadata.addWidget(orderLabel);
+			wgroupboxMetadata.addWidget(order);
+			
 			wvBoxLayoutChart.addWidget(wgroupboxMetadata);
 			wvBoxLayoutChart.setStretchFactor(wgroupboxMetadata, 0);
 		}

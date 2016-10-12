@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import be.kuleuven.rega.comparator.NaturalOrderComparator;
+import be.kuleuven.rega.comparator.SortingOptions;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.WColor;
 import eu.webtoolkit.jwt.WFont;
@@ -28,6 +30,7 @@ public class WBarChartMine {
 	private WStandardPaletteMine wStandardPaletteMine = null;
 	private int maxValue = 0;
 	private WStandardItemModel model;
+	private SortingOptions sortingOption;
 	
 	private final int MAX_LABEL_LENGTH = 11;
 	
@@ -58,7 +61,7 @@ public class WBarChartMine {
 		}
 		
 		if(fullDataSet != null) {
-			Map<String,Integer> sorted_map = sortMap(fullDataSet);
+			Map<String,Integer> sorted_map = getSortedMap(fullDataSet);
 			this.fullDataset = sorted_map;
 			
 			if(sorted_map.size() > maxViews) {
@@ -108,7 +111,7 @@ public class WBarChartMine {
 		int maxViews = 5;
 		
 		if(node != null) {
-			Map<String,Integer> sorted_map = sortMap(node);
+			Map<String,Integer> sorted_map = getSortedMap(node);
 			
 			if(model != null) {
 				model.clear();
@@ -223,7 +226,26 @@ public class WBarChartMine {
 //		wCartesianChart.resize(new WLength(120), new WLength(120));
 	}
 	
-	public <K, V extends Comparable<? super V>> Map<K, V> sortMap(final Map<K, V> mapToSort) {
+	private Map<String,Integer> getSortedMap(Map<String,Integer> fullDataSet) {
+		if(sortingOption != null) {
+			switch(sortingOption) {
+				case ALPHABETICAL_ASCENDING:
+					return sortMapAlphabetically(fullDataSet, true);
+				case ALPHABETICAL_DESCENDING:
+					return sortMapAlphabetically(fullDataSet, false);
+				case FREQUENCY_ASCENDING:
+					return sortMap(fullDataSet, true);
+				case FREQUENCY_DESCENDING:
+					return sortMap(fullDataSet, false);
+				default:
+					return sortMap(fullDataSet, false);
+			}
+		} else {
+			return sortMap(fullDataSet, false);
+		}
+	}
+	
+	public <K, V extends Comparable<? super V>> Map<K, V> sortMap(final Map<K, V> mapToSort, boolean ascending) {
 		List<Map.Entry<K, V>> entries = new ArrayList<Map.Entry<K, V>>(mapToSort.size());
  
 		entries.addAll(mapToSort.entrySet());
@@ -234,14 +256,42 @@ public class WBarChartMine {
 				return entry1.getValue().compareTo(entry2.getValue());
 			}
 		});
- 
-		Collections.reverse(entries);
+		
+		if(!ascending)
+			Collections.reverse(entries);
 		
 		Map<K, V> sortedMap = new LinkedHashMap<K, V>();
 		for (Map.Entry<K, V> entry : entries) {
 			sortedMap.put(entry.getKey(), entry.getValue());
 		}
 		return sortedMap;
+	}
+	
+	public <K, V extends Comparable<? super V>> Map<K, V> sortMapAlphabetically(final Map<K, V> mapToSort, boolean ascending) {
+		List<Map.Entry<K, V>> entries = new ArrayList<Map.Entry<K, V>>(mapToSort.size());
+ 
+		entries.addAll(mapToSort.entrySet());
+		NaturalOrderComparator naturalOrderComparator = new NaturalOrderComparator();
+		Collections.sort(entries, new Comparator<Map.Entry<K, V>>() {
+			//TODO: Check if this function works properly if we have a mixture of strings and ints
+			@Override
+			public int compare(final Map.Entry<K, V> entry1, final Map.Entry<K, V> entry2) {
+					return naturalOrderComparator.compare(entry1.getKey(), entry2.getKey());
+			}
+		});
+ 
+		if(!ascending)
+			Collections.reverse(entries);
+		
+		Map<K, V> sortedMap = new LinkedHashMap<K, V>();
+		for (Map.Entry<K, V> entry : entries) {
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+		return sortedMap;
+	}
+	
+	public void setSortingOption(SortingOptions sortingOption) {
+		this.sortingOption = sortingOption;
 	}
 	
 	public void setSecondBarColor(WColor wColor) {
