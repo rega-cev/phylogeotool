@@ -271,7 +271,7 @@ public class WBarChartMine {
 		List<Map.Entry<K, V>> entries = new ArrayList<Map.Entry<K, V>>(mapToSort.size());
  
 		entries.addAll(mapToSort.entrySet());
-		NaturalOrderComparator naturalOrderComparator = new NaturalOrderComparator();
+		final NaturalOrderComparator naturalOrderComparator = new NaturalOrderComparator();
 		Collections.sort(entries, new Comparator<Map.Entry<K, V>>() {
 			//TODO: Check if this function works properly if we have a mixture of strings and ints
 			@Override

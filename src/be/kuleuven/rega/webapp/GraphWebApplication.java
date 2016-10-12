@@ -559,7 +559,7 @@ public class GraphWebApplication extends WApplication {
 			WText orderLabel = new WText("Select ordering: ");
 			orderLabel.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
 			
-			WComboBox order = new WComboBox();
+			final WComboBox order = new WComboBox();
 			for(SortingOptions sortingOption:SortingOptions.values()) {
 				order.addItem(sortingOption.getDescription());
 			}
