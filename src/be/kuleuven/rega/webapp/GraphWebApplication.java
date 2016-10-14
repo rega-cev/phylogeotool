@@ -558,6 +558,7 @@ public class GraphWebApplication extends WApplication {
 			wgroupboxMetadata.addWidget(wComboBoxMetadata);
 			
 			WText orderLabel = new WText("Select ordering: ");
+			orderLabel.setMargin(20, Side.Left);
 			orderLabel.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
 			
 			final WComboBox order = new WComboBox();
@@ -578,6 +579,7 @@ public class GraphWebApplication extends WApplication {
 			wgroupboxMetadata.addWidget(order);
 			
 			WText showNALabel = new WText("Show NA: ");
+			showNALabel.setMargin(20, Side.Left);
 			showNALabel.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
 			
 			final WCheckBox showNACheckbox = new WCheckBox();
