@@ -32,7 +32,7 @@ public class WBarChartMine {
 	private WStandardItemModel model;
 	private SortingOptions sortingOption;
 	
-	private final int MAX_LABEL_LENGTH = 11;
+	private final int MAX_LABEL_LENGTH = 21;
 	
 	public WBarChartMine(Map<String,Integer> fullDataset) {
 		chart = new WCartesianChart();
