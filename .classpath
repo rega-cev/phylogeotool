@@ -30,5 +30,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.18.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.18.jar"/>
 	<classpathentry kind="lib" path="lib/javax.mail.jar"/>
+	<classpathentry kind="lib" path="lib/fasta-utils-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

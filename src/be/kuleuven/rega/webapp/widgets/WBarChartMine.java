@@ -226,6 +226,11 @@ public class WBarChartMine {
 //		wCartesianChart.resize(new WLength(120), new WLength(120));
 	}
 	
+	/**
+	 * Method to determine in which way the dataset should be sorted. It makes use of the SortingOptions enum under be.kuleuven.rega.comparator
+	 * @param fullDataSet: Map with keys being x-values of the barchart, values being the y-values of the barchart
+	 * @return sorted map
+	 */
 	private Map<String,Integer> getSortedMap(Map<String,Integer> fullDataSet) {
 		if(sortingOption != null) {
 			switch(sortingOption) {
@@ -245,6 +250,12 @@ public class WBarChartMine {
 		}
 	}
 	
+	/**
+	 * Method to sort the dataset based on frequency. How many times a value occurs.
+	 * @param mapToSort: Map containing keys (x-values of the barchart) and values (y-values of the barchart)
+	 * @param ascending: : Boolean indicating if should be sorted ascending or descending.
+	 * @return LinkedHashMap with all the entries that were in the list such that we keep the ordered structure of the dataset
+	 */
 	public <K, V extends Comparable<? super V>> Map<K, V> sortMap(final Map<K, V> mapToSort, boolean ascending) {
 		List<Map.Entry<K, V>> entries = new ArrayList<Map.Entry<K, V>>(mapToSort.size());
  
@@ -257,16 +268,15 @@ public class WBarChartMine {
 			}
 		});
 		
-		if(!ascending)
-			Collections.reverse(entries);
-		
-		Map<K, V> sortedMap = new LinkedHashMap<K, V>();
-		for (Map.Entry<K, V> entry : entries) {
-			sortedMap.put(entry.getKey(), entry.getValue());
-		}
-		return sortedMap;
+		return listToSortedMap(entries, ascending);
 	}
 	
+	/**
+	 * Method to sort the dataset based on alphabetical order of the keys (x-values of the bar chart)
+	 * @param mapToSort: Map containing keys (x-values of the barchart) and values (y-values of the barchart)
+	 * @param ascending: : Boolean indicating if should be sorted ascending or descending.
+	 * @return LinkedHashMap with all the entries that were in the list such that we keep the ordered structure of the dataset
+	 */
 	public <K, V extends Comparable<? super V>> Map<K, V> sortMapAlphabetically(final Map<K, V> mapToSort, boolean ascending) {
 		List<Map.Entry<K, V>> entries = new ArrayList<Map.Entry<K, V>>(mapToSort.size());
  
@@ -280,13 +290,41 @@ public class WBarChartMine {
 			}
 		});
  
+		return listToSortedMap(entries, ascending);
+	}
+	
+	/**
+	 * We transform the list with sorted elements to a map.
+	 * On top of that we check if the dataset contains "NA" or "Others" values as they have to be last in the ordering
+	 * @param entries: List of sorted entries which we want to store in a map
+	 * @param ascending: Boolean indicating if should be sorted ascending or descending. Currently sorted ascending
+	 * @return LinkedHashMap with all the entries that were in the list such that we keep the ordered structure of the dataset
+	 */
+	private <K, V extends Comparable<? super V>> Map<K, V> listToSortedMap(List<Map.Entry<K, V>> entries, boolean ascending) {
 		if(!ascending)
 			Collections.reverse(entries);
 		
 		Map<K, V> sortedMap = new LinkedHashMap<K, V>();
+		Map.Entry<K, V> entryNA = null;
+		Map.Entry<K, V> entryOthers = null;
 		for (Map.Entry<K, V> entry : entries) {
-			sortedMap.put(entry.getKey(), entry.getValue());
+			if(entry.getKey().equals("NA")){
+				entryNA = entry;
+			} else if(entry.getKey().equals("Other")) {
+				entryOthers = entry;
+			} else {
+				sortedMap.put(entry.getKey(), entry.getValue());
+			}
 		}
+		
+		// Add the 'NA' as one before last element to the map
+		if(entryNA != null)
+			sortedMap.put(entryNA.getKey(), entryNA.getValue());
+		
+		// Add the 'Others' as last element to the map
+		if(entryOthers != null)
+			sortedMap.put(entryOthers.getKey(), entryOthers.getValue());
+
 		return sortedMap;
 	}
 	

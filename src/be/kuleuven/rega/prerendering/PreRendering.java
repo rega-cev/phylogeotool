@@ -165,7 +165,8 @@ public class PreRendering {
 			if(cluster != null) {
 				this.writeClusterToXML(cluster);
 				System.err.println("Cluster " + cluster.getRootId() + " structure written to file");
-				this.prepareCSV(cluster.getRoot().getId(), tree.getLeaves(cluster.getRoot()), csvLocation, showNA);
+				// Include NA, we can later on always decide not to show it. We can at least render it
+				this.prepareCSV(cluster.getRoot().getId(), tree.getLeaves(cluster.getRoot()), csvLocation, true);
 				System.err.println("XML details written to file");
 //				NexusExporter.export(cluster, jeblTree, new FileWriter(new File(this.folderLocationTreeView + File.separator + cluster.getRoot().getId() + ".nexus")), minimumClusterSize, true);
 				ColorClusters.prepareFullTreeView(treeLocation, cluster, GraphicFormat.PNG, new FileOutputStream(new File(Settings.getTreeviewPath(basePath) + File.separator + cluster.getRoot().getId() + ".png")), minimumClusterSize, true, false);
@@ -178,7 +179,8 @@ public class PreRendering {
 						toDo.add(tree.getNodeById(node.getId()));
 					// Leaf
 					} else {
-						this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, showNA);
+						// Include NA, we can later on always decide not to show it. We can at least render it
+						this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, true);
 						this.writeClusterToXML(new Cluster(tree, node, new ArrayList<Node>()));
 					}
 				}
@@ -186,13 +188,15 @@ public class PreRendering {
 			} else {
 				List<Node> boundaries = new ArrayList<Node>();
 				for(Node node:tree.getLeaves(currentNode)) {
-					this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, showNA);
+					// Include NA, we can later on always decide not to show it. We can at least render it
+					this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, true);
 					boundaries.add(node);
 					this.writeClusterToXML(new Cluster(tree, node, new ArrayList<Node>()));
 				}
 				Cluster fakeCluster = new Cluster(tree, currentNode, boundaries);
 				this.writeClusterToXML(fakeCluster);
-				this.prepareCSV(fakeCluster.getRoot().getId(), tree.getLeaves(fakeCluster.getRoot()), csvLocation, showNA);
+				// Include NA, we can later on always decide not to show it. We can at least render it
+				this.prepareCSV(fakeCluster.getRoot().getId(), tree.getLeaves(fakeCluster.getRoot()), csvLocation, true);
 			}
 //			break;
 //			toDo.addAll(tempTree.getLeaves());
@@ -350,12 +354,21 @@ public class PreRendering {
 					org.w3c.dom.Node nNode = nList.item(temp);
 					if (nNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
 						Element eElement = (Element) nNode;
-						if(!readNA && !eElement.getAttribute("id").equals("XX") && !eElement.getAttribute("id").equals("X1") && !eElement.getAttribute("id").equals("X2") &&
-								!eElement.getAttribute("id").equals("X3") && !eElement.getAttribute("id").equals("X4") && !eElement.getAttribute("id").equals("X5") &&
-								!eElement.getAttribute("id").equals("X6") && !eElement.getAttribute("id").equals("")) {
-							hashMap.put(eElement.getAttribute("id"), Integer.parseInt(eElement.getTextContent()));
+						if(!readNA && !eElement.getAttribute("id").equals("NA") && !eElement.getAttribute("id").equals("")) {
+							
+//							hashMap.put(checkKey(key, eElement), Integer.parseInt(eElement.getTextContent()));
+							if(hashMap.containsKey(eElement.getAttribute("id"))) {
+								hashMap.put(eElement.getAttribute("id"), hashMap.get(eElement.getAttribute("id")) + Integer.parseInt(eElement.getTextContent()));
+							} else {
+								hashMap.put(eElement.getAttribute("id"), Integer.parseInt(eElement.getTextContent()));
+							}
 						} else if(readNA) {
-							hashMap.put(eElement.getAttribute("id"), Integer.parseInt(eElement.getTextContent()));
+//							hashMap.put(eElement.getAttribute("id"), Integer.parseInt(eElement.getTextContent()));
+							if(hashMap.containsKey(eElement.getAttribute("id"))) {
+								hashMap.put(eElement.getAttribute("id"), hashMap.get(eElement.getAttribute("id")) + Integer.parseInt(eElement.getTextContent()));
+							} else {
+								hashMap.put(eElement.getAttribute("id"), Integer.parseInt(eElement.getTextContent()));
+							}
 						}
 //						System.out.println("ID : " + eElement.getAttribute("id"));
 //						System.out.println("Value : " + eElement.getTextContent());

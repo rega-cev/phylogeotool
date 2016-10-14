@@ -299,7 +299,7 @@ public class CsvUtils {
 							hashMap.put(value, 1);
 						}
 					} else {
-						if(value != null && !value.equals("")) {
+						if(value != null && !value.equals("NA") && !value.equals("")) {
 							if(hashMap.containsKey(value)) {
 								hashMap.put(value, hashMap.get(value) + 1);
 							} else {

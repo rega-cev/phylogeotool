@@ -37,6 +37,7 @@ import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
 import eu.webtoolkit.jwt.WApplication;
+import eu.webtoolkit.jwt.WCheckBox;
 import eu.webtoolkit.jwt.WColor;
 import eu.webtoolkit.jwt.WComboBox;
 import eu.webtoolkit.jwt.WCssTextRule;
@@ -119,7 +120,7 @@ public class GraphWebApplication extends WApplication {
 		try {
 			graphWidget = new GraphWidget(facadeRequestData);
 			HashMap<String, Integer> countries = null;
-			countries = facadeRequestData.readCsv(graphWidget.getCluster().getRoot().getId(), settings.getVisualizeGeography(), showNAData);
+			countries = facadeRequestData.readCsv(graphWidget.getCluster().getRoot().getId(), settings.getVisualizeGeography());
 			wGroupBoxGoogleMapWidget = getGoogleChartWGroupBox(countries,null,null);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -301,7 +302,7 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	private void setGoogleChart(int nodeId) {
-		HashMap<String, Integer> countries = facadeRequestData.readCsv(nodeId, settings.getVisualizeGeography(), showNAData);
+		HashMap<String, Integer> countries = facadeRequestData.readCsv(nodeId, settings.getVisualizeGeography());
 		this.googleChartWidget.setCountries(countries);
 		this.googleChartWidget.setRegion("");
 		this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
@@ -310,12 +311,12 @@ public class GraphWebApplication extends WApplication {
 	private void setStatisticGraph(WBarChartMine wBarChartMine, int nodeId) {
 		if(wComboBoxMetadata != null)
 			wBarChartMine.setSecondBarColor(WColor.white);
-			wBarChartMine.setData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText(), showNAData));
+			wBarChartMine.setData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText()));
 	}
 	
 	private void updateStatisticGraph(WBarChartMine wBarChartMine, int nodeId, Color clusterColor) {
 		if(wComboBoxMetadata != null)
-			wBarChartMine.updateData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText(), showNAData), new WColor(clusterColor.getRed(), clusterColor.getGreen(), clusterColor.getBlue()));
+			wBarChartMine.updateData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText()), new WColor(clusterColor.getRed(), clusterColor.getGreen(), clusterColor.getBlue()));
 	}
 	
 	private final void showDialog() {
@@ -575,6 +576,21 @@ public class GraphWebApplication extends WApplication {
 			
 			wgroupboxMetadata.addWidget(orderLabel);
 			wgroupboxMetadata.addWidget(order);
+			
+			WText showNALabel = new WText("Show NA: ");
+			showNALabel.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
+			
+			final WCheckBox showNACheckbox = new WCheckBox();
+			showNACheckbox.changed().addListener(this, new Signal.Listener() {
+				public void trigger() {
+					facadeRequestData.setShowNAData(showNACheckbox.isChecked());
+					int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
+					setStatisticGraph(wBarChartMine, id);
+				}
+			});
+			
+			wgroupboxMetadata.addWidget(showNALabel);
+			wgroupboxMetadata.addWidget(showNACheckbox);
 			
 			wvBoxLayoutChart.addWidget(wgroupboxMetadata);
 			wvBoxLayoutChart.setStretchFactor(wgroupboxMetadata, 0);

@@ -19,6 +19,7 @@ public class FacadeRequestData {
 	private File csvFile;
 	private DistanceInterface distanceInterface;
 	private int minimumClusterSize;
+	private boolean showNAData = false;
 	
 	public FacadeRequestData(PreRendering preRendering, String treeLocation) {
 		this.preRendering = preRendering;
@@ -48,9 +49,9 @@ public class FacadeRequestData {
 	}
 	
 	// TODO: Implement this method
-	public HashMap<String, Integer> readCsv(int nodeid, String key, boolean readNA) {
+	public HashMap<String, Integer> readCsv(int nodeid, String key) {
 		if(preRendering != null) {
-			return preRendering.readCsv(nodeid, key, readNA);
+			return preRendering.readCsv(nodeid, key, showNAData);
 		} else {
 			List<String> ids = new ArrayList<String>();
 			
@@ -58,7 +59,15 @@ public class FacadeRequestData {
 				ids.add(node.getLabel());
 			}
 			
-			return CsvUtils.csvToHashMapStringInteger(csvFile, ';', ids, key, readNA);
+			return CsvUtils.csvToHashMapStringInteger(csvFile, ';', ids, key, showNAData);
 		}
+	}
+	
+	public void setShowNAData(boolean showNAData) {
+		this.showNAData = showNAData;
+	}
+	
+	public boolean isShowNAData() {
+		return this.showNAData;
 	}
 }
