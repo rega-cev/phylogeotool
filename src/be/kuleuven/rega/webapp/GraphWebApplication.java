@@ -262,7 +262,7 @@ public class GraphWebApplication extends WApplication {
 		mouseWentOut(null, wCircleNode);
 		
 		this.setGoogleChart(wCircleNode.getNode().getId());
-		this.setStatisticGraph(wBarChartMine, wCircleNode.getNode().getId());
+		this.setStatisticGraph(wBarChartMine, wCircleNode.getNode().getId(), true);
 	}
 	
 	
@@ -274,7 +274,7 @@ public class GraphWebApplication extends WApplication {
 	public void mouseWentOut(WMouseEvent wMouseEvent, WCircleNode wCircleNode) {
 		int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 		this.setGoogleChart(id);
-		this.setStatisticGraph(wBarChartMine, id);
+		this.setStatisticGraph(wBarChartMine, id, false);
 	}
 	
 	public void pathChanged() {
@@ -298,7 +298,7 @@ public class GraphWebApplication extends WApplication {
 		}
 		graphWidget.setCluster(id, treeLevel, deeper);
 		setGoogleChart(id);
-		setStatisticGraph(this.wBarChartMine, id);
+		setStatisticGraph(this.wBarChartMine, id, true);
 	}
 	
 	private void setGoogleChart(int nodeId) {
@@ -308,10 +308,15 @@ public class GraphWebApplication extends WApplication {
 		this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
 	}
 	
-	private void setStatisticGraph(WBarChartMine wBarChartMine, int nodeId) {
-		if(wComboBoxMetadata != null)
+	private void setStatisticGraph(WBarChartMine wBarChartMine, int nodeId, boolean reread) {
+		if (wComboBoxMetadata != null) {
 			wBarChartMine.setSecondBarColor(WColor.white);
-			wBarChartMine.setData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText()));
+			if (reread) {
+				wBarChartMine.setData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText()), reread);
+			} else {
+				wBarChartMine.setData(null, reread);
+			}
+		}
 	}
 	
 	private void updateStatisticGraph(WBarChartMine wBarChartMine, int nodeId, Color clusterColor) {
@@ -545,7 +550,7 @@ public class GraphWebApplication extends WApplication {
 			wComboBoxMetadata.changed().addListener(this, new Signal.Listener() {
 				public void trigger() {
 					int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
-					setStatisticGraph(wBarChartMine, id);
+					setStatisticGraph(wBarChartMine, id, true);
 				}
 			});
 			wComboBoxMetadata.changed().trigger();
@@ -571,7 +576,7 @@ public class GraphWebApplication extends WApplication {
 				public void trigger() {
 					wBarChartMine.setSortingOption(SortingOptions.getOptionByDescription(order.getValueText()));
 					int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
-					setStatisticGraph(wBarChartMine, id);
+					setStatisticGraph(wBarChartMine, id, true);
 				}
 			});
 			
@@ -580,14 +585,14 @@ public class GraphWebApplication extends WApplication {
 			
 			WText showNALabel = new WText("Show NA: ");
 			showNALabel.setMargin(20, Side.Left);
-			showNALabel.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
+//			showNALabel.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
 			
 			final WCheckBox showNACheckbox = new WCheckBox();
 			showNACheckbox.changed().addListener(this, new Signal.Listener() {
 				public void trigger() {
 					facadeRequestData.setShowNAData(showNACheckbox.isChecked());
 					int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
-					setStatisticGraph(wBarChartMine, id);
+					setStatisticGraph(wBarChartMine, id, true);
 				}
 			});
 			

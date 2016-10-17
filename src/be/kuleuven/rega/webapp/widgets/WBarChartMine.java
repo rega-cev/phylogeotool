@@ -26,172 +26,133 @@ public class WBarChartMine {
 	
 	private Map<String, Integer> fullDataset;
 	private WCartesianChart chart = null;
-	private WStandardItemModel fullDatasetModel = null;
 	private WStandardPaletteMine wStandardPaletteMine = null;
 	private int maxValue = 0;
 	private WStandardItemModel model;
+	private WStandardItemModel hoveredModel;
 	private SortingOptions sortingOption;
 	
 	private final int MAX_LABEL_LENGTH = 21;
+	private final int maxViews = 5;
 	
 	public WBarChartMine(Map<String,Integer> fullDataset) {
 		chart = new WCartesianChart();
-		setData(fullDataset);
+		model = new WStandardItemModel();
+		setData(fullDataset, true);
 		wStandardPaletteMine = new WStandardPaletteMine();
 		chart.setPalette(wStandardPaletteMine);
 		chart.setMinimumSize(new WLength(120), new WLength(140));
 		chart.setPlotAreaPadding(0, EnumSet.of(Side.Top));
 		chart.setPlotAreaPadding(10, EnumSet.of(Side.Left));
-		model = new WStandardItemModel();
+		hoveredModel = new WStandardItemModel();
 	}
 	
 	public WCartesianChart getWidget() {
 		return this.chart;
 	}
 	
-	public void setData(Map<String,Integer> fullDataSet) {
-		int maxViews = 5;
-		maxValue = 0;
-		
-		if(model != null) {
-			model.clear();
-			model.insertColumns(model.getColumnCount(), 2);
-			model.setHeaderData(0, new WString("Property"));
-			model.setHeaderData(1, new WString("Full Dataset"));
-		}
-		
-		if(fullDataSet != null) {
-			Map<String,Integer> sorted_map = getSortedMap(fullDataSet);
-			this.fullDataset = sorted_map;
-			
-			if(sorted_map.size() > maxViews) {
-				model.insertRows(model.getRowCount(), (maxViews + 1));
-			} else {
-				model.insertRows(model.getRowCount(), fullDataSet.keySet().size());
+	// We do not want to reread the model if it is caused by for example hovering out of a node
+	public void setData(Map<String,Integer> fullDataSet, boolean reread) {
+		if(reread) {
+			maxValue = 0;
+			if(model != null) {
+				model.clear();
+				model.insertColumns(model.getColumnCount(), 2);
+				model.setHeaderData(0, new WString("Property"));
+				model.setHeaderData(1, new WString("Full Dataset"));
 			}
 			
-			int j = 0;
-			int totalValues = 0;
-			int totalValuesSet = 0;
-			
-			for(int value: fullDataSet.values()) {
-				 totalValues += value;
-			}
-			
-			for(String label:sorted_map.keySet()) {
-				if(label.length() >= MAX_LABEL_LENGTH)
-					model.setData(j, 0, label.substring(0, MAX_LABEL_LENGTH));
-				else
-					model.setData(j, 0, label);
-				model.setData(j, 1, sorted_map.get(label));
+			if(fullDataSet != null) {
+				Map<String,Integer> sorted_map = getSortedMap(fullDataSet);
+				Map<String, Integer> reduced_map = reduceMap(sorted_map, maxViews);
 				
-				if(sorted_map.get(label) > maxValue) {
-					maxValue = sorted_map.get(label);
-				}
+				this.fullDataset = reduced_map;
 				
-				totalValuesSet += sorted_map.get(label);
-				if(++j >= maxViews) {
-					model.setData(j, 0, new WString("Other"));
-					model.setData(j, 1, totalValues - totalValuesSet);
+				model.insertRows(model.getRowCount(), reduced_map.keySet().size());
+				
+				int j = 0;
+				
+				for(String label:reduced_map.keySet()) {
+					if(label.length() >= MAX_LABEL_LENGTH)
+						model.setData(j, 0, label.substring(0, MAX_LABEL_LENGTH));
+					else
+						model.setData(j, 0, label);
+					model.setData(j, 1, reduced_map.get(label));
 					
-					if(totalValues - totalValuesSet > maxValue) {
-						maxValue = totalValues - totalValuesSet;
+					if(reduced_map.get(label) > maxValue) {
+						maxValue = reduced_map.get(label);
 					}
-					
-					break;
+					j++;
 				}
 			}
-		
-			this.fullDatasetModel = model;
-			this.updateChart(model, chart);
 		}
+		this.updateChart(model, chart);
 	}
 	
 	public void updateData(Map<String,Integer> node, WColor wColor) {
-		int maxViews = 5;
-		
 		if(node != null) {
 			Map<String,Integer> sorted_map = getSortedMap(node);
+			Map<String, Integer> reduced_map = reduceMap(sorted_map, maxViews);
 			
-			if(model != null) {
-				model.clear();
-				model.insertColumns(model.getColumnCount(), 3);
-				model.setHeaderData(0, new WString("Property"));
-				model.setHeaderData(1, new WString("Full Dataset"));
-				model.setHeaderData(2, new WString("Hovered Node"));
+			if(hoveredModel != null) {
+				hoveredModel.clear();
+				hoveredModel.insertColumns(hoveredModel.getColumnCount(), 3);
+				hoveredModel.setHeaderData(0, new WString("Property"));
+				hoveredModel.setHeaderData(1, new WString("Full Dataset"));
+				hoveredModel.setHeaderData(2, new WString("Hovered Node"));
 			}
 			
-			if(this.fullDataset.size() > maxViews) {
-				model.insertRows(model.getRowCount(), maxViews + 1);
-			} else {
-				model.insertRows(model.getRowCount(), this.fullDataset.keySet().size());
-			}
+			hoveredModel.insertRows(hoveredModel.getRowCount(), fullDataset.keySet().size());
 			
 			int j = 0;
-			int totalValues = 0;
-			int totalValuesSet = 0;
 			
 			// Set full dataset
-			for(int value: this.fullDataset.values()) {
-				 totalValues += value;
-			}
-			
 			for(String label:this.fullDataset.keySet()) {
 				if(label.length() >= MAX_LABEL_LENGTH)
-					model.setData(j, 0, label.substring(0, MAX_LABEL_LENGTH));
+					hoveredModel.setData(j, 0, label.substring(0, MAX_LABEL_LENGTH));
 				else
-					model.setData(j, 0, label);
+					hoveredModel.setData(j, 0, label);
 				
-				if(sorted_map.containsKey(label)) {
+				if(reduced_map.containsKey(label)) {
 					// Because we need to recalculate "full dataset" part
-					model.setData(j, 1, (fullDataset.get(label) - sorted_map.get(label)));
+					hoveredModel.setData(j, 1, (fullDataset.get(label) - reduced_map.get(label)));
 					if(fullDataset.get(label) > maxValue) {
 						maxValue = fullDataset.get(label);
 					}
 				} else {
-					model.setData(j, 1, fullDataset.get(label));
+					hoveredModel.setData(j, 1, fullDataset.get(label));
 				}
-				totalValuesSet += fullDataset.get(label);
-				if(++j >= maxViews) {
-					model.setData(j, 0, new WString("Other"));
-					model.setData(j, 1, totalValues - totalValuesSet);
-					if((totalValues - totalValuesSet) > maxValue) {
-						maxValue = totalValues - totalValuesSet;
-					}
-					break;
-				}
+				j++;
 			}
 			
-			totalValues = 0;
-			totalValuesSet = 0;
 			// set hovered node
-			for(int value: sorted_map.values()) {
-				 totalValues += value;
-			}
-			
 			int i = 0;
 			for(Map.Entry<String, Integer> entry:fullDataset.entrySet()) {
 //				System.out.println("Value: " + model.getData(i, 0));
-				if(sorted_map.containsKey(model.getData(i, 0))) {
-					model.setData(i, 2, sorted_map.get(model.getData(i, 0)));
-					totalValuesSet += sorted_map.get(model.getData(i, 0));
+				if(reduced_map.containsKey(hoveredModel.getData(i, 0))) {
+					hoveredModel.setData(i, 2, reduced_map.get(hoveredModel.getData(i, 0)));
+					reduced_map.remove(hoveredModel.getData(i, 0));
 				} else {
-					model.setData(i, 2, 0);
+					hoveredModel.setData(i, 2, 0);
 				}
-				
-				if(++i >= maxViews) {
-					model.setData(i, 0, new WString("Other"));
-					// Because we need to recalculate "other" part
-					model.setData(i, 1, (Integer)model.getData(i, 1) - (totalValues - totalValuesSet));
-					if((Integer)model.getData(i, 1) - (totalValues - totalValuesSet) > maxValue) {
-						maxValue = (Integer)model.getData(i, 1) - (totalValues - totalValuesSet);
-					}
-					model.setData(i, 2, totalValues - totalValuesSet);
-					break;
+				i++;
+			}
+			
+			// In case that the hovered node has data such as [HIV-1 D => 258, HIV-1 C => 1]
+			// And full dataset doesn't contain HIV-1 D, it should be added to the others bar
+			for(Map.Entry<String, Integer> entry:reduced_map.entrySet()) {
+				if(fullDataset.containsKey("NA")) {
+					hoveredModel.setData(maxViews - 2, 2, (Integer)hoveredModel.getData(maxViews - 2, 2) + entry.getValue());
+					// Because of flipping the graphs, we also need to lower the max height of the full dataset chart here
+					hoveredModel.setData(maxViews - 2, 1, (Integer)hoveredModel.getData(maxViews - 2, 1) - entry.getValue());
+				} else {
+						hoveredModel.setData(maxViews - 1, 2, (Integer)hoveredModel.getData(maxViews - 1, 2) + entry.getValue());
+						// Because of flipping the graphs, we also need to lower the max height of the full dataset chart here
+						hoveredModel.setData(maxViews - 1, 1, (Integer)hoveredModel.getData(maxViews - 1, 1) - entry.getValue());
 				}
 			}
 			this.setSecondBarColor(wColor);
-			this.updateChart(model, chart);
+			this.updateChart(hoveredModel, chart);
 		}
 	}
 	
@@ -306,26 +267,60 @@ public class WBarChartMine {
 		
 		Map<K, V> sortedMap = new LinkedHashMap<K, V>();
 		Map.Entry<K, V> entryNA = null;
-		Map.Entry<K, V> entryOthers = null;
+//		Map.Entry<K, V> entryOthers = null;
 		for (Map.Entry<K, V> entry : entries) {
 			if(entry.getKey().equals("NA")){
 				entryNA = entry;
-			} else if(entry.getKey().equals("Other")) {
-				entryOthers = entry;
+//			} else if(entry.getKey().equals("Other")) {
+//				entryOthers = entry;
 			} else {
 				sortedMap.put(entry.getKey(), entry.getValue());
 			}
 		}
 		
-		// Add the 'NA' as one before last element to the map
+		// Add the 'NA' as last element to the map
 		if(entryNA != null)
 			sortedMap.put(entryNA.getKey(), entryNA.getValue());
 		
 		// Add the 'Others' as last element to the map
-		if(entryOthers != null)
-			sortedMap.put(entryOthers.getKey(), entryOthers.getValue());
+//		if(entryOthers != null)
+//			sortedMap.put(entryOthers.getKey(), entryOthers.getValue());
 
 		return sortedMap;
+	}
+	
+	private Map<String,Integer> reduceMap(Map<String,Integer> mapToReduce, int maxViews) {
+		Map<String, Integer> mapToReturn = new LinkedHashMap<String, Integer>();
+		int i = 0;
+		int totalOtherValue = 0;
+		boolean showNA = mapToReduce.containsKey("NA");
+		for(Map.Entry<String, Integer> entry:mapToReduce.entrySet()) {
+			if(!showNA && ++i <= maxViews) {
+				if(!entry.getKey().equals("Other")) {
+					mapToReturn.put(entry.getKey(), entry.getValue());
+				} else {
+					totalOtherValue += entry.getValue();
+				}
+			} else if (showNA && ++i < maxViews) {
+				if(!entry.getKey().equals("Other")) {
+					mapToReturn.put(entry.getKey(), entry.getValue());
+				} else {
+					totalOtherValue += entry.getValue();
+				}
+			} else {
+				// This should be the last element of the array
+				if(entry.getKey().equals("NA")) {
+					mapToReturn.put("Other", totalOtherValue);
+					mapToReturn.put("NA", entry.getValue());
+					return mapToReturn;
+				} else {
+					totalOtherValue += entry.getValue();
+				}
+			}
+		}
+		mapToReturn.put("Other", totalOtherValue);
+		
+		return mapToReturn;
 	}
 	
 	public void setSortingOption(SortingOptions sortingOption) {
