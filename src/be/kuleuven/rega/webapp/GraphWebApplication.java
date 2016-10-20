@@ -12,8 +12,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-
 import be.kuleuven.rega.comparator.SortingOptions;
 import be.kuleuven.rega.form.MyComboBox;
 import be.kuleuven.rega.phylogeotool.core.Node;
@@ -25,12 +23,14 @@ import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
 import be.kuleuven.rega.prerendering.FacadeRequestData;
 import be.kuleuven.rega.prerendering.PreRendering;
 import be.kuleuven.rega.url.UrlManipulator;
+import be.kuleuven.rega.webapp.widgets.Chart;
 import be.kuleuven.rega.webapp.widgets.GoogleChartWidget;
 import be.kuleuven.rega.webapp.widgets.PPlacerForm;
 import be.kuleuven.rega.webapp.widgets.WBarChartMine;
 import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
 import be.kuleuven.rega.webapp.widgets.WDownloadResource;
 import be.kuleuven.rega.webapp.widgets.WExportTreeForm;
+import be.kuleuven.rega.webapp.widgets.WHistogramMine;
 import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
 import be.kuleuven.rega.webapp.widgets.WTreeDownloaderForm;
 import eu.webtoolkit.jwt.Side;
@@ -59,6 +59,7 @@ import eu.webtoolkit.jwt.WTemplate;
 import eu.webtoolkit.jwt.WText;
 import eu.webtoolkit.jwt.WVBoxLayout;
 import eu.webtoolkit.jwt.WXmlLocalizedStrings;
+import eu.webtoolkit.jwt.chart.WCartesianChart;
 import figtree.application.GraphicFormat;
 
 public class GraphWebApplication extends WApplication {
@@ -67,6 +68,8 @@ public class GraphWebApplication extends WApplication {
 	private File metaDataFile;
 	private MyComboBox wComboBoxMetadata;
 	private WBarChartMine wBarChartMine;
+	private WHistogramMine wHistogramMine;
+	private Chart chart;
 	private WLayout wGroupBoxGoogleMapWidget;
 	private GoogleChartWidget googleChartWidget;
 	private WComboBox wComboBoxRegions;
@@ -74,6 +77,12 @@ public class GraphWebApplication extends WApplication {
 	private FacadeRequestData facadeRequestData;
 	private PPlacer pplacer;
 	private JobScheduler jobScheduler;
+	
+	// Elements that have to be dynamically shown and hidden
+	private final WText orderLabel = new WText("Select ordering: ");
+	private final WComboBox order = new WComboBox();
+	private final WText showNALabel = new WText("Show NA: ");
+	private final WCheckBox showNACheckbox = new WCheckBox();
 	
 //	private String treeRenderLocation = "";
 //	private String clusterRenderLocation = "";
@@ -262,19 +271,19 @@ public class GraphWebApplication extends WApplication {
 		mouseWentOut(null, wCircleNode);
 		
 		this.setGoogleChart(wCircleNode.getNode().getId());
-		this.setStatisticGraph(wBarChartMine, wCircleNode.getNode().getId(), true);
+		this.setStatisticGraph(wCircleNode.getNode().getId(), true);
 	}
 	
 	
 	public void mouseWentOver(WMouseEvent wMouseEvent, WCircleNode wCircleNode) {
 		this.setGoogleChart(wCircleNode.getNode().getId());
-		this.updateStatisticGraph(wBarChartMine, wCircleNode.getNode().getId(), wCircleNode.getColor());
+		this.updateStatisticGraph(wCircleNode.getNode().getId(), wCircleNode.getColor());
 	}
 
 	public void mouseWentOut(WMouseEvent wMouseEvent, WCircleNode wCircleNode) {
 		int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 		this.setGoogleChart(id);
-		this.setStatisticGraph(wBarChartMine, id, false);
+		this.setStatisticGraph(id, false);
 	}
 	
 	public void pathChanged() {
@@ -298,7 +307,7 @@ public class GraphWebApplication extends WApplication {
 		}
 		graphWidget.setCluster(id, treeLevel, deeper);
 		setGoogleChart(id);
-		setStatisticGraph(this.wBarChartMine, id, true);
+		setStatisticGraph(id, true);
 	}
 	
 	private void setGoogleChart(int nodeId) {
@@ -308,20 +317,29 @@ public class GraphWebApplication extends WApplication {
 		this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
 	}
 	
-	private void setStatisticGraph(WBarChartMine wBarChartMine, int nodeId, boolean reread) {
+	private void setStatisticGraph(int nodeId, boolean reread) {
 		if (wComboBoxMetadata != null) {
-			wBarChartMine.setSecondBarColor(WColor.white);
-			if (reread) {
-				wBarChartMine.setData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText()), reread);
+			if(wComboBoxMetadata.getValueText().equals("PATIENT_ID") || wComboBoxMetadata.getValueText().equals("YEAR_OF_BIRTH") || wComboBoxMetadata.getValueText().equals("SAMPLE_YEAR")
+					|| wComboBoxMetadata.getValueText().equals("VIRAL_LOAD")) {
+				this.chart = wHistogramMine;
+				this.hideHistogramElements();
 			} else {
-				wBarChartMine.setData(null, reread);
+				this.chart = wBarChartMine;
+				this.showHistogramElements();
+			}
+			
+			this.chart.setSecondBarColor(WColor.white);
+			if (reread) {
+				this.chart.setData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText()), reread);
+			} else {
+				this.chart.setData(null, reread);
 			}
 		}
 	}
 	
-	private void updateStatisticGraph(WBarChartMine wBarChartMine, int nodeId, Color clusterColor) {
+	private void updateStatisticGraph(int nodeId, Color clusterColor) {
 		if(wComboBoxMetadata != null)
-			wBarChartMine.updateData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText()), new WColor(clusterColor.getRed(), clusterColor.getGreen(), clusterColor.getBlue()));
+			chart.updateData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText()), new WColor(clusterColor.getRed(), clusterColor.getGreen(), clusterColor.getBlue()));
 	}
 	
 	private final void showDialog() {
@@ -543,14 +561,16 @@ public class GraphWebApplication extends WApplication {
 		wvBoxLayout.addWidget(wGroupBoxBottom);
 		WVBoxLayout wvBoxLayoutChart = new WVBoxLayout(wGroupBoxBottom);
 		
-		wBarChartMine = new WBarChartMine(hashMapTemp);
+		WCartesianChart wCartesianChart = new WCartesianChart();
+		wBarChartMine = new WBarChartMine(wCartesianChart);
+		wHistogramMine = new WHistogramMine(wCartesianChart);
 		
 		if(metaDataFile != null && metaDataFile.exists()) {
 			wComboBoxMetadata = new MyComboBox(metaDataFile, csvDelimitor);
 			wComboBoxMetadata.changed().addListener(this, new Signal.Listener() {
 				public void trigger() {
 					int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
-					setStatisticGraph(wBarChartMine, id, true);
+					setStatisticGraph(id, true);
 				}
 			});
 			wComboBoxMetadata.changed().trigger();
@@ -562,11 +582,9 @@ public class GraphWebApplication extends WApplication {
 			wgroupboxMetadata.setMaximumSize(new WLength(100.0, Unit.Percentage), new WLength(25));
 			wgroupboxMetadata.addWidget(wComboBoxMetadata);
 			
-			WText orderLabel = new WText("Select ordering: ");
 			orderLabel.setMargin(20, Side.Left);
 			orderLabel.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
 			
-			final WComboBox order = new WComboBox();
 			for(SortingOptions sortingOption:SortingOptions.values()) {
 				order.addItem(sortingOption.getDescription());
 			}
@@ -574,25 +592,28 @@ public class GraphWebApplication extends WApplication {
 			order.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
 			order.changed().addListener(this, new Signal.Listener() {
 				public void trigger() {
-					wBarChartMine.setSortingOption(SortingOptions.getOptionByDescription(order.getValueText()));
-					int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
-					setStatisticGraph(wBarChartMine, id, true);
+					// We should only be able to sort the barchart, not the histogram
+					if(chart instanceof WBarChartMine) {
+						((WBarChartMine)chart).setSortingOption(SortingOptions.getOptionByDescription(order.getValueText()));
+						int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
+						setStatisticGraph(id, true);
+					} else {
+						System.err.println("Trying to cast a chart to WBarChart when it isn't");
+					}
 				}
 			});
 			
 			wgroupboxMetadata.addWidget(orderLabel);
 			wgroupboxMetadata.addWidget(order);
 			
-			WText showNALabel = new WText("Show NA: ");
 			showNALabel.setMargin(20, Side.Left);
 //			showNALabel.setMaximumSize(new WLength(25.0, Unit.Percentage), new WLength(25));
 			
-			final WCheckBox showNACheckbox = new WCheckBox();
 			showNACheckbox.changed().addListener(this, new Signal.Listener() {
 				public void trigger() {
 					facadeRequestData.setShowNAData(showNACheckbox.isChecked());
 					int id = Integer.parseInt(UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
-					setStatisticGraph(wBarChartMine, id, true);
+					setStatisticGraph(id, true);
 				}
 			});
 			
@@ -604,9 +625,31 @@ public class GraphWebApplication extends WApplication {
 		}
 		
 		
-		wvBoxLayoutChart.addWidget(wBarChartMine.getWidget());
-		wvBoxLayoutChart.setStretchFactor(wBarChartMine.getWidget(), 1);
+		wvBoxLayoutChart.addWidget(wCartesianChart);
+		wvBoxLayoutChart.setStretchFactor(wCartesianChart, 1);
 		return wvBoxLayout;
+	}
+	
+	private void hideHistogramElements() {
+		if(orderLabel != null)
+			orderLabel.hide();
+		if(order != null)
+			order.hide();
+		if(showNALabel != null)
+			showNALabel.hide();
+		if(showNACheckbox != null)
+			showNACheckbox.hide();
+	}
+	
+	private void showHistogramElements() {
+		if(orderLabel != null)
+			orderLabel.show();
+		if(order != null)
+			order.show();
+		if(showNALabel != null)
+			showNALabel.show();
+		if(showNACheckbox != null)
+			showNACheckbox.show();
 	}
 	
 	public Settings getSettings() {
