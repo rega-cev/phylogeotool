@@ -8,7 +8,9 @@ package be.kuleuven.rega.phylogeotool.settings;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 
@@ -129,6 +131,10 @@ public class Settings {
 		return this.columnsToExport;
 	}
 	
+	public Map<String, String> getCsvColumnRepresentation() {
+		return this.csvColumnRepresentation;
+	}
+	
 	private String basePath;
 	private String metaDataFile;
 	private String phyloTreeFile;
@@ -142,6 +148,7 @@ public class Settings {
 	private String[] colorAxis;
 	private boolean pplacerSupport;
 	private List<String> columnsToExport;
+	private Map<String, String> csvColumnRepresentation;
 	
     @SuppressWarnings("unchecked")
 	private void parseConfFile(File confFile) {
@@ -198,6 +205,13 @@ public class Settings {
             	List<Element> headersToExport = e.getChildren();
             	for (Element child : headersToExport) {
             		columnsToExport.add(child.getValue().trim());
+            	}
+            } else if(name.equals("csvFieldRepresentation")) {
+            	csvColumnRepresentation = new HashMap<String,String>();
+            	List<Element> headersToExport = e.getChildren();
+            	for (Element child : headersToExport) {
+//            		System.out.println("Adding: " + child.getValue().trim() + ", " + child.getAttribute("type").getValue().trim());
+            		csvColumnRepresentation.put(child.getValue().toLowerCase().trim(), child.getAttribute("type").getValue().trim());
             	}
             }
         }
