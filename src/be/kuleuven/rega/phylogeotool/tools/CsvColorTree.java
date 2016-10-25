@@ -57,7 +57,7 @@ public class CsvColorTree {
 				}
 				
 				if (taxa.size() == 0) {
-//					throw new RuntimeException("Could not find node with label \"" + s.label + "\"");
+					System.err.println("Could not find node with label \"" + s.label + "\"");
 				} else if (taxa.size() >= 1) {
 					final String key = "!color";
 					final String value = colorToAttribute(s.color);
