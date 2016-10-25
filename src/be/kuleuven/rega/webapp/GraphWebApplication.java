@@ -319,20 +319,23 @@ public class GraphWebApplication extends WApplication {
 	
 	private void setStatisticGraph(int nodeId, boolean reread) {
 		if (wComboBoxMetadata != null) {
-			if(wComboBoxMetadata.getValueText().equals("PATIENT_ID") || wComboBoxMetadata.getValueText().equals("YEAR_OF_BIRTH") || wComboBoxMetadata.getValueText().equals("SAMPLE_YEAR")
-					|| wComboBoxMetadata.getValueText().equals("VIRAL_LOAD")) {
-				this.chart = wHistogramMine;
-				this.hideHistogramElements();
+			if(settings.getCsvColumnRepresentation().containsKey(wComboBoxMetadata.getValueText().toLowerCase())) {
+				if(settings.getCsvColumnRepresentation().get(wComboBoxMetadata.getValueText().toLowerCase()).equals("number")) {
+					this.chart = wHistogramMine;
+					this.hideHistogramElements();
+				} else {
+					this.chart = wBarChartMine;
+					this.showHistogramElements();
+				}
+				
+				this.chart.setSecondBarColor(WColor.white);
+				if (reread) {
+					this.chart.setData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText()), reread);
+				} else {
+					this.chart.setData(null, reread);
+				}
 			} else {
-				this.chart = wBarChartMine;
-				this.showHistogramElements();
-			}
-			
-			this.chart.setSecondBarColor(WColor.white);
-			if (reread) {
-				this.chart.setData(facadeRequestData.readCsv(nodeId, wComboBoxMetadata.getValueText()), reread);
-			} else {
-				this.chart.setData(null, reread);
+				System.err.println("Please update your global-conf.xml file. <property name=\"csvFieldRepresentation\"> not found");
 			}
 		}
 	}
@@ -623,7 +626,6 @@ public class GraphWebApplication extends WApplication {
 			wvBoxLayoutChart.addWidget(wgroupboxMetadata);
 			wvBoxLayoutChart.setStretchFactor(wgroupboxMetadata, 0);
 		}
-		
 		
 		wvBoxLayoutChart.addWidget(wCartesianChart);
 		wvBoxLayoutChart.setStretchFactor(wCartesianChart, 1);
