@@ -9,6 +9,7 @@ import be.kuleuven.rega.comparator.ClusterSizeComparator;
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.core.Tree;
+import be.kuleuven.rega.phylogeotool.settings.Settings;
 import be.kuleuven.rega.phylogeotool.tree.ClusterDistance;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceInterface;
 
@@ -43,7 +44,7 @@ public class BestClusterMultiThread {
 //		System.out.println("MaxEntry: " + maxSecondDerivative.getKey() + " Value: " + maxSecondDerivative.getValue());
 //	}
 	
-	public static Cluster getBestCluster(int minClusters, int maxClusters, int minClusterSize, Tree tree, Node startNode, DistanceInterface distanceInterface) {
+	public static Cluster getBestCluster(Settings settings, int minClusters, int maxClusters, int minClusterSize, Tree tree, Node startNode, DistanceInterface distanceInterface) {
 		List<Double> distances = forkJoinPool.invoke(new PreRenderingThread(minClusters, maxClusters, tree, startNode, distanceInterface, new ClusterSizeComparator(tree), minClusterSize));
 		ClusterDistance clusterDistance = new ClusterDistance(tree);
 		if(distances.size() >= 3) {

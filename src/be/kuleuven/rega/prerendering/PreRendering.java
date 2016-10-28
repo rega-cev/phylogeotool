@@ -48,6 +48,7 @@ public class PreRendering {
 
 	private XStream xStream = null;
 	private static String basePath;
+	private Settings settings;
 	public final static int CONTROL_PALETTE_WIDTH = 200;
 	public static enum ID {
 		LEAFID, NODEID
@@ -63,6 +64,7 @@ public class PreRendering {
 		this.xStream.omitField(Cluster.class, "root");
 		this.xStream.omitField(Cluster.class, "boundaries");
 		setBasePath(folderPhyloRenderLocation);
+		settings = Settings.getInstance();
 	}
 	
 	private static void setBasePath(String basePath) {
@@ -161,7 +163,7 @@ public class PreRendering {
 			currentNode = toDo.pop();
 //			currentNode = tree.getNodeById(1);
 			// Do multi thread here
-			Cluster cluster = BestClusterMultiThread.getBestCluster(minimumClusterSize, 50, 2, tree, currentNode, distanceInterface);
+			Cluster cluster = BestClusterMultiThread.getBestCluster(settings, minimumClusterSize, 50, 2, tree, currentNode, distanceInterface);
 			if(cluster != null) {
 				this.writeClusterToXML(cluster);
 				System.err.println("Cluster " + cluster.getRootId() + " structure written to file");
