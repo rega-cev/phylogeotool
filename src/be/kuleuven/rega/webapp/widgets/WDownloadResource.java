@@ -45,7 +45,7 @@ public class WDownloadResource extends WFileResource {
 		BufferedOutputStream output;
 		try {
 			output = new BufferedOutputStream(response.getOutputStream());
-			ColorClusters.prepareFullTreeView(Settings.getInstance().getPhyloTree(), cluster, graphicFormat, output, 2, colorTree, showTips);
+			ColorClusters.prepareFullTreeView(null, Settings.getInstance().getPhyloTree(), cluster, graphicFormat, output, 2, colorTree, showTips);
 			output.flush();
 		} catch (IOException e) {
 			e.printStackTrace();

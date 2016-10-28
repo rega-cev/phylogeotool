@@ -169,7 +169,7 @@ public class PreRendering {
 				this.prepareCSV(cluster.getRoot().getId(), tree.getLeaves(cluster.getRoot()), csvLocation, true);
 				System.err.println("XML details written to file");
 //				NexusExporter.export(cluster, jeblTree, new FileWriter(new File(this.folderLocationTreeView + File.separator + cluster.getRoot().getId() + ".nexus")), minimumClusterSize, true);
-				ColorClusters.prepareFullTreeView(treeLocation, cluster, GraphicFormat.PNG, new FileOutputStream(new File(Settings.getTreeviewPath(basePath) + File.separator + cluster.getRoot().getId() + ".png")), minimumClusterSize, true, false);
+				ColorClusters.prepareFullTreeView(jeblTree, null, cluster, GraphicFormat.PNG, new FileOutputStream(new File(Settings.getTreeviewPath(basePath) + File.separator + cluster.getRoot().getId() + ".png")), minimumClusterSize, true, false);
 				System.err.println("Image written to file");
 				
 				List<Node> nodesList = cluster.getBoundaries();

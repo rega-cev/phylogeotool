@@ -62,7 +62,7 @@ public class ColorClusters {
 		ColorClusters colorClusters = new ColorClusters();
 		// colorClusters.colorCluster(treeLocation, clusterLocation,
 		// treeviewLocation, minimumClusterSize);
-		colorClusters.colorClusterExportPNG(treeLocation, basePath, minimumClusterSize);
+//		colorClusters.colorClusterExportPNG(treeLocation, basePath, minimumClusterSize);
 		// colorClusters.colorClusterExportGIF(treeLocation, treeviewLocation);
 	}
 
@@ -89,7 +89,7 @@ public class ColorClusters {
 		}
 	}
 
-	private void colorClusterExportPNG(String treeLocation, String configPath, int minimumClusterSize) {
+	/*private void colorClusterExportPNG(String treeLocation, String configPath, int minimumClusterSize) {
 		PreRendering preRendering = new PreRendering(configPath);
 		File clusters = new File(Settings.getClusterPath(configPath));
 		File[] files = clusters.listFiles();
@@ -120,7 +120,7 @@ public class ColorClusters {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	private void colorClusterExportGIF(String treeLocation, String basePath) {
 		// jeblTree = ReadTree.readTree(new FileReader(treeLocation));
@@ -145,15 +145,17 @@ public class ColorClusters {
 		}
 	}
 
-	public static void prepareFullTreeView(String treeLocation, Cluster cluster, GraphicFormat graphicsFormat, OutputStream output, int minimumClusterSize, boolean colorTree, boolean showTips) {
+	public static void prepareFullTreeView(Tree tree, String treeLocation, Cluster cluster, GraphicFormat graphicsFormat, OutputStream output, int minimumClusterSize, boolean colorTree, boolean showTips) {
 		int CONTROL_PALETTE_WIDTH = 200;
-		Tree tree;
+//		Tree tree;
 		// We read a new instance of jebltree to prevent overlapping coloring events to occur
-		try {
-			tree = ReadTree.readTree(new FileReader(new File(treeLocation)));
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-			tree = null;
+		if(tree == null) {
+			try {
+				tree = ReadTree.readTree(new FileReader(new File(treeLocation)));
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+				tree = null;
+			}
 		}
 		try {
 			if (graphicsFormat == null) {
