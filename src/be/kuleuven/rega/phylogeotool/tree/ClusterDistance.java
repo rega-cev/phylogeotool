@@ -81,52 +81,6 @@ public class ClusterDistance {
 		return tree;
 	}
 	
-//	public Cluster getBestClustering(Tree tree, Node startNode, int minNrClusters, int maxNrClusters, int minClusterSize) {
-//		List<Double> distances = new ArrayList<Double>();
-//		int min = minNrClusters;
-//		int max = maxNrClusters;
-////		TreeMap<Integer, List<Cluster>> clusterMapper = new TreeMap<Integer, List<Cluster>>();
-//		Cluster lastClustering = null;
-//		
-//		/**
-//		 * Calculate SDR's
-//		 */
-//		for(int i = min; i <= max; i++) {
-//			Cluster cluster = MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), 2, i);
-////			System.out.println(clusteredTree.getAcceptableClusters(2).size());
-//			if(cluster == null) {
-//				cluster = lastClustering;
-//				break;
-//			} else {
-//				if(cluster.getBoundaries().size() >= 2) {
-//					double value = TreeStatistics.calculateStatistics(cluster, distanceInterface, minClusterSize);
-//					distances.add(value);
-////					clusterMapper.put(i, clusters);
-//					lastClustering = cluster;
-//				} else if(cluster.getBoundaries().size() < 2 && distances.size() >= 3){
-//					break;
-//				} else {
-//					return cluster;
-//				}
-//			}
-//		}
-//		
-//		Entry<Integer, Double> maxSecondDerivative = this.getMaxSecondDerivative(distances);
-//		// This R-Script should be changed location
-//		String args1[] = {"/usr/local/Cellar/R/3.2.1/bin/Rscript", "/Users/ewout/Test.R", distances.toString(), Integer.toString(startNode.getId())};
-//		
-//		Runtime rt = Runtime.getRuntime();
-//		try {
-//			rt.exec(args1);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		
-////		long stopTime = java.lang.System.nanoTime();
-////		System.out.println((stopTime - startTime)/1000000000);
-//		return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), 2, maxSecondDerivative.getKey());
-//	}
-	
 	/**
 	 * @pre It is expected that the list of distances given to this method exceeds size 3
 	 * @param distances
@@ -142,14 +96,6 @@ public class ClusterDistance {
 			secondDerivative.put(i + 2,calculateSecondDerivative(distances.get(i - 1), distances.get(i), distances.get(i + 1)));
 		}
 		
-//		/**
-//		 * Print to screen
-//		 */
-//		Iterator<Integer> iterator = secondDerivative.keySet().iterator();
-//		while(iterator.hasNext()) {
-//			int i = iterator.next();
-//		}
-		
 		/**
 		 * Max second derivative
 		 */
@@ -162,6 +108,103 @@ public class ClusterDistance {
 		
 //		System.out.println("MaxEntry: " + maxEntry.getKey() + " Value: " + maxEntry.getValue());
 		return maxEntry;
+	}
+	
+	public boolean isFunctionBumpy(List<Double> firstDerivatives) {
+		List<Double> positiveFirstDerivatives = ClusterDistance.getPositiveFirstDerivatives(firstDerivatives);
+		List<Double> negativeFirstDerivatives = ClusterDistance.getNegativeFirstDerivatives(firstDerivatives);
+		
+		double positiveSum = ClusterDistance.getSumOfList(positiveFirstDerivatives);
+		double negativeSum = ClusterDistance.getSumOfList(negativeFirstDerivatives);
+		
+		double percentage = (Math.abs(positiveSum) / (Math.abs(positiveSum) + Math.abs(negativeSum))) * 100;
+		
+		// TODO: Make this variable interchangeable
+		if(percentage > 20) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Calculate the first derivative of a list of double values (SDR scores, y-values) with the list index being the x-axis value
+	 * (yi+1−yi−1)/(xi+1−xi−1)
+	 * @param distances: List containing all the SDR scores
+	 * @return list with the first derivatives
+	 */
+	public static List<Double> getFirstDerivatives(List<Double> distances) {
+		List<Double> firstDerivatives = new ArrayList<Double>();
+		// Calculate the first derivative for the first point
+		// (y2-y1)/(x2-x1)
+		firstDerivatives.add(calculateFirstDerivative(1, 2, distances.get(0), distances.get(1)));
+//		System.out.print(calculateFirstDerivative(1, 2, distances.get(0), distances.get(1)));
+		
+		// Calculate the first derivative for all the coming points (but the last one)
+		for(int i = 2; i < distances.size(); i++) {
+			firstDerivatives.add(calculateFirstDerivative(i - 1, i + 1, distances.get(i - 2), distances.get(i)));
+//			System.out.print(calculateFirstDerivative(i - 1, i + 1, distances.get(i - 2), distances.get(i)) + ", ");
+		}
+		
+		// Calculate the first derivative for the last point
+		// (yn-yn-1)/(xn-xn-1)
+		firstDerivatives.add(calculateFirstDerivative(distances.size() - 1, distances.size(), distances.get(distances.size() - 2), distances.get(distances.size() - 1)));
+//		System.out.print(calculateFirstDerivative(distances.size() - 1, distances.size(), distances.get(distances.size() - 2), distances.get(distances.size() - 1)));
+
+		return firstDerivatives;
+	}
+	
+	public static List<Double> getPositiveFirstDerivatives(List<Double> firstDerivatives) {
+		List<Double> positiveFirstDerivatives = new ArrayList<Double>();
+		for(double firstDerivative:firstDerivatives) {
+			if(firstDerivative > 0) {
+				positiveFirstDerivatives.add(firstDerivative);
+			}
+		}
+		return positiveFirstDerivatives;
+	}
+	
+	public static List<Double> getNegativeFirstDerivatives(List<Double> firstDerivatives) {
+		List<Double> negativeFirstDerivatives = new ArrayList<Double>();
+		for(double firstDerivative:firstDerivatives) {
+			if(firstDerivative < 0) {
+				negativeFirstDerivatives.add(firstDerivative);
+			}
+		}
+		return negativeFirstDerivatives;
+	}
+	
+	public static double getSumOfList(List<Double> values) {
+		double sum = 0.0;
+		for(double value:values) {
+			sum += value;
+		}
+		return sum;
+	}
+	
+	public static int getMinValueFromList(List<Double> firstDerivatives) {
+		double previousFirstDerivative = 0;
+		
+		for(int i = 0; i < firstDerivatives.size(); i++) {
+			// if the first derivatives still have the same sign
+			if(previousFirstDerivative != 0 && (previousFirstDerivative<0) == (firstDerivatives.get(i)<0)) {
+				previousFirstDerivative = firstDerivatives.get(i);
+			} else {
+				// We get to a local min, we return the value
+				if(previousFirstDerivative < 0) {
+					return i + 1;
+				// We get to a local max and keep searching
+				} else {
+					previousFirstDerivative = firstDerivatives.get(i);
+				}
+			}
+		}
+		// If the function keeps increasing and we never have a local minimum, we take 2 clusters as the best clustering
+		return 2;
+	}
+	
+	private static double calculateFirstDerivative(double previousX, double nextX, double previousY, double nextY) {
+		return ((nextY - previousY) / (nextX - previousX));
 	}
 	
 	private double calculateSecondDerivative(double previous, double current, double next) {
