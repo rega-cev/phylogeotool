@@ -72,6 +72,14 @@ public class TreeStatistics {
 		return 0.0D;
 	}
 
+	/**
+	 * The Inter cluster pairwise distance is calculated as the average distance of every leaf in cluster 1 to every leaf in cluster 2
+	 * @param tree
+	 * @param cluster1
+	 * @param cluster2
+	 * @param distanceInterface
+	 * @return
+	 */
 	private static double getInterClusterPairwiseDistance(Tree tree, Node cluster1, Node cluster2, DistanceInterface distanceInterface) {
 		List<Node> list1 = tree.getLeaves(cluster1);
 		List<Node> list2 = tree.getLeaves(cluster2);
