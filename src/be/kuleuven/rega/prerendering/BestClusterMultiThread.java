@@ -89,7 +89,7 @@ public class BestClusterMultiThread {
 
 //			System.out.println("Output: ");
 			while ((line = br.readLine()) != null) {
-//				System.out.println(line);
+				System.out.println("Sgolay: " + line);
 				String [] sgolayArray = line.split(" ");
 				for(String value:sgolayArray) {
 					try {
@@ -107,11 +107,13 @@ public class BestClusterMultiThread {
 		ClusterDistance clusterDistance = new ClusterDistance(tree);
 
 		if(distances.size() >= 2) {
-			List<Double> firstDerivatives = ClusterDistance.getFirstDerivatives(distances);
+			// Calculate the first derivative on the sgolay function
+			List<Double> firstDerivatives = ClusterDistance.getFirstDerivatives(sgolay);
 			boolean isFunctionBumpy = clusterDistance.isFunctionBumpy(firstDerivatives);
 			
 			if(isFunctionBumpy) {
 				int best = ClusterDistance.getMinValueFromList(firstDerivatives);
+				System.out.println("Bumpy function for: " + startNode.getId() + " MaxEntry: " + best + " Value: " + distances.get(best));
 				return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, best);
 			} else {
 				if(distances.size() >= 3) {
