@@ -184,10 +184,10 @@ public class Tree {
 	}
 	
 	private List<Node> visitLeafsRecursive(Node node, List<Node> leafs) {
-		if (node.hasChildren() && node.getImmediateChildren().get(0) != null) {
+		if (node.hasChildren() && node.getImmediateChildren().size() > 0 && node.getImmediateChildren().get(0) != null) {
 			visitLeafsRecursive(node.getImmediateChildren().get(0), leafs);
 		}
-		if (node.hasChildren() && node.getImmediateChildren().get(1) != null) {
+		if (node.hasChildren() && node.getImmediateChildren().size() > 1 && node.getImmediateChildren().get(1) != null) {
 			visitLeafsRecursive(node.getImmediateChildren().get(1), leafs);
 		}
 		if (!node.hasChildren()) {
@@ -225,5 +225,5 @@ public class Tree {
 		} else {
 			return false;
 		}
-    }	
+    }
 }
