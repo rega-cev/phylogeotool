@@ -54,7 +54,7 @@ public class PreRendering {
 		LEAFID, NODEID
 	}
 	
-	public PreRendering(String folderPhyloRenderLocation) {
+	public PreRendering(String folderPhyloRenderLocation, String configLocation) {
 		this.xStream = new XStream();
 		this.xStream.alias("cluster", Cluster.class);
 		this.xStream.alias("tree", Tree.class);
@@ -64,7 +64,11 @@ public class PreRendering {
 		this.xStream.omitField(Cluster.class, "root");
 		this.xStream.omitField(Cluster.class, "boundaries");
 		setBasePath(folderPhyloRenderLocation);
-		settings = Settings.getInstance();
+		if(configLocation != null && !configLocation.equals("")) {
+			settings = Settings.getInstanceByPath(configLocation);
+		} else {
+			settings = Settings.getInstance();
+		}
 	}
 	
 	private static void setBasePath(String basePath) {
@@ -406,6 +410,7 @@ public class PreRendering {
 		String treeLocation = "";
 		String csvLocation = "";
 		String distanceMatrixLocation = "";
+		String configFileLocation = "";
 		int minimumClusterSize = 2;
 		
 		if(args.length > 3) {
@@ -413,6 +418,8 @@ public class PreRendering {
 			csvLocation = args[1];
 			distanceMatrixLocation = args[2];
 			basePath = args[3];
+			if(args.length > 4)
+				configFileLocation = args[4];
 			
 			ReadTree.setJeblTree(treeLocation);
 			ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
@@ -425,7 +432,7 @@ public class PreRendering {
 		}
 		
 //		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/Configs/Portugal/tree","/Users/ewout/Documents/phylogeo/Configs/Portugal/clusters", "/Users/ewout/Documents/phylogeo/Configs/Portugal/xml", "/Users/ewout/Documents/phylogeo/Configs/Portugal/treeview", "/Users/ewout/Documents/phylogeo/Configs/Portugal/leafIds", "/Users/ewout/Documents/phylogeo/Configs/Portugal/nodeIds");
-		PreRendering preRendering = new PreRendering(basePath);
+		PreRendering preRendering = new PreRendering(basePath, configFileLocation);
 		
 		try {
 //			preRendering.preRender("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree", "/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv", "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.portugal.txt");

@@ -233,6 +233,10 @@ public class Settings {
 		else
 			return app.getSettings();
 	}
+	
+	public static Settings getInstanceByPath(String configLocation) {
+		return new Settings(new File(configLocation + File.separatorChar + "global-conf.xml"));
+	}
 
 	public static Settings getInstance(ServletConfig config) {
         String configFile = null;

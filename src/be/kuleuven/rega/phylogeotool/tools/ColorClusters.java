@@ -69,7 +69,7 @@ public class ColorClusters {
 	private void colorClusterExportNexus(String treeLocation, String basePath, int minimumClusterSize) {
 		try {
 			Tree jeblTree = ReadTree.readTree(new FileReader(treeLocation));
-			PreRendering preRendering = new PreRendering(basePath);
+			PreRendering preRendering = new PreRendering(basePath, null);
 			File clusters = new File(Settings.getClusterPath(basePath));
 			File[] files = clusters.listFiles();
 			Cluster currentCluster = null;
