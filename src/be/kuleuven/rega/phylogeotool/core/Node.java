@@ -203,4 +203,15 @@ public class Node {
         builder.append(id);
 		return builder.toHashCode();
     }
+	
+	public void print(String prefix, boolean isTail) {
+		System.out.println(prefix + (isTail ? "└── " : "├── ") + getLabel());
+        for (int i = 0; i < getImmediateChildren().size() - 1; i++) {
+        	getImmediateChildren().get(i).print(prefix + (isTail ? "    " : "│   "), false);
+        }
+        if (getImmediateChildren().size() > 0) {
+        	getImmediateChildren().get(getImmediateChildren().size() - 1)
+                    .print(prefix + (isTail ?"    " : "│   "), true);
+        }
+    }
 }
