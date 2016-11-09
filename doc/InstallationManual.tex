@@ -96,8 +96,8 @@ A rooted binary phylogenetic tree in either Nexus or Newick format, which may or
 
 \subsubsection*{CSV file}
 A comma-separated value (CSV) file, containing an ID column that contains IDs that correspond to the taxa names of the provided phylogenetic tree.
-Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as geographic location, virus genotype/subtype, patient attributes (age, ethnicity), \ldots
-%PL: since the geographic location is interpreted to build up the map, I would think the application needs to know which column is providing info for this. Is this done by using a fixed name? If so mention it here.
+Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as geographic location, virus genotype/subtype, patient attributes (age, ethnicity), \ldots \\
+Information on the geography of taxa can be visualized in a map (Google Charts). For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (more information: section \ref{sssec:config_file}). The geographic values need to be formatted with the code or country name as defined in the ISO\_3166-1\_alpha-2 standard \footnote{\url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}}.  
 
 \subsection{Building the project - Ubuntu Linux}
 
@@ -149,7 +149,7 @@ distance\_matrix folder\_output
 \end{verbatim}
 
 
-\subsubsection{Create a config file}
+\subsubsection{Create a config file} \label{sssec:config_file}
 
 In the /etc folder, create a directory `phylogeotool', which is the default location for the config file:
 \begin{verbatim}
