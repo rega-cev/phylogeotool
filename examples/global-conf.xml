@@ -69,6 +69,13 @@
     <chart name="colorAxis">#e9e9e9,red</chart>
   </property>
 
+<!-- PPlacer Support
+  Indication if PPlacer should be supported in the PhyloGeoTool
+ -->
+ <property name="pplacer_support">
+ true
+ </property>
+
 <!--
    How the csv field should be represented in the tool.
    A number field will be shown in a histogram
