@@ -33,7 +33,7 @@
 \title{\textbf{Phylogeotool}\\ % Title
 Installation Reference Manual} % Subtitle
 
-\author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, anderen, Guy Baele} % Author
+\author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, Guy Baele} % Author
 \\{\textit{Rega Institute for Medical Research, KU Leuven}}} % Institution
 
 \date{September 2016} % Date
@@ -53,15 +53,6 @@ Installation Reference Manual} % Subtitle
 
 \subsection{Using pre-built JAR files}
 If you don't want to build the JARs/WAR from source, you can skip the following sections and proceed to section \ref{sec:jars}.
-%PL: is a building from source really in its place in this document?
-%GB: YES, it's an installation manual
-%PL: I would just explain how to install the jars, and refer to a BUILD file that explains how to build the jars?
-%GB: only referring to a build file requires even more knowledge than listing the steps here; we have to keep the fully detailed installation instructions, but can precede it by listing the main steps only.
-%PL: With the BUILD file, I meant the build *documentation* file, that explains how to build the source code.
-%PL: We could then keep the installation file about installing, and refer to this BUILD doc file from the installation manual.
-%PL: But adding a section with details on how the build is performed, is also OK to me. 
-
-
 
 \subsection{Prerequisites for building your own}
 
@@ -105,13 +96,12 @@ A rooted binary phylogenetic tree in either Nexus or Newick format, which may or
 
 \subsubsection*{CSV file}
 A comma-separated value (CSV) file, containing an ID column that contains IDs that correspond to the taxa names of the provided phylogenetic tree.
-Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as geographic location, virus genotype/subtype, patient attributes (age, ethnicity), \ldots
-%PL: since the geographic location is interpreted to build up the map, I would think the application needs to know which column is providing info for this. Is this done by using a fixed name? If so mention it here.
+Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as geographic location, virus genotype/subtype, patient attributes (age, ethnicity), \ldots \\
+Information on the geography of taxa can be visualized in a map (Google Charts). For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (more information: section \ref{sssec:config_file}). The geographic values need to be formatted with the code or country name as defined in the ISO\_3166-1\_alpha-2 standard \footnote{\url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}}.  
 
 \subsection{Building the project - Ubuntu Linux}
 
 \subsubsection{Clone the git repository}
-
 We here outline the various steps necessary for a successful build of the project.
 The build process here is described as it was performed on an Ubuntu 14.04 LTS (Trusty Tahr) installation.
 \begin{itemize}
@@ -126,16 +116,16 @@ ant
 }
 \end{itemize}
 
+
 \subsubsection{DistanceMatrix.jar}
 \label{sec:dm}
-%GB: Is this mandatory? Why do we need to do this? Would be nice to explain here.
-This jar file contains a tool to create a distance matrix based on the phylogenetic tree that will be used in the PhyloGeoTool.
-DistanceMatrix.jar uses one input file, a phylogenetic tree to be used in the PhyloGeoTool, and will output the distance matrix that is derived from the phylogenetic tree. %GB: what is this phylo.tree? What format should it be in? Should it have a specific extension?
+This jar file contains a tool to create a distance matrix, which will be used in the next section, based on the phylogenetic tree that will be used in the PhyloGeoTool.
+DistanceMatrix.jar uses one input file, a phylogenetic tree to be used in the PhyloGeoTool, and will output the distance matrix that is derived from the phylogenetic tree.
 For example, the following command uses DistanceMatrix.jar to generate a distance matrix (to be stored in a file called distances.csv in the command below) from a previously reconstructed phylogenetic tree in Newick format: 
 \begin{verbatim}
 java -jar DistanceMatrix.jar tree.newick distances.csv
 \end{verbatim}
-%is the distance matrix a CSV file?
+
 
 \subsubsection{PreRender.jar}
 A major goal of the PhyloGeoTool is to cluster the tree index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree. 
@@ -158,7 +148,7 @@ distance\_matrix folder\_output
 \end{verbatim}
 
 
-\subsubsection{Create a config file}
+\subsubsection{Create a config file} \label{sssec:config_file}
 
 In the /etc folder, create a directory `phylogeotool', which is the default location for the config file:
 \begin{verbatim}
@@ -170,6 +160,7 @@ touch global-conf.xml
 An example of such a configuration file can be found here: \url{https://github.com/rega-cev/phylogeotool/blob/master/examples/global-conf.xml}.
 In the XML file, we assume a user name 'phylogeo' to perform the installation.
 
+%GB: Ewout, can you replace the XML code below by the latest version of such a global-conf.xml file?
 Edit the global-conf.xml file to correctly set up all the necessary paths, example content of global-conf.xml is shown here (assuming that all the data resides in subfolders of /Users/phylogeo/Documents/):
 \begin{verbatim}
 <?xml version="1.0" encoding="UTF-8"?>
@@ -225,8 +216,6 @@ Edit the global-conf.xml file to correctly set up all the necessary paths, examp
    This folder should contain fasta_subsample.pl, init.sh 
    and place.sh, which can be found here:
    https://github.com/rega-cev/phylogeotool/blob/master/scripts/
-%GB: the scripts still need to be adjusted as they currently contain hard-coded file locations  
-%GB: users also need to have mafft installed? and also Perl apparently? Used Perl version: v5.18.2
   -->
   <property name="scriptFolder">
     /Users/phylogeo/Documents/PPlacer
