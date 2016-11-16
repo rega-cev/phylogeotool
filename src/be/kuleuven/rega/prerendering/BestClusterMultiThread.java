@@ -106,18 +106,18 @@ public class BestClusterMultiThread {
 		
 		ClusterDistance clusterDistance = new ClusterDistance(tree);
 
-		if(distances.size() >= 2) {
+		if(sgolay.size() >= 2) {
 			// Calculate the first derivative on the sgolay function
 			List<Double> firstDerivatives = ClusterDistance.getFirstDerivatives(sgolay);
 			boolean isFunctionBumpy = clusterDistance.isFunctionBumpy(firstDerivatives);
 			
 			if(isFunctionBumpy) {
 				int best = ClusterDistance.getMinValueFromList(firstDerivatives);
-				System.out.println("Bumpy function for: " + startNode.getId() + " MaxEntry: " + best + " Value: " + distances.get(best));
+				System.out.println("Bumpy function for: " + startNode.getId() + " MaxEntry: " + best + " Value: " + sgolay.get(best));
 				return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, best);
 			} else {
-				if(distances.size() >= 3) {
-					Entry<Integer, Double> maxSecondDerivative = clusterDistance.getMaxSecondDerivative(distances);
+				if(sgolay.size() >= 3) {
+					Entry<Integer, Double> maxSecondDerivative = clusterDistance.getMaxSecondDerivative(sgolay);
 					System.out.println("MaxEntry: " + maxSecondDerivative.getKey() + " Value: " + maxSecondDerivative.getValue());
 					try {
 						rt.exec(argsSecondDerivative);
@@ -126,16 +126,16 @@ public class BestClusterMultiThread {
 					}
 					return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, maxSecondDerivative.getKey());
 				} else {
-					System.out.println("MaxEntry: " + (distances.size() + 1) + " Value: No second derivative");
-					return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, (distances.size() + 1));
+					System.out.println("MaxEntry: " + (sgolay.size() + 1) + " Value: No second derivative");
+					return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, (sgolay.size() + 1));
 				}
 			}
 		} else {
 			// If distances is of size 0, this means that there are no more clusters big enough to be considered for the SDR distance
 			// If distances is of size 1, this means that there is only one cluster big enough to be further split up but obviously we cannot
 			// take the first nor second derivative of this function.
-			System.out.println("MaxEntry: " + (distances.size() + 1) + " Value: No first derivative for " + startNode.getId());
-			return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, (distances.size() + 1));
+			System.out.println("MaxEntry: " + (sgolay.size() + 1) + " Value: No first derivative for " + startNode.getId());
+			return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, (sgolay.size() + 1));
 		}
 	}
 }
