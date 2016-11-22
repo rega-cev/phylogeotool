@@ -356,7 +356,9 @@ public class PreRendering {
 				FileInputStream fileInputStream = new FileInputStream(file);
 				Document doc = dBuilder.parse(fileInputStream);
 				NodeList nList = doc.getElementsByTagName(key);
-				for (int temp = 0; temp < nList.getLength(); temp++) {
+				int size = nList.getLength();
+				System.out.println("Here1");
+				for (int temp = 0; temp < size; temp++) {
 					org.w3c.dom.Node nNode = nList.item(temp);
 					if (nNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
 						Element eElement = (Element) nNode;
@@ -380,6 +382,7 @@ public class PreRendering {
 //						System.out.println("Value : " + eElement.getTextContent());
 					}
 				}
+				System.out.println("Here2");
 				try {
 					fileInputStream.close();
 				} catch(IOException ioException) {
