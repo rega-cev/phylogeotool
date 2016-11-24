@@ -218,15 +218,16 @@ public class PreRendering {
 		DirectoryStream<Path> xmlStream = null;
 		DirectoryStream<Path> treeviewStream = null;
 		
-		try {
-			clustersStream = Files.newDirectoryStream(clusters.toPath());
-			xmlStream = Files.newDirectoryStream(xml.toPath());
-			treeviewStream = Files.newDirectoryStream(treeview.toPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
 		if(clusters.isDirectory() && xml.isDirectory() && treeview.isDirectory()){
+			try {
+				clustersStream = Files.newDirectoryStream(clusters.toPath());
+				xmlStream = Files.newDirectoryStream(xml.toPath());
+				treeviewStream = Files.newDirectoryStream(treeview.toPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 			if(clustersStream.iterator().hasNext() || xmlStream.iterator().hasNext() || treeviewStream.iterator().hasNext()){
 				return false;
 			} else {
@@ -357,7 +358,6 @@ public class PreRendering {
 				Document doc = dBuilder.parse(fileInputStream);
 				NodeList nList = doc.getElementsByTagName(key);
 				int size = nList.getLength();
-				System.out.println("Here1");
 				for (int temp = 0; temp < size; temp++) {
 					org.w3c.dom.Node nNode = nList.item(temp);
 					if (nNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
@@ -382,7 +382,6 @@ public class PreRendering {
 //						System.out.println("Value : " + eElement.getTextContent());
 					}
 				}
-				System.out.println("Here2");
 				try {
 					fileInputStream.close();
 				} catch(IOException ioException) {
