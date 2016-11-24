@@ -181,7 +181,11 @@ public class ClusterDistance {
 		}
 		return sum;
 	}
-	
+	/**
+	 * This method returns the optimal amount of clusters based on the first derivative
+	 * @param firstDerivatives
+	 * @return optimal amount of clusters
+	 */
 	public static int getMinValueFromList(List<Double> firstDerivatives) {
 		double previousFirstDerivative = 0;
 		
@@ -191,6 +195,7 @@ public class ClusterDistance {
 				previousFirstDerivative = firstDerivatives.get(i);
 			} else {
 				// We get to a local min, we return the value
+				// i = 0 are 2 clusters => i + 1 because previous point was minimum
 				if(previousFirstDerivative < 0) {
 					return i + 1;
 				// We get to a local max and keep searching

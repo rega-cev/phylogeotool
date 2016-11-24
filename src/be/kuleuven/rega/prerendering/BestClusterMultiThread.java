@@ -113,7 +113,9 @@ public class BestClusterMultiThread {
 			
 			if(isFunctionBumpy) {
 				int best = ClusterDistance.getMinValueFromList(firstDerivatives);
-				System.out.println("Bumpy function for: " + startNode.getId() + " MaxEntry: " + best + " Value: " + sgolay.get(best));
+				// Note: sgolay.get(best - 2) because we return the best amount of clusters in ClusterDistance.getMinValueFromList
+				// if(best == 0) nrClusters = 2 => sgolay.get(best - 2)
+				System.out.println("Bumpy function for: " + startNode.getId() + " Best Nr Clusters: " + best+ " Value: " + sgolay.get(best - 2));
 				return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, best);
 			} else {
 				if(sgolay.size() >= 3) {
