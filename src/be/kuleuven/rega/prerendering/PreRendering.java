@@ -11,6 +11,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -48,13 +49,12 @@ public class PreRendering {
 
 	private XStream xStream = null;
 	private static String basePath;
-	private Settings settings;
 	public final static int CONTROL_PALETTE_WIDTH = 200;
 	public static enum ID {
 		LEAFID, NODEID
 	}
 	
-	public PreRendering(String folderPhyloRenderLocation, String configLocation) {
+	public PreRendering(String folderPhyloRenderLocation) {
 		this.xStream = new XStream();
 		this.xStream.alias("cluster", Cluster.class);
 		this.xStream.alias("tree", Tree.class);
@@ -64,11 +64,6 @@ public class PreRendering {
 		this.xStream.omitField(Cluster.class, "root");
 		this.xStream.omitField(Cluster.class, "boundaries");
 		setBasePath(folderPhyloRenderLocation);
-		if(configLocation != null && !configLocation.equals("")) {
-			settings = Settings.getInstanceByPath(configLocation);
-		} else {
-			settings = Settings.getInstance();
-		}
 	}
 	
 	private static void setBasePath(String basePath) {
@@ -129,7 +124,7 @@ public class PreRendering {
 		return new Cluster(tree, cluster.getRootId(), cluster.getBoundariesIds());
 	}
 	
-	public void preRender(String treeLocation, String csvLocation, String distanceMatrixLocation) throws IOException {
+	public void preRender(String treeLocation, String csvLocation, String distanceMatrixLocation, Path rBinary, Path rScripts) throws IOException {
 		System.err.println("Reading JeblTree");
 		jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader(treeLocation));
 		System.err.println("JeblTree read");
@@ -167,7 +162,7 @@ public class PreRendering {
 			currentNode = toDo.pop();
 //			currentNode = tree.getNodeById(1);
 			// Do multi thread here
-			Cluster cluster = BestClusterMultiThread.getBestCluster(settings, minimumClusterSize, 50, 2, tree, currentNode, distanceInterface);
+			Cluster cluster = BestClusterMultiThread.getBestCluster(rBinary, rScripts, Paths.get(basePath), minimumClusterSize, 50, 2, tree, currentNode, distanceInterface);
 			if(cluster != null) {
 				this.writeClusterToXML(cluster);
 				System.err.println("Cluster " + cluster.getRootId() + " structure written to file");
@@ -412,16 +407,17 @@ public class PreRendering {
 		String treeLocation = "";
 		String csvLocation = "";
 		String distanceMatrixLocation = "";
-		String configFileLocation = "";
+		String rBinaryLocation = "";
+		String rScriptsLocation = "";
 		int minimumClusterSize = 2;
 		
-		if(args.length > 3) {
+		if(args.length > 5) {
 			treeLocation = args[0];
 			csvLocation = args[1];
 			distanceMatrixLocation = args[2];
 			basePath = args[3];
-			if(args.length > 4)
-				configFileLocation = args[4];
+			rBinaryLocation = args[4];
+			rScriptsLocation = args[5];
 			
 			ReadTree.setJeblTree(treeLocation);
 			ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
@@ -429,16 +425,16 @@ public class PreRendering {
 			checkFoldersEmpty(basePath);
 		} else {
 			System.err.println("You need to have a java -version > 7");
-			System.err.println("java -jar PreRendering.jar phylo.tree csvFile distance.matrix basePath");
+			System.err.println("java -jar PreRendering.jar phylo.tree csvFile distance.matrix basePath rBinaryLocation rScriptsLocation");
 			System.exit(0);
 		}
 		
 //		PreRendering preRendering = new PreRendering("/Users/ewout/Documents/phylogeo/Configs/Portugal/tree","/Users/ewout/Documents/phylogeo/Configs/Portugal/clusters", "/Users/ewout/Documents/phylogeo/Configs/Portugal/xml", "/Users/ewout/Documents/phylogeo/Configs/Portugal/treeview", "/Users/ewout/Documents/phylogeo/Configs/Portugal/leafIds", "/Users/ewout/Documents/phylogeo/Configs/Portugal/nodeIds");
-		PreRendering preRendering = new PreRendering(basePath, configFileLocation);
+		PreRendering preRendering = new PreRendering(basePath);
 		
 		try {
 //			preRendering.preRender("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree", "/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv", "/Users/ewout/Documents/phylogeo/TestCases/Portugal/distance.portugal.txt");
-			preRendering.preRender(treeLocation, csvLocation, distanceMatrixLocation);
+			preRendering.preRender(treeLocation, csvLocation, distanceMatrixLocation, Paths.get(rBinaryLocation), Paths.get(rScriptsLocation));
 //			preRendering.preRender("/Users/ewout/Documents/phylogeo/TestCases/Portugal/besttree.500.midpoint.solved.newick", "", "");
 		} catch (IOException e) {
 			e.printStackTrace();

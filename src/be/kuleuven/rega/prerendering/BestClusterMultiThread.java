@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -15,7 +16,6 @@ import be.kuleuven.rega.comparator.ClusterSizeComparator;
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.core.Tree;
-import be.kuleuven.rega.phylogeotool.settings.Settings;
 import be.kuleuven.rega.phylogeotool.tree.ClusterDistance;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceInterface;
 
@@ -50,7 +50,7 @@ public class BestClusterMultiThread {
 //		System.out.println("MaxEntry: " + maxSecondDerivative.getKey() + " Value: " + maxSecondDerivative.getValue());
 //	}
 	
-	public static Cluster getBestCluster(Settings settings, int minClusters, int maxClusters, int minClusterSize, Tree tree, Node startNode, DistanceInterface distanceInterface) {
+	public static Cluster getBestCluster(Path rBinary, Path rScripts, Path basePath, int minClusters, int maxClusters, int minClusterSize, Tree tree, Node startNode, DistanceInterface distanceInterface) {
 		List<Double> distances = forkJoinPool.invoke(new PreRenderingThread(minClusters, maxClusters, tree, startNode, distanceInterface, new ClusterSizeComparator(tree), minClusterSize));
 		
 		// Calculate SDR plot here
@@ -65,16 +65,16 @@ public class BestClusterMultiThread {
 		
 		Runtime rt = Runtime.getRuntime();
 		// First print the SDR in R
-		String argsSDR[] = {"/usr/local/bin/Rscript", settings.getScriptFolder() + File.separator + "SDR.R", sb.toString(), Integer.toString(startNode.getId()), settings.getBasePath()};
+		String argsSDR[] = {rBinary.toString(), rScripts + File.separator + "SDR.R", sb.toString(), Integer.toString(startNode.getId()), basePath.toString()};
 		
 		// Second print the First Derivative in R
-		String argsFirstDerivative[] = {"/usr/local/bin/Rscript", settings.getScriptFolder() + File.separator + "FirstDerivative.R", sb.toString(), Integer.toString(startNode.getId()), settings.getBasePath()};
+		String argsFirstDerivative[] = {rBinary.toString(), rScripts + File.separator + "FirstDerivative.R", sb.toString(), Integer.toString(startNode.getId()), basePath.toString()};
 		
 		// Finally do Sgolay in R
-		String argsSGolay[] = {"/usr/local/bin/Rscript", settings.getScriptFolder() + File.separator + "sgolay.R", sb.toString(), Integer.toString(startNode.getId()), settings.getBasePath()};
+		String argsSGolay[] = {rBinary.toString(), rScripts + File.separator + "sgolay.R", sb.toString(), Integer.toString(startNode.getId()), basePath.toString()};
 		
 		// If there is a second derivative, plot it in R
-		String argsSecondDerivative[] = {"/usr/local/bin/Rscript", settings.getScriptFolder() + File.separator + "SecondDerivative.R", sb.toString(), Integer.toString(startNode.getId()), settings.getBasePath()};
+		String argsSecondDerivative[] = {rBinary.toString(), rScripts + File.separator + "SecondDerivative.R", sb.toString(), Integer.toString(startNode.getId()), basePath.toString()};
 
 		
 		List<Double> sgolay = new ArrayList<Double>();

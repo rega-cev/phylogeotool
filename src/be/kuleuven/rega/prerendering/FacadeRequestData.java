@@ -1,6 +1,7 @@
 package be.kuleuven.rega.prerendering;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,7 @@ public class FacadeRequestData {
 		} else {
 			// TODO: Change the nr 12 and add SDRCalculations
 //			return MidRootCluster.calculate(tree, tree.getNodeById(Integer.parseInt(clusterId)), new ClusterSizeComparator(tree), minimumClusterSize, 12);
-			return BestClusterMultiThread.getBestCluster(settings, minimumClusterSize, 50, 2, ReadTree.getTreeDrawTree(), ReadTree.getTreeDrawTree().getNodeById(Integer.parseInt(clusterId)), distanceInterface);
+			return BestClusterMultiThread.getBestCluster(Paths.get(settings.getRBinary()), Paths.get(settings.getScriptFolder()), Paths.get(settings.getBasePath()), minimumClusterSize, 50, 2, ReadTree.getTreeDrawTree(), ReadTree.getTreeDrawTree().getNodeById(Integer.parseInt(clusterId)), distanceInterface);
 		}
 	}
 	

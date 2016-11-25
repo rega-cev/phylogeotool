@@ -7,6 +7,7 @@ package be.kuleuven.rega.phylogeotool.settings;
  */
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,6 +128,10 @@ public class Settings {
 		return visualizeGeography;
 	}
 	
+	public String getRBinary() {
+		return rBinary;
+	}
+	
 	public List<String> getColumnsToExport() {
 		return this.columnsToExport;
 	}
@@ -141,6 +146,7 @@ public class Settings {
 	private String alignmentLocation;
 	private String logfileLocation;
 	private String scriptFolder;
+	private String rBinary;
 	private boolean showNAData;
 	private String visualizeGeography;
 	private String datalessRegionColor;
@@ -180,6 +186,8 @@ public class Settings {
             	logfileLocation = e.getValue().trim();
             } else if(name.equals("scriptFolder")) {
             	scriptFolder = e.getValue().trim();
+            } else if(name.equals("rBinary")) {
+            	rBinary = e.getValue().trim();
             } else if(name.equals("visualizeGeography")) {
             	visualizeGeography = e.getValue().trim();
             } else if(name.equals("showNAData")) {

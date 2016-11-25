@@ -109,7 +109,7 @@ public class GraphWebApplication extends WApplication {
 		
 		this.setCSS();
 		
-		facadeRequestData = new FacadeRequestData(settings, new PreRendering(basePath, null), settings.getPhyloTree());
+		facadeRequestData = new FacadeRequestData(settings, new PreRendering(basePath), settings.getPhyloTree());
 //			jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree"));
 //			Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 //			facadeRequestData = new FacadeRequestData(tree, new File("/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv"), new DistanceCalculateFromTree());
