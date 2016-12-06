@@ -342,6 +342,7 @@ public class PreRendering {
 	
 	public HashMap<String, Integer> readCsv(int clusterId, String key, boolean readNA) {
 		HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
+		FileInputStream fileInputStream = null;
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -349,7 +350,7 @@ public class PreRendering {
 //			System.out.println(new File(folderLocationCsvs + File.separator + clusterId + ".xml"));
 			if(Settings.getXmlPath(basePath) != null && !Settings.getXmlPath(basePath).equals("") && dirStream.iterator().hasNext()) {
 				File file = new File(Settings.getXmlPath(basePath) + File.separator + clusterId + ".xml");
-				FileInputStream fileInputStream = new FileInputStream(file);
+				fileInputStream = new FileInputStream(file);
 				Document doc = dBuilder.parse(fileInputStream);
 				NodeList nList = doc.getElementsByTagName(key);
 				int size = nList.getLength();
@@ -389,6 +390,13 @@ public class PreRendering {
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
+		} finally {
+			if(fileInputStream != null)
+				try {
+					fileInputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 		}
 		return hashMap;
 	}
