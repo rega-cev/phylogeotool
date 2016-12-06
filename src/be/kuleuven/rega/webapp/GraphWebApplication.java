@@ -93,23 +93,20 @@ public class GraphWebApplication extends WApplication {
 	
 	private boolean showNAData = false;
 
-	private Settings settings;
-	
 	public GraphWebApplication(WEnvironment env) {
 		super(env);
 		setTitle("PhyloGeoTool");
-		this.settings = Settings.getInstance(null);
 //		this.treeRenderLocation = settings.getTreePath();
-		this.basePath = settings.getBasePath();
+		this.basePath = Settings.getInstance().getBasePath();
 //		this.clusterRenderLocation = settings.getClusterPath();
 //		this.csvRenderLocation = settings.getXmlPath();
 //		this.treeViewRenderLocation = settings.getTreeviewPath();
-		this.metaDataFile = new File(settings.getMetaDataFile());
-		this.showNAData = settings.getShowNAData();
+		this.metaDataFile = new File(Settings.getInstance().getMetaDataFile());
+		this.showNAData = Settings.getInstance().getShowNAData();
 		
 		this.setCSS();
 		
-		facadeRequestData = new FacadeRequestData(settings, new PreRendering(basePath), settings.getPhyloTree());
+		facadeRequestData = new FacadeRequestData(new PreRendering(basePath));
 //			jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree"));
 //			Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 //			facadeRequestData = new FacadeRequestData(tree, new File("/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv"), new DistanceCalculateFromTree());
@@ -129,7 +126,7 @@ public class GraphWebApplication extends WApplication {
 		try {
 			graphWidget = new GraphWidget(facadeRequestData);
 			HashMap<String, Integer> countries = null;
-			countries = facadeRequestData.readCsv(graphWidget.getCluster().getRoot().getId(), settings.getVisualizeGeography());
+			countries = facadeRequestData.readCsv(graphWidget.getCluster().getRoot().getId(), Settings.getInstance().getVisualizeGeography());
 			wGroupBoxGoogleMapWidget = getGoogleChartWGroupBox(countries,null,null);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -156,7 +153,7 @@ public class GraphWebApplication extends WApplication {
 		});
 		
 		WPushButton pplaceButton = new WPushButton("Phylo-place");
-		if(settings.getPPlacerSupport()) {
+		if(Settings.getInstance().getPPlacerSupport()) {
 			pplaceButton.clicked().addListener(this, new Signal.Listener() {
 				public void trigger() {
 			        showPPlacer();
@@ -232,11 +229,11 @@ public class GraphWebApplication extends WApplication {
 //		}
 		
 		if(pplacerId != null && !pplacerId.equals("")) {
-			if(settings.getPPlacerSupport()) {
-				if(Files.notExists(FileSystems.getDefault().getPath(settings.getScriptFolder() + File.separator + "init.sh"), LinkOption.NOFOLLOW_LINKS)) {
-					System.err.println("File init.sh does not exists at: " + settings.getScriptFolder() + File.separator + "init.sh");
+			if(Settings.getInstance().getPPlacerSupport()) {
+				if(Files.notExists(FileSystems.getDefault().getPath(Settings.getInstance().getScriptFolder() + File.separator + "init.sh"), LinkOption.NOFOLLOW_LINKS)) {
+					System.err.println("File init.sh does not exists at: " + Settings.getInstance().getScriptFolder() + File.separator + "init.sh");
 				} else {
-					String args[] = {settings.getScriptFolder() + File.separator + "init.sh", pplacerId};
+					String args[] = {Settings.getInstance().getScriptFolder() + File.separator + "init.sh", pplacerId};
 					StreamGobbler streamGobbler = StreamGobbler.runProcess(args);
 					System.out.println("PPlacer tree loaded from: " + streamGobbler.getLastLine());
 					String location = streamGobbler.getLastLine();
@@ -311,7 +308,7 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	private void setGoogleChart(int nodeId) {
-		HashMap<String, Integer> countries = facadeRequestData.readCsv(nodeId, settings.getVisualizeGeography());
+		HashMap<String, Integer> countries = facadeRequestData.readCsv(nodeId, Settings.getInstance().getVisualizeGeography());
 		this.googleChartWidget.setCountries(countries);
 		this.googleChartWidget.setRegion("");
 		this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
@@ -319,8 +316,8 @@ public class GraphWebApplication extends WApplication {
 	
 	private void setStatisticGraph(int nodeId, boolean reread) {
 		if (wComboBoxMetadata != null) {
-			if(settings.getCsvColumnRepresentation().containsKey(wComboBoxMetadata.getValueText().toLowerCase())) {
-				if(settings.getCsvColumnRepresentation().get(wComboBoxMetadata.getValueText().toLowerCase()).equals("number")) {
+			if(Settings.getInstance().getCsvColumnRepresentation().containsKey(wComboBoxMetadata.getValueText().toLowerCase())) {
+				if(Settings.getInstance().getCsvColumnRepresentation().get(wComboBoxMetadata.getValueText().toLowerCase()).equals("number")) {
 					this.chart = wHistogramMine;
 					this.hideHistogramElements();
 				} else {
@@ -348,7 +345,7 @@ public class GraphWebApplication extends WApplication {
 	private final void showDialog() {
 	    final WDialog dialog = new WDialog("Visualize Tree");
 //	    WFigTreeMine wFigTreeMine = new WFigTreeMine(facadeRequestData.getJeblTree(), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())));
-	    WImageTreeMine wImageTreeMine = new WImageTreeMine(settings.getTreeviewPath(), UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
+	    WImageTreeMine wImageTreeMine = new WImageTreeMine(Settings.getInstance().getTreeviewPath(), UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 //	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
 	    WPushButton cancel = new WPushButton("Exit");
 	    
@@ -422,7 +419,7 @@ public class GraphWebApplication extends WApplication {
 	    pplace.clicked().addListener(dialog,
 	            new Signal1.Listener<WMouseEvent>() {
 	                public void trigger(WMouseEvent e1) {
-	                	if(settings.getPPlacerSupport()) {
+	                	if(Settings.getInstance().getPPlacerSupport()) {
 	                		if(PPlacerForm.isFormValid()) {
 	            				Path path = null;
 	            				File pplacerFile = null;
@@ -438,8 +435,8 @@ public class GraphWebApplication extends WApplication {
 								}
 	            				
 	                			System.out.println(pplacerFile.getAbsolutePath());
-	                			jobScheduler.addPPlacerJob(settings.getScriptFolder(), settings.getPhyloTree(), settings.getAlignmentLocation(),
-	                					pplacerFile.getAbsolutePath(), settings.getLogfileLocation(), PPlacerForm.getEmail());
+	                			jobScheduler.addPPlacerJob(Settings.getInstance().getScriptFolder(), Settings.getInstance().getPhyloTree(), Settings.getInstance().getAlignmentLocation(),
+	                					pplacerFile.getAbsolutePath(), Settings.getInstance().getLogfileLocation(), PPlacerForm.getEmail());
 	                			dialog.reject();
 	                		}
 	                	} else {
@@ -546,7 +543,7 @@ public class GraphWebApplication extends WApplication {
 		wgroupboxRegion.addWidget(regionLabel);
 		wgroupboxRegion.addWidget(wComboBoxRegions);
 		
-		googleChartWidget = new GoogleChartWidget(countries, region, settings.getDatalessRegionColor(), settings.getBackgroundcolor(), settings.getColorAxis());
+		googleChartWidget = new GoogleChartWidget(countries, region, Settings.getInstance().getDatalessRegionColor(), Settings.getInstance().getBackgroundcolor(), Settings.getInstance().getColorAxis());
 		googleChartWidget.setMinimumSize(new WLength(30.0, Unit.Percentage), new WLength(300.0, Unit.Pixel));
 
 		wvBoxLayoutMap.addWidget(wgroupboxRegion);
@@ -652,10 +649,6 @@ public class GraphWebApplication extends WApplication {
 			showNALabel.show();
 		if(showNACheckbox != null)
 			showNACheckbox.show();
-	}
-	
-	public Settings getSettings() {
-		return settings;
 	}
 	
 	public PPlacer getPPlacer() {

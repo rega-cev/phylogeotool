@@ -20,13 +20,11 @@ public class FacadeRequestData {
 	private DistanceInterface distanceInterface;
 	private int minimumClusterSize;
 	private boolean showNAData = false;
-	private Settings settings;
 	
-	public FacadeRequestData(Settings settings, PreRendering preRendering, String treeLocation) {
+	public FacadeRequestData(PreRendering preRendering) {
 		this.preRendering = preRendering;
-		ReadTree.setJeblTree(treeLocation);
+		ReadTree.setJeblTree(Settings.getInstance().getPhyloTree());
 		ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
-		this.settings = settings;
 	}
 	
 	//TODO: Needs a jeblTree
@@ -46,7 +44,7 @@ public class FacadeRequestData {
 		} else {
 			// TODO: Change the nr 12 and add SDRCalculations
 //			return MidRootCluster.calculate(tree, tree.getNodeById(Integer.parseInt(clusterId)), new ClusterSizeComparator(tree), minimumClusterSize, 12);
-			return BestClusterMultiThread.getBestCluster(Paths.get(settings.getRBinary()), Paths.get(settings.getScriptFolder()), Paths.get(settings.getBasePath()), minimumClusterSize, 50, 2, ReadTree.getTreeDrawTree(), ReadTree.getTreeDrawTree().getNodeById(Integer.parseInt(clusterId)), distanceInterface);
+			return BestClusterMultiThread.getBestCluster(Paths.get(Settings.getInstance().getRBinary()), Paths.get(Settings.getInstance().getScriptFolder()), Paths.get(Settings.getInstance().getBasePath()), minimumClusterSize, 50, 2, ReadTree.getTreeDrawTree(), ReadTree.getTreeDrawTree().getNodeById(Integer.parseInt(clusterId)), distanceInterface);
 		}
 	}
 	

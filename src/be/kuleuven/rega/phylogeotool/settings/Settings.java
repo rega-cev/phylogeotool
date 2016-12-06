@@ -7,7 +7,6 @@ package be.kuleuven.rega.phylogeotool.settings;
  */
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +31,9 @@ import be.kuleuven.rega.webapp.Main;
 public class Settings {
 //	public final static String defaultStyleSheet = "../style/genotype.css";
 	
-	public Settings(File f) {
+	private static Settings settingsInstance = null;
+	
+	protected Settings(File f) {
 		System.err.println("Loading config file: " + f.getAbsolutePath());
 		if (!f.exists())
 			throw new RuntimeException("Config file could not be found!");
@@ -235,42 +236,46 @@ public class Settings {
 //	}
 
 	public static Settings getInstance() {
-		GraphWebApplication app = Main.getApp();
-		if (app == null)
-			return getInstance(null);
+		if(settingsInstance != null)
+			return settingsInstance;
 		else
-			return app.getSettings();
+			return getInstance(null);
 	}
 	
-	public static Settings getInstanceByPath(String configLocation) {
-		return new Settings(new File(configLocation + File.separatorChar + "global-conf.xml"));
-	}
+//	public static Settings getInstanceByPath(String configLocation) {
+//		return new Settings(new File(configLocation + File.separatorChar + "global-conf.xml"));
+//	}
 
 	public static Settings getInstance(ServletConfig config) {
-        String configFile = null;
-        
-        if (config != null) {
-        	configFile = config.getInitParameter("configFile");
-        	if (configFile != null)
-        		return new Settings(new File(configFile));
-        } 
-        
-//        if (configFile == null) {
-//            System.err.println("REGA_GENOTYPE_CONF_DIR"+":"+System.getenv("REGA_GENOTYPE_CONF_DIR"));
-//        	configFile = System.getenv("REGA_GENOTYPE_CONF_DIR");
-//        }
-        
-        if (configFile == null) {
-            String osName = System.getProperty("os.name");
-            osName = osName.toLowerCase();
-            if (osName.startsWith("windows"))
-                configFile = "C:\\Program files\\phylogeotool\\";
-            else
-                configFile = "/etc/phylogeotool/";
+        if(settingsInstance == null) {
+			String configFile = null;
+	        
+	        if (config != null) {
+	        	configFile = config.getInitParameter("configFile");
+	        	if (configFile != null) {
+	        		settingsInstance = new Settings(new File(configFile));
+	        		return settingsInstance;
+	        	}
+	        } 
+	        
+	//        if (configFile == null) {
+	//            System.err.println("REGA_GENOTYPE_CONF_DIR"+":"+System.getenv("REGA_GENOTYPE_CONF_DIR"));
+	//        	configFile = System.getenv("REGA_GENOTYPE_CONF_DIR");
+	//        }
+	        
+	        if (configFile == null) {
+	            String osName = System.getProperty("os.name");
+	            osName = osName.toLowerCase();
+	            if (osName.startsWith("windows"))
+	                configFile = "C:\\Program files\\phylogeotool\\";
+	            else
+	                configFile = "/etc/phylogeotool/";
+	        }
+	
+	       	configFile += File.separatorChar + "global-conf.xml";
+	        
+	        settingsInstance = new Settings(new File(configFile));
         }
-
-       	configFile += File.separatorChar + "global-conf.xml";
-        
-        return new Settings(new File(configFile));
+        return settingsInstance;
 	}
 }
