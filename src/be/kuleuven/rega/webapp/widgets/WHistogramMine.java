@@ -215,12 +215,17 @@ public class WHistogramMine extends Chart {
 			Double value = null;
 			try {
 				value = Double.parseDouble(valueString);
+			} catch(NumberFormatException e) {
+				System.err.println("Cannot convert " + valueString + " to double.");
+			}
+
+			try {
 				if (Integer.parseInt(valueString) != Math.floor(value)) {
 					doubleValues = true;
 				}
 			} catch(NumberFormatException e) {
+				// We couldn't parse the data into a string but know it's continuous, it must be doubles
 				doubleValues = true;
-				System.err.println("Cannot convert " + valueString + " to double.");
 			}
 			for(int j = 0; j < mapToTransform.get(valueString); j++) {
 				values[i++] = value;
