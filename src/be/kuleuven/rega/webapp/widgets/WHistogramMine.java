@@ -218,11 +218,12 @@ public class WHistogramMine extends Chart {
 				if (Integer.parseInt(valueString) != Math.floor(value)) {
 					doubleValues = true;
 				}
-				for(int j = 0; j < mapToTransform.get(valueString); j++) {
-					values[i++] = value;
-				}
 			} catch(NumberFormatException e) {
+				doubleValues = true;
 				System.err.println("Cannot convert " + valueString + " to double.");
+			}
+			for(int j = 0; j < mapToTransform.get(valueString); j++) {
+				values[i++] = value;
 			}
 		}
 		Arrays.sort(values);
