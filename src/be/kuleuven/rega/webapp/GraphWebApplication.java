@@ -26,6 +26,7 @@ import be.kuleuven.rega.url.UrlManipulator;
 import be.kuleuven.rega.webapp.widgets.Chart;
 import be.kuleuven.rega.webapp.widgets.GoogleChartWidget;
 import be.kuleuven.rega.webapp.widgets.PPlacerForm;
+import be.kuleuven.rega.webapp.widgets.SDRVisualizer;
 import be.kuleuven.rega.webapp.widgets.WBarChartMine;
 import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
 import be.kuleuven.rega.webapp.widgets.WDownloadResource;
@@ -163,6 +164,13 @@ public class GraphWebApplication extends WApplication {
 			pplaceButton.setDisabled(true);
 		}
 		
+		WPushButton wPushButtonStatistics = new WPushButton("View statistics");
+		wPushButtonStatistics.clicked().addListener(this, new Signal.Listener() {
+			public void trigger() {
+				showDialogStatistics();
+			}
+		});
+		
 //		WHBoxLayout treeLevelHBox = new WHBoxLayout();
 		WGroupBox wGroupBox = new WGroupBox();
 		wGroupBox.setMaximumSize(new WLength(200), new WLength(15));
@@ -187,6 +195,7 @@ public class GraphWebApplication extends WApplication {
 		wHBoxLayout.addWidget(wPushButton);
 //		wHBoxLayout.addWidget(treeLevel);
 		wHBoxLayout.addWidget(pplaceButton);
+		wHBoxLayout.addWidget(wPushButtonStatistics);
 //		wHBoxLayout.addWidget(exportSequencesButton);
 		wVBoxLayoutGraphWidget.addLayout(wHBoxLayout);
 		wVBoxLayoutGraphWidget.addWidget(graphWidget);
@@ -453,6 +462,11 @@ public class GraphWebApplication extends WApplication {
 //	    whBoxLayout.addWidget(cancel);
 //		wGroupBox.setLayout(whBoxLayout);
 //		dialog.getContents().addWidget(wGroupBox);
+	}
+	
+	private final void showDialogStatistics() {
+	    final WDialog dialog = new WDialog("Visualize Statistics");
+	    SDRVisualizer sdrVisualizer = new SDRVisualizer(dialog, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 	}
 	
 	private void setCSS() {

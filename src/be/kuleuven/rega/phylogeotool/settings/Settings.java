@@ -68,6 +68,14 @@ public class Settings {
 		return basePath + File.separator + "treeview";
 	}
 	
+	public static String getStatisticalImagesPath(String basePath) {
+		return basePath + File.separator + "r";
+	}
+	
+	public String getStatisticalImagesPath() {
+		return basePath + File.separator + "r";
+	}
+	
 	public String getMetaDataFile() {
 		return metaDataFile;
 	}
