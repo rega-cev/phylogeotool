@@ -1,10 +1,14 @@
 package be.kuleuven.rega.prerendering;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+
+import com.neovisionaries.i18n.CountryCode;
 
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
@@ -69,5 +73,34 @@ public class FacadeRequestData {
 	
 	public boolean isShowNAData() {
 		return this.showNAData;
+	}
+	
+	/**
+	 * TODO: Check if HashSet<String> acceptedCountryCodes could be loaded only once
+	 * @return 	true if the dataset used to represent the countries in the Google Chart is built in the ISO 3166-1 alpha-2 format
+	 * (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+	 * 			false if the dataset used is not in the correct format
+	 * @throws FileNotFoundException when the file 1.xml is not found. It is required to check the ISO structure of the countries.
+	 */
+	public boolean isGeoGraphicDataISO3166() throws FileNotFoundException {
+		boolean xmlFileExist = new File(Settings.getInstance().getXmlPath() + File.separator + "1.xml").exists();
+		
+		if(xmlFileExist) {
+			HashMap<String, Integer> countries = this.readCsv(1, Settings.getInstance().getVisualizeGeography());
+			HashSet<String> acceptedCountryCodes = new HashSet<String>();
+			for (CountryCode countryCode : CountryCode.values()) {
+			      acceptedCountryCodes.add(countryCode.name());
+			}
+			
+			for(String key:countries.keySet()) {
+				if(!acceptedCountryCodes.contains(key)) {
+					System.err.println("Could not find country " + key + " in the ISO3166 list");
+					return false;
+				}
+			}
+			return true;
+		} else {
+			throw new FileNotFoundException("File " + Settings.getInstance().getXmlPath() + File.separator + "1.xml");
+		}
 	}
 }

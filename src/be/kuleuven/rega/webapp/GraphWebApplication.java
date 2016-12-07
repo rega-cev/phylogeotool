@@ -2,6 +2,7 @@ package be.kuleuven.rega.webapp;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -108,6 +109,14 @@ public class GraphWebApplication extends WApplication {
 		this.setCSS();
 		
 		facadeRequestData = new FacadeRequestData(new PreRendering(basePath));
+		try {
+			boolean isGeoGraphicDataISO3166 = facadeRequestData.isGeoGraphicDataISO3166();
+			if(!isGeoGraphicDataISO3166) {
+				showISO3166Warning();
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 //			jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree"));
 //			Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 //			facadeRequestData = new FacadeRequestData(tree, new File("/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv"), new DistanceCalculateFromTree());
@@ -466,7 +475,41 @@ public class GraphWebApplication extends WApplication {
 	
 	private final void showDialogStatistics() {
 	    final WDialog dialog = new WDialog("Visualize Statistics");
-	    SDRVisualizer sdrVisualizer = new SDRVisualizer(dialog, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
+	    new SDRVisualizer(dialog, UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
+	}
+	
+	private final void showISO3166Warning() {
+		final WDialog wDialog = new WDialog("Warning");
+		wDialog.setWidth(new WLength(500));
+		WImage wImage = new WImage(new WLink("images/warning.png"));
+		wImage.setWidth(new WLength(50));
+		wImage.setHeight(new WLength(50));
+		
+		WText wText = new WText("The countries provided under '" + Settings.getInstance().getVisualizeGeography() + "'<br /> are not (all) formatted in the ISO 3166-1 alpha-2 standard.");
+		wText.setMargin(8, Side.Top);
+		
+		WPushButton exit = new WPushButton("Exit");
+		exit.clicked().addListener(wDialog,
+	            new Signal1.Listener<WMouseEvent>() {
+	                public void trigger(WMouseEvent e1) {
+	                    wDialog.reject();
+	                }
+	            });
+		exit.setMaximumSize(new WLength(50), new WLength(30));
+		// TODO: Improve this part to put the Exit button in the middle by not using margin
+		exit.setMargin(200, Side.Left);
+		
+		WHBoxLayout whBoxLayout = new WHBoxLayout();
+		whBoxLayout.addWidget(wImage);
+		whBoxLayout.addWidget(wText);
+		
+		WVBoxLayout wvBoxLayout = new WVBoxLayout();
+		wvBoxLayout.addItem(whBoxLayout);
+		wvBoxLayout.addWidget(exit);
+		
+		wDialog.getContents().setLayout(wvBoxLayout);
+		wDialog.rejectWhenEscapePressed();
+		wDialog.show();
 	}
 	
 	private void setCSS() {
