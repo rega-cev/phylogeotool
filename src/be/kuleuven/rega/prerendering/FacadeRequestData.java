@@ -94,7 +94,7 @@ public class FacadeRequestData {
 			
 			for(String key:countries.keySet()) {
 				if(!acceptedCountryCodes.contains(key)) {
-					System.err.println("Could not find country " + key + " in the ISO3166 list");
+					System.err.println("Could not find country " + key + " in the ISO_3166-1_alpha-2 list");
 					return false;
 				}
 			}
