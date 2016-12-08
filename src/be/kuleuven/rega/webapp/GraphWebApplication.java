@@ -13,6 +13,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import be.kuleuven.rega.comparator.SortingOptions;
 import be.kuleuven.rega.form.MyComboBox;
 import be.kuleuven.rega.phylogeotool.core.Node;
@@ -94,8 +96,10 @@ public class GraphWebApplication extends WApplication {
 	private WLabel treeLevel;
 	
 	private boolean showNAData = false;
+	
+	private ServletContext servletContext_;
 
-	public GraphWebApplication(WEnvironment env) {
+	public GraphWebApplication(WEnvironment env, ServletContext servletContext) {
 		super(env);
 		setTitle("PhyloGeoTool");
 //		this.treeRenderLocation = settings.getTreePath();
@@ -105,6 +109,7 @@ public class GraphWebApplication extends WApplication {
 //		this.treeViewRenderLocation = settings.getTreeviewPath();
 		this.metaDataFile = new File(Settings.getInstance().getMetaDataFile());
 		this.showNAData = Settings.getInstance().getShowNAData();
+		this.servletContext_ = servletContext;
 		
 		this.setCSS();
 		
@@ -186,7 +191,7 @@ public class GraphWebApplication extends WApplication {
 		treeLevel = new WLabel("Level: ");
 		treeLevel.setText(treeLevel.getText() + String.valueOf(graphWidget.getPreviousClusterID()));
 		treeLevel.setMargin(7, Side.Right);
-		WImage wImage = new WImage(new WLink("images/question_mark.png"));
+		WImage wImage = new WImage(new WLink(getServletContext().getContextPath().concat("/images/question_mark.png")));
 		wImage.setToolTip("Use the webbrowser back button to move up one level. Use the webbrowser forward button to move down again.");
 		wImage.setMaximumSize(new WLength(15), new WLength(15));
 		wGroupBox.addWidget(treeLevel);
@@ -234,8 +239,12 @@ public class GraphWebApplication extends WApplication {
 		});
 	}
 	
-	public GraphWebApplication(WEnvironment wEnvironment, String pplacerId) {
-		this(wEnvironment);
+	private ServletContext getServletContext() {
+		return this.servletContext_;
+	}
+
+	public GraphWebApplication(WEnvironment wEnvironment, ServletContext servletContext, String pplacerId) {
+		this(wEnvironment, servletContext);
 //		String tmpDir = System.getProperty("java.io.tmpdir");
 //		if(Files.notExists(FileSystems.getDefault().getPath(tmpDir), LinkOption.NOFOLLOW_LINKS)) {
 //			System.err.println("Tmp directory does not exist! Please set the TEMP environment variable.");

@@ -2,6 +2,7 @@ package be.kuleuven.rega.webapp;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +28,7 @@ public class Main extends WtServlet implements javax.servlet.ServletContextListe
 	
 	@Override
 	public WApplication createApplication(WEnvironment env) {
-		WApplication wApplication = new GraphWebApplication(env, pplacer);
+		WApplication wApplication = new GraphWebApplication(env, getServletContext(), pplacer);
 		// We do this to clear our the variable in case a user refreshes the webpage
 		pplacer = null;
 		return wApplication;
