@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.yeastrc.fasta.FASTAEntry;
 import org.yeastrc.fasta.FASTAReader;
 
+import be.kuleuven.rega.webapp.Main;
 import eu.webtoolkit.jwt.AlignmentFlag;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
@@ -230,7 +231,7 @@ public class PPlacerForm {
 					wTable.setWidth(new WLength("100%"));
 					wTable.setStyleClass("tableDialog");
 					
-					WImage wImage = new WImage(new WLink("images/warning.png"));
+					WImage wImage = new WImage(new WLink(Main.getApp().getServletContext().getContextPath().concat("/images/warning.png")));
 					wImage.setWidth(new WLength(50));
 					wImage.setHeight(new WLength(50));
 					

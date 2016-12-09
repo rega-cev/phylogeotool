@@ -239,7 +239,7 @@ public class GraphWebApplication extends WApplication {
 		});
 	}
 	
-	private ServletContext getServletContext() {
+	public ServletContext getServletContext() {
 		return this.servletContext_;
 	}
 
@@ -490,7 +490,7 @@ public class GraphWebApplication extends WApplication {
 	private final void showISO3166Warning() {
 		final WDialog wDialog = new WDialog("Warning");
 		wDialog.setWidth(new WLength(500));
-		WImage wImage = new WImage(new WLink("images/warning.png"));
+		WImage wImage = new WImage(new WLink(getServletContext().getContextPath().concat("/images/warning.png")));
 		wImage.setWidth(new WLength(50));
 		wImage.setHeight(new WLength(50));
 		
