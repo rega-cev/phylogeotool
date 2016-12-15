@@ -2,13 +2,11 @@ package be.kuleuven.rega.webapp;
 
 import java.io.IOException;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import jebl.evolution.trees.Tree;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
 import eu.webtoolkit.jwt.WApplication;
@@ -21,6 +19,7 @@ public class Main extends WtServlet implements javax.servlet.ServletContextListe
 	 */
 	private static final long serialVersionUID = -7955893733032239397L;
 	private String pplacer;
+	private static Settings settings;
 	
 	public static GraphWebApplication getApp() {
 		return (GraphWebApplication)WApplication.getInstance();
@@ -47,10 +46,6 @@ public class Main extends WtServlet implements javax.servlet.ServletContextListe
 //	@Override
 //	public void init(ServletConfig config) throws ServletException {
 //		super.init(config);
-//		System.out.println("Here");
-//		// TODO: Might have to change TreeDrawTree
-//		ReadTree.getJeblTree();
-//		ReadTree.getTreeDrawTree();
 //	}
 
 	@Override
@@ -64,5 +59,6 @@ public class Main extends WtServlet implements javax.servlet.ServletContextListe
 		ReadTree.setJeblTree(Settings.getInstance().getPhyloTree());
 //		System.out.println(ReadTree.getJeblTree().getTaxa().size());
 		ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
+		settings = Settings.getInstance();
 	}
 }

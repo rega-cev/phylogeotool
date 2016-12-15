@@ -19,9 +19,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import be.kuleuven.rega.webapp.GraphWebApplication;
-import be.kuleuven.rega.webapp.Main;
-
 /**
  * Singleton class which contains the application settings, parses them from the xml configuration file.
  * 
