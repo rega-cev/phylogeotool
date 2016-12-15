@@ -179,11 +179,15 @@ public class GraphWebApplication extends WApplication {
 		}
 		
 		WPushButton wPushButtonStatistics = new WPushButton("View statistics");
-		wPushButtonStatistics.clicked().addListener(this, new Signal.Listener() {
-			public void trigger() {
-				showDialogStatistics();
-			}
-		});
+		if(Settings.getInstance().getStastisticsSupport()) {
+			wPushButtonStatistics.clicked().addListener(this, new Signal.Listener() {
+				public void trigger() {
+					showDialogStatistics();
+				}
+			});
+		} else {
+			wPushButtonStatistics.setHidden(true);
+		}
 		
 //		WHBoxLayout treeLevelHBox = new WHBoxLayout();
 		WGroupBox wGroupBox = new WGroupBox();

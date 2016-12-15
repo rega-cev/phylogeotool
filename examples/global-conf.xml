@@ -76,6 +76,13 @@
  true
  </property>
 
+<!-- Statistics Support
+  Indication if you want to offer the possibility to users to download the generated statistics files
+ -->
+ <property name="statistics_support">
+ true
+ </property>
+
 <!--
    How the csv field should be represented in the tool.
    A number field will be shown in a histogram
