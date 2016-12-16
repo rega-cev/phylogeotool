@@ -3,24 +3,15 @@ package be.kuleuven.rega.webapp.widgets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import be.kuleuven.rega.comparator.NaturalOrderComparator;
 import be.kuleuven.rega.comparator.SortingOptions;
-import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.WColor;
-import eu.webtoolkit.jwt.WFont;
-import eu.webtoolkit.jwt.WLength;
-import eu.webtoolkit.jwt.WShadow;
-import eu.webtoolkit.jwt.WStandardItemModel;
 import eu.webtoolkit.jwt.WString;
-import eu.webtoolkit.jwt.chart.Axis;
-import eu.webtoolkit.jwt.chart.SeriesType;
 import eu.webtoolkit.jwt.chart.WCartesianChart;
-import eu.webtoolkit.jwt.chart.WDataSeries;
 
 public class WBarChartMine extends Chart {
 	
@@ -31,6 +22,7 @@ public class WBarChartMine extends Chart {
 	
 	private final int MAX_LABEL_LENGTH = 21;
 	private final int maxViews = 5;
+	private final String remainingValuesColumnName = "Remaining";
 	
 	public WBarChartMine(WCartesianChart wCartesianChart) {
 		super(wCartesianChart);
@@ -270,7 +262,7 @@ public class WBarChartMine extends Chart {
 			} else {
 				// This should be the last element of the array
 				if(entry.getKey().equals("NA")) {
-					mapToReturn.put("Other", totalOtherValue);
+					mapToReturn.put(remainingValuesColumnName, totalOtherValue);
 					mapToReturn.put("NA", entry.getValue());
 					return mapToReturn;
 				} else {
@@ -278,7 +270,7 @@ public class WBarChartMine extends Chart {
 				}
 			}
 		}
-		mapToReturn.put("Other", totalOtherValue);
+		mapToReturn.put(remainingValuesColumnName, totalOtherValue);
 		
 		return mapToReturn;
 	}
