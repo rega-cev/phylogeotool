@@ -20,6 +20,11 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import jebl.evolution.trees.SimpleRootedTree;
 
@@ -260,7 +265,7 @@ public class PreRendering {
 				if(!key.equalsIgnoreCase("id")) {
 					HashMap<String,Integer> tempHashMap = CsvUtils.csvToHashMapStringInteger(new File(csvLocation), ';', ids, key, showNA);
 					for(String hashMapKey:tempHashMap.keySet()) {
-						fileWriter.write("\t<" + key + " id=\"" + hashMapKey + "\">" + tempHashMap.get(hashMapKey) + "</" + key + ">" + "\n");
+						fileWriter.write("\t<FIELD name=\"" + key + "\"" + " id=\"" + hashMapKey + "\">" + tempHashMap.get(hashMapKey) + "</FIELD>" + "\n");
 					}
 				}
 			}
@@ -352,7 +357,16 @@ public class PreRendering {
 				File file = new File(Settings.getXmlPath(basePath) + File.separator + clusterId + ".xml");
 				fileInputStream = new FileInputStream(file);
 				Document doc = dBuilder.parse(fileInputStream);
-				NodeList nList = doc.getElementsByTagName(key);
+				XPathFactory xPathfactory = XPathFactory.newInstance();
+				XPath xpath = xPathfactory.newXPath();
+				NodeList nList = null;
+				try {
+					XPathExpression expr = xpath.compile("//FIELD[@name=\"" + key + "\"]");
+					nList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+				} catch (XPathExpressionException e) {
+					e.printStackTrace();
+				}
+				// Could throw nullpointer if expression gave an exception
 				int size = nList.getLength();
 				for (int temp = 0; temp < size; temp++) {
 					org.w3c.dom.Node nNode = nList.item(temp);
