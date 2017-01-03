@@ -1,6 +1,7 @@
 package be.kuleuven.rega.webapp;
 
 import java.awt.Color;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -22,7 +23,9 @@ import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
 import be.kuleuven.rega.phylogeotool.pplacer.PPlacer;
 import be.kuleuven.rega.phylogeotool.pplacer.StreamGobbler;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
+import be.kuleuven.rega.phylogeotool.tools.ColorClusters;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
+import be.kuleuven.rega.phylogeotool.treeexporter.TreeExportJobScheduler;
 import be.kuleuven.rega.prerendering.FacadeRequestData;
 import be.kuleuven.rega.prerendering.PreRendering;
 import be.kuleuven.rega.url.UrlManipulator;
@@ -32,6 +35,7 @@ import be.kuleuven.rega.webapp.widgets.PPlacerForm;
 import be.kuleuven.rega.webapp.widgets.SDRVisualizer;
 import be.kuleuven.rega.webapp.widgets.WBarChartMine;
 import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
+import be.kuleuven.rega.webapp.widgets.WConfirmationDialog;
 import be.kuleuven.rega.webapp.widgets.WDownloadResource;
 import be.kuleuven.rega.webapp.widgets.WExportTreeForm;
 import be.kuleuven.rega.webapp.widgets.WHistogramMine;
@@ -40,6 +44,7 @@ import be.kuleuven.rega.webapp.widgets.WTreeDownloaderForm;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
+import eu.webtoolkit.jwt.WAnchor;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WCheckBox;
 import eu.webtoolkit.jwt.WColor;
@@ -47,6 +52,7 @@ import eu.webtoolkit.jwt.WComboBox;
 import eu.webtoolkit.jwt.WCssTextRule;
 import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WEnvironment;
+import eu.webtoolkit.jwt.WFileResource;
 import eu.webtoolkit.jwt.WGroupBox;
 import eu.webtoolkit.jwt.WHBoxLayout;
 import eu.webtoolkit.jwt.WImage;
@@ -55,9 +61,10 @@ import eu.webtoolkit.jwt.WLayout;
 import eu.webtoolkit.jwt.WLength;
 import eu.webtoolkit.jwt.WLength.Unit;
 import eu.webtoolkit.jwt.WLink;
+import eu.webtoolkit.jwt.WMemoryResource;
 import eu.webtoolkit.jwt.WMouseEvent;
+import eu.webtoolkit.jwt.WObject;
 import eu.webtoolkit.jwt.WPushButton;
-import eu.webtoolkit.jwt.WResource.DispositionType;
 import eu.webtoolkit.jwt.WString;
 import eu.webtoolkit.jwt.WTemplate;
 import eu.webtoolkit.jwt.WText;
@@ -81,6 +88,7 @@ public class GraphWebApplication extends WApplication {
 	private FacadeRequestData facadeRequestData;
 	private PPlacer pplacer;
 	private JobScheduler jobScheduler;
+	private TreeExportJobScheduler treeExportJobScheduler;
 	
 	// Elements that have to be dynamically shown and hidden
 	private final WText orderLabel = new WText("Select ordering: ");
@@ -126,6 +134,8 @@ public class GraphWebApplication extends WApplication {
 //			Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 //			facadeRequestData = new FacadeRequestData(tree, new File("/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv"), new DistanceCalculateFromTree());
 		jobScheduler = new JobScheduler();
+		treeExportJobScheduler = new TreeExportJobScheduler();
+		
 		WVBoxLayout rootLayout = new WVBoxLayout(this.getRoot());
 		// Added for design
 		rootLayout.setContentsMargins(2, 0, 2, 2);
@@ -374,7 +384,7 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	private final void showDialog() {
-	    final WDialog dialog = new WDialog("Visualize Tree");
+	    final WDialog dialog = new WDialog("Visualize Tree", this);
 //	    WFigTreeMine wFigTreeMine = new WFigTreeMine(facadeRequestData.getJeblTree(), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())));
 	    WImageTreeMine wImageTreeMine = new WImageTreeMine(Settings.getInstance().getTreeviewPath(), UrlManipulator.getId(WApplication.getInstance().getInternalPath()));
 //	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
@@ -391,7 +401,7 @@ public class GraphWebApplication extends WApplication {
 	    buttonCallDialog.clicked().addListener(dialog, 
 	    		new Signal1.Listener<WMouseEvent>() {
             public void trigger(WMouseEvent e1) {
-            	showExportTreeDialog();
+            	showExportTreeDialog(dialog);
             }
         });
 	    
@@ -404,15 +414,19 @@ public class GraphWebApplication extends WApplication {
 	    dialog.show();
 	}
 	
-	private final void showExportTreeDialog() {
-		final WDialog dialog = new WDialog("Export Tree");
+	private void showExportTreeDialog(final WDialog parent) {
+		final WDialog dialog = new WDialog("Export Tree", parent);
 		
-		final WDownloadResource wDownloadResource = new WDownloadResource(dialog.getContents(), "cluster_" + UrlManipulator.getId(WApplication.getInstance().getInternalPath()), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), GraphicFormat.PDF);
-		WPushButton button = new WPushButton("Export");
+//		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//		ColorClusters.prepareFullTreeView(null, Settings.getInstance().getPhyloTree(), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), GraphicFormat.PDF, byteArrayOutputStream, 2, true, true);
+//		WDownloadResource wDownloadResource = new WDownloadResource(parent, "cluster_1", GraphicFormat.PDF, byteArrayOutputStream);
+//		WFileResource wFileResource = new WFileResource("image/pdf", fileName);
+//		System.out.println(wFileResource.generateUrl());
 		
-		wDownloadResource.setDispositionType(DispositionType.Attachment);
-		button.setLink(new WLink(wDownloadResource));
+//		WAnchor wAnchor = new WAnchor(wDownloadResource, "Download File");
+//		dialog.getContents().addWidget(wAnchor);
 		
+		final WPushButton button = new WPushButton("Export");
 		WPushButton cancel = new WPushButton("Cancel");
 		cancel.clicked().addListener(dialog,
 				new Signal1.Listener<WMouseEvent>() {
@@ -420,13 +434,34 @@ public class GraphWebApplication extends WApplication {
 				dialog.reject();
 			}
 		});
-		
-		WExportTreeForm wExportTreeForm = new WExportTreeForm(dialog, wDownloadResource, button, cancel);
-		
+		final WExportTreeForm wExportTreeForm = new WExportTreeForm(dialog, button, cancel);
 		dialog.rejectWhenEscapePressed();
 		dialog.getContents().addWidget(wExportTreeForm.getWidget());
 		
 		dialog.show();
+//		final WDownloadResource wDownloadResource = new WDownloadResource(dialog.getContents(), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), );
+//		wDownloadResource.setDispositionType(DispositionType.Attachment);
+		
+//		button.setLink(new WLink(wDownloadResource));
+		final GraphWebApplication graphWebApplication = this;
+		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		button.clicked().addListener(dialog, new Signal1.Listener<WMouseEvent>() {
+			public void trigger(WMouseEvent e1) {
+				button.disable();
+				
+				final WConfirmationDialog wConfirmationDialog = new WConfirmationDialog("Confirmation", "Your file is being prepared for download. Your download link will appear shortly. Please be patient.");
+				wConfirmationDialog.getOkButton().clicked().addListener(parent, new Signal1.Listener<WMouseEvent>() {
+					public void trigger(WMouseEvent e1) {
+						button.enable();
+						wConfirmationDialog.reject();
+					}
+				});
+				wConfirmationDialog.show();
+				
+				graphWebApplication.enableUpdates(true);
+				treeExportJobScheduler.addExportTreeJob(graphWebApplication, wConfirmationDialog, dialog.getContents(), "cluster_" + UrlManipulator.getId(WApplication.getInstance().getInternalPath()), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), wExportTreeForm.getwMyComboBoxExportFormat().getGraphicFormat(), byteArrayOutputStream, 2, wExportTreeForm.getwMyButtonGroupColorTree().isTreeColored(), wExportTreeForm.getwMyButtonGroupNodeTips().getShowTips());
+			}
+		});
 	}
 	
 	private final void showPPlacer() {
@@ -691,11 +726,11 @@ public class GraphWebApplication extends WApplication {
 			wgroupboxMetadata.addWidget(showNACheckbox);
 			
 			wvBoxLayoutChart.addWidget(wgroupboxMetadata);
-			wvBoxLayoutChart.setStretchFactor(wgroupboxMetadata, 0);
+//			wvBoxLayoutChart.setStretchFactor(wgroupboxMetadata, 0);
 		}
 		
 		wvBoxLayoutChart.addWidget(wCartesianChart);
-		wvBoxLayoutChart.setStretchFactor(wCartesianChart, 1);
+//		wvBoxLayoutChart.setStretchFactor(wCartesianChart, 1);
 		return wvBoxLayout;
 	}
 	
@@ -723,5 +758,16 @@ public class GraphWebApplication extends WApplication {
 	
 	public PPlacer getPPlacer() {
 		return this.pplacer;
+	}
+	
+	public void treeExportFinished(WObject parent, final WConfirmationDialog wConfirmationDialog, ByteArrayOutputStream byteArrayOutputStream, String fileName, GraphicFormat graphicFormat) {
+		UpdateLock updateLock = this.getUpdateLock();
+		WDownloadResource wDownloadResource = new WDownloadResource(parent, fileName, graphicFormat, byteArrayOutputStream);
+		WAnchor wAnchor = new WAnchor(wDownloadResource, "Download File");
+		wConfirmationDialog.addWidget(wAnchor);
+		wConfirmationDialog.getOkButton().show();
+		this.triggerUpdate();
+		this.enableUpdates(false);
+		updateLock.release();
 	}
 }

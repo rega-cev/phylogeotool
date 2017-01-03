@@ -1,6 +1,5 @@
 package be.kuleuven.rega.form;
 
-import be.kuleuven.rega.webapp.widgets.WDownloadResource;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.WButtonGroup;
 import eu.webtoolkit.jwt.WDialog;
@@ -10,8 +9,9 @@ public class MyButtonGroupNodeTips extends WButtonGroup {
 
 	private WRadioButton radioYes;
 	private WRadioButton radioNo;
+	private boolean showTips = false;
 	
-	public MyButtonGroupNodeTips(WDialog wDialog, final WDownloadResource wDownloadResource) {
+	public MyButtonGroupNodeTips(WDialog wDialog) {
 		super(wDialog.getContents());
 		
 		radioYes = new WRadioButton("Yes");
@@ -26,14 +26,22 @@ public class MyButtonGroupNodeTips extends WButtonGroup {
 			@Override
 			public void trigger() {
 				if(getCheckedButton().getText().equals("Yes")) {
-					wDownloadResource.setShowTips(true);
+					setShowTips(true);
 				} else {
-					wDownloadResource.setShowTips(false);
+					setShowTips(false);
 				}
-				wDownloadResource.dataChanged().trigger();
+//				wDownloadResource.dataChanged().trigger();
 			}
 		});
 	    
+	}
+	
+	private void setShowTips(boolean showTips) {
+		this.showTips = showTips;
+	}
+	
+	public boolean getShowTips() {
+		return this.showTips;
 	}
 	
 	public WRadioButton getRadioYes() {

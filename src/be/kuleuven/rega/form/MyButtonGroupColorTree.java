@@ -1,6 +1,5 @@
 package be.kuleuven.rega.form;
 
-import be.kuleuven.rega.webapp.widgets.WDownloadResource;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.WButtonGroup;
 import eu.webtoolkit.jwt.WDialog;
@@ -10,8 +9,9 @@ public class MyButtonGroupColorTree extends WButtonGroup {
 
 	private WRadioButton radioYes;
 	private WRadioButton radioNo;
+	private boolean colorTree = true;
 	
-	public MyButtonGroupColorTree(WDialog wDialog, final WDownloadResource wDownloadResource) {
+	public MyButtonGroupColorTree(WDialog wDialog) {
 		super(wDialog.getContents());
 		
 		radioYes = new WRadioButton("Yes");
@@ -26,14 +26,22 @@ public class MyButtonGroupColorTree extends WButtonGroup {
 			@Override
 			public void trigger() {
 				if(getCheckedButton().getText().equals("Yes")) {
-					wDownloadResource.setColorTree(true);
+					setColorTree(true);
 				} else {
-					wDownloadResource.setColorTree(false);
+					setColorTree(false);
 				}
-				wDownloadResource.dataChanged().trigger();
+//				wDownloadResource.dataChanged().trigger();
 			}
 		});
 	    
+	}
+	
+	private void setColorTree(boolean colorTree) {
+		this.colorTree = colorTree;
+	}
+	
+	public boolean isTreeColored() {
+		return this.colorTree;
 	}
 	
 	public WRadioButton getRadioYes() {

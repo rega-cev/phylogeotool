@@ -1,11 +1,8 @@
 package be.kuleuven.rega.webapp.widgets;
 
-import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import be.kuleuven.rega.phylogeotool.core.Cluster;
-import be.kuleuven.rega.phylogeotool.settings.Settings;
-import be.kuleuven.rega.phylogeotool.tools.ColorClusters;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.WFileResource;
 import eu.webtoolkit.jwt.WObject;
@@ -15,19 +12,15 @@ import figtree.application.GraphicFormat;
 
 public class WDownloadResource extends WFileResource {
 
-	private Cluster cluster;
 	private GraphicFormat graphicFormat;
-	private boolean colorTree;
-	private boolean showTips;
-
-	public WDownloadResource(WObject parent, String fileName, Cluster cluster, GraphicFormat graphicFormat) {
+	private ByteArrayOutputStream byteArrayOutputStream;
+	
+	public WDownloadResource(WObject parent, String fileName, GraphicFormat graphicFormat, ByteArrayOutputStream byteArrayOutputStream) {
 		super("image/pdf", fileName, parent);
-		this.cluster = cluster;
 		this.graphicFormat = graphicFormat;
-		this.colorTree = true;
-		this.showTips = false;
+		this.byteArrayOutputStream = byteArrayOutputStream;
 	}
-
+	
 	@Override
 	public void handleRequest(WebRequest request, WebResponse response) {
 		if (graphicFormat == null) {
@@ -42,31 +35,17 @@ public class WDownloadResource extends WFileResource {
 				response.setContentType("image/svg+xml");
 			}
 		}
-		BufferedOutputStream output;
 		try {
-			output = new BufferedOutputStream(response.getOutputStream());
-			ColorClusters.prepareFullTreeView(null, Settings.getInstance().getPhyloTree(), cluster, graphicFormat, output, 2, colorTree, showTips);
-			output.flush();
+			response.getOutputStream().write(byteArrayOutputStream.toByteArray());	
+			response.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void setCluster(Cluster cluster) {
-		this.cluster = cluster;
-	}
-
-	public void setGraphicFormat(GraphicFormat graphicFormat) {
-		this.graphicFormat = graphicFormat;
-	}
-	
-	public void setColorTree(boolean colorTree) {
-		this.colorTree = colorTree;
-	}
-	
-	public void setShowTips(boolean showTips) {
-		this.showTips = showTips;
-	}
+//	public void setGraphicFormat(GraphicFormat graphicFormat) {
+//		this.graphicFormat = graphicFormat;
+//	}
 	
 	@Override
 	public Signal dataChanged() {
