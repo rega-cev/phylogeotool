@@ -23,7 +23,6 @@ import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
 import be.kuleuven.rega.phylogeotool.pplacer.PPlacer;
 import be.kuleuven.rega.phylogeotool.pplacer.StreamGobbler;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
-import be.kuleuven.rega.phylogeotool.tools.ColorClusters;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
 import be.kuleuven.rega.phylogeotool.treeexporter.TreeExportJobScheduler;
 import be.kuleuven.rega.prerendering.FacadeRequestData;
@@ -52,7 +51,6 @@ import eu.webtoolkit.jwt.WComboBox;
 import eu.webtoolkit.jwt.WCssTextRule;
 import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WEnvironment;
-import eu.webtoolkit.jwt.WFileResource;
 import eu.webtoolkit.jwt.WGroupBox;
 import eu.webtoolkit.jwt.WHBoxLayout;
 import eu.webtoolkit.jwt.WImage;
@@ -61,7 +59,6 @@ import eu.webtoolkit.jwt.WLayout;
 import eu.webtoolkit.jwt.WLength;
 import eu.webtoolkit.jwt.WLength.Unit;
 import eu.webtoolkit.jwt.WLink;
-import eu.webtoolkit.jwt.WMemoryResource;
 import eu.webtoolkit.jwt.WMouseEvent;
 import eu.webtoolkit.jwt.WObject;
 import eu.webtoolkit.jwt.WPushButton;
@@ -87,8 +84,6 @@ public class GraphWebApplication extends WApplication {
 	private char csvDelimitor = ';';
 	private FacadeRequestData facadeRequestData;
 	private PPlacer pplacer;
-	private JobScheduler jobScheduler;
-	private TreeExportJobScheduler treeExportJobScheduler;
 	
 	// Elements that have to be dynamically shown and hidden
 	private final WText orderLabel = new WText("Select ordering: ");
@@ -133,8 +128,6 @@ public class GraphWebApplication extends WApplication {
 //			jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree"));
 //			Tree tree = ReadTree.jeblToTreeDraw((SimpleRootedTree) jeblTree, new ArrayList<String>());
 //			facadeRequestData = new FacadeRequestData(tree, new File("/Users/ewout/Documents/TDRDetector/fullPortugal/allSequences_cleaned_ids.out2.csv"), new DistanceCalculateFromTree());
-		jobScheduler = new JobScheduler();
-		treeExportJobScheduler = new TreeExportJobScheduler();
 		
 		WVBoxLayout rootLayout = new WVBoxLayout(this.getRoot());
 		// Added for design
@@ -459,7 +452,7 @@ public class GraphWebApplication extends WApplication {
 				wConfirmationDialog.show();
 				
 				graphWebApplication.enableUpdates(true);
-				treeExportJobScheduler.addExportTreeJob(graphWebApplication, wConfirmationDialog, dialog.getContents(), "cluster_" + UrlManipulator.getId(WApplication.getInstance().getInternalPath()), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), wExportTreeForm.getwMyComboBoxExportFormat().getGraphicFormat(), byteArrayOutputStream, 2, wExportTreeForm.getwMyButtonGroupColorTree().isTreeColored(), wExportTreeForm.getwMyButtonGroupNodeTips().getShowTips());
+				Main.getTreeExportJobScheduler().addExportTreeJob(graphWebApplication, wConfirmationDialog, dialog.getContents(), "cluster_" + UrlManipulator.getId(WApplication.getInstance().getInternalPath()), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), wExportTreeForm.getwMyComboBoxExportFormat().getGraphicFormat(), byteArrayOutputStream, 2, wExportTreeForm.getwMyButtonGroupColorTree().isTreeColored(), wExportTreeForm.getwMyButtonGroupNodeTips().getShowTips());
 			}
 		});
 	}
@@ -501,7 +494,7 @@ public class GraphWebApplication extends WApplication {
 								}
 	            				
 	                			System.out.println(pplacerFile.getAbsolutePath());
-	                			jobScheduler.addPPlacerJob(Settings.getInstance().getScriptFolder(), Settings.getInstance().getPhyloTree(), Settings.getInstance().getAlignmentLocation(),
+	                			Main.getJobScheduler().addPPlacerJob(Settings.getInstance().getScriptFolder(), Settings.getInstance().getPhyloTree(), Settings.getInstance().getAlignmentLocation(),
 	                					pplacerFile.getAbsolutePath(), Settings.getInstance().getLogfileLocation(), PPlacerForm.getEmail());
 	                			dialog.reject();
 	                		}

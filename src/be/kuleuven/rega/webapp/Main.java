@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
+import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
+import be.kuleuven.rega.phylogeotool.treeexporter.TreeExportJobScheduler;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WEnvironment;
 import eu.webtoolkit.jwt.WtServlet;
@@ -20,6 +22,8 @@ public class Main extends WtServlet implements javax.servlet.ServletContextListe
 	private static final long serialVersionUID = -7955893733032239397L;
 	private String pplacer;
 	private static Settings settings;
+	private static JobScheduler jobScheduler;
+	private static TreeExportJobScheduler treeExportJobScheduler;
 	
 	public static GraphWebApplication getApp() {
 		return (GraphWebApplication)WApplication.getInstance();
@@ -60,5 +64,15 @@ public class Main extends WtServlet implements javax.servlet.ServletContextListe
 //		System.out.println(ReadTree.getJeblTree().getTaxa().size());
 		ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
 		settings = Settings.getInstance();
+		jobScheduler = new JobScheduler();
+		treeExportJobScheduler = new TreeExportJobScheduler();
+	}
+	
+	public static JobScheduler getJobScheduler() {
+		return jobScheduler;
+	}
+	
+	public static TreeExportJobScheduler getTreeExportJobScheduler() {
+		return treeExportJobScheduler;
 	}
 }
