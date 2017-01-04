@@ -134,6 +134,10 @@ public class Settings {
 		return statisticsSupport;
 	}
 	
+	public String getFull_url() {
+		return full_url;
+	}
+	
 	public String getVisualizeGeography() {
 		return visualizeGeography;
 	}
@@ -164,6 +168,7 @@ public class Settings {
 	private String[] colorAxis;
 	private boolean pplacerSupport;
 	private boolean statisticsSupport;
+	private String full_url;
 	private List<String> columnsToExport;
 	private Map<String, String> csvColumnRepresentation;
 	
@@ -207,6 +212,8 @@ public class Settings {
             	pplacerSupport = Boolean.parseBoolean(e.getValue().trim());
             } else if(name.equals("statistics_support")) {
             	statisticsSupport = Boolean.parseBoolean(e.getValue().trim());
+            } else if(name.equals("full_url")) {
+            	full_url = e.getValue().trim();
             } else if(name.equals("colorCodes")) {
             	List<Element> colorProperties = e.getChildren();
             	String colorPropertyName;

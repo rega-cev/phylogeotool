@@ -83,6 +83,11 @@
  true
  </property>
 
+<!-- Full url that is used to navigate to the tool -->
+ <property name="full_url">
+        http://localhost:8080/phylogeotool/PhyloGeoTool/
+ </property>
+
 <!--
    How the csv field should be represented in the tool.
    A number field will be shown in a histogram

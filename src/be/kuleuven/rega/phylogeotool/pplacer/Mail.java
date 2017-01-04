@@ -1,5 +1,6 @@
 package be.kuleuven.rega.phylogeotool.pplacer;
 
+import java.io.File;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -9,6 +10,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import be.kuleuven.rega.phylogeotool.settings.Settings;
 
 public class Mail {
 	private String username = "ue711728";
@@ -35,7 +38,7 @@ public class Mail {
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
 			message.setSubject("Your PPlacing job has finished");
 			message.setText("Dear User,"
-					+ "\n\n Your PPlacing job has recently finished and can be reviewed here: http://localhost:8080/phylogeotool/PhyloGeoTool/root_1?pplacer="
+					+ "\n\n Your PPlacing job has recently finished and can be reviewed here: " + Settings.getInstance().getFull_url() + File.separator + "root_1?pplacer="
 					+ pplacerId);
 
 			Transport.send(message);
