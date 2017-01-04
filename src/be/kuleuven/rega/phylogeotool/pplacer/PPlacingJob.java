@@ -27,9 +27,9 @@ public class PPlacingJob implements Job {
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		System.err.println("PPlacer job is running!"); 
 		
-		String tempDir = createTempDirs(jobExecutionContext.getJobDetail().getJobDataMap().getString(PPLACER_SCRIPTS_LOCATION));
-		jobExecutionContext.getJobDetail().getJobDataMap().put(TEMPDIR_LOCATION, tempDir.split("pplacer.")[1]);
-		String pplacedTree = doPPlacing(jobExecutionContext.getJobDetail().getJobDataMap().getString(PPLACER_SCRIPTS_LOCATION), tempDir, jobExecutionContext.getJobDetail().getJobDataMap().getString(PHYLO_TREE_LOCATION), 
+//		String tempDir = createTempDirs(jobExecutionContext.getJobDetail().getJobDataMap().getString(PPLACER_SCRIPTS_LOCATION));
+//		jobExecutionContext.getJobDetail().getJobDataMap().put(TEMPDIR_LOCATION, tempDir.split("pplacer.")[1]);
+		String pplacedTree = doPPlacing(jobExecutionContext.getJobDetail().getJobDataMap().getString(PPLACER_SCRIPTS_LOCATION), jobExecutionContext.getJobDetail().getJobDataMap().getString(TEMPDIR_LOCATION), jobExecutionContext.getJobDetail().getJobDataMap().getString(PHYLO_TREE_LOCATION), 
 				jobExecutionContext.getJobDetail().getJobDataMap().getString(ALIGNMENT_FASTA_LOCATION), 
 				jobExecutionContext.getJobDetail().getJobDataMap().getString(NEW_SEQUENCES_LOCATION), 
 				jobExecutionContext.getJobDetail().getJobDataMap().getString(LOGFILE_LOCATION));

@@ -264,14 +264,15 @@ public class GraphWebApplication extends WApplication {
 		
 		if(pplacerId != null && !pplacerId.equals("")) {
 			if(Settings.getInstance().getPPlacerSupport()) {
-				if(Files.notExists(FileSystems.getDefault().getPath(Settings.getInstance().getScriptFolder() + File.separator + "init.sh"), LinkOption.NOFOLLOW_LINKS)) {
-					System.err.println("File init.sh does not exists at: " + Settings.getInstance().getScriptFolder() + File.separator + "init.sh");
-				} else {
-					String args[] = {Settings.getInstance().getScriptFolder() + File.separator + "init.sh", pplacerId};
-					StreamGobbler streamGobbler = StreamGobbler.runProcess(args);
-					System.out.println("PPlacer tree loaded from: " + streamGobbler.getLastLine());
-					String location = streamGobbler.getLastLine();
+//				if(Files.notExists(FileSystems.getDefault().getPath(Settings.getInstance().getScriptFolder() + File.separator + "init.sh"), LinkOption.NOFOLLOW_LINKS)) {
+//					System.err.println("File init.sh does not exists at: " + Settings.getInstance().getScriptFolder() + File.separator + "init.sh");
+//				} else {
+//					String args[] = {Settings.getInstance().getScriptFolder() + File.separator + "init.sh", pplacerId};
+//					StreamGobbler streamGobbler = StreamGobbler.runProcess(args);
+//					System.out.println("PPlacer tree loaded from: " + streamGobbler.getLastLine());
+//					String location = streamGobbler.getLastLine();
 					
+					String location = System.getProperty("java.io.tmpdir") + File.separator + "pplacer" + pplacerId;
 					if(Files.notExists(FileSystems.getDefault().getPath(location + File.separator + "sequences.tog.tre"), LinkOption.NOFOLLOW_LINKS)) {
 						System.err.println("PPlaced tree with id: " + pplacerId + " could not be found at " + location + File.separator + "sequences.tog.tre");
 					} else {
@@ -279,7 +280,7 @@ public class GraphWebApplication extends WApplication {
 						this.pplacer = new PPlacer(location + File.separator + "sequences.tog.tre", pplacedIds);
 						graphWidget.setPPlacer(pplacer);
 					}
-				}
+//				}
 			} else {
 				System.err.println("PPlacer not supported. If you want to support PPlacer, please toggle PPlacer support on in your global-conf.xml file");
 			}
@@ -494,7 +495,7 @@ public class GraphWebApplication extends WApplication {
 								}
 	            				
 	                			System.out.println(pplacerFile.getAbsolutePath());
-	                			Main.getJobScheduler().addPPlacerJob(Settings.getInstance().getScriptFolder(), Settings.getInstance().getPhyloTree(), Settings.getInstance().getAlignmentLocation(),
+	                			Main.getJobScheduler().addPPlacerJob(path.toString(), Settings.getInstance().getScriptFolder(), Settings.getInstance().getPhyloTree(), Settings.getInstance().getAlignmentLocation(),
 	                					pplacerFile.getAbsolutePath(), Settings.getInstance().getLogfileLocation(), PPlacerForm.getEmail());
 	                			dialog.reject();
 	                		}
