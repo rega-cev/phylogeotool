@@ -75,19 +75,18 @@ public class BestClusterMultiThread {
 		
 		// If there is a second derivative, plot it in R
 		String argsSecondDerivative[] = {rBinary.toString(), rScripts + File.separator + "SecondDerivative.R", sb.toString(), Integer.toString(startNode.getId()), basePath.toString()};
-
 		
 		List<Double> sgolay = new ArrayList<Double>();
 		try {
 			rt.exec(argsSDR);
 			rt.exec(argsFirstDerivative);
-			Process process = rt.exec(argsSGolay);
+			ProcessBuilder processBuilder = new ProcessBuilder(argsSGolay);
+			Process process = processBuilder.start();
 			InputStream is = process.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			String line;
 
-//			System.out.println("Output: ");
 			while ((line = br.readLine()) != null) {
 				System.out.println("Sgolay: " + line);
 				String [] sgolayArray = line.split(" ");

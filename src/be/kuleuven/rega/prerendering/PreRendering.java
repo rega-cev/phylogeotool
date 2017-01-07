@@ -213,22 +213,24 @@ public class PreRendering {
 		File clusters = new File(folderPhyloRenderLocation + File.separator + "clusters");
 		File xml = new File(folderPhyloRenderLocation + File.separator + "xml");
 		File treeview = new File(folderPhyloRenderLocation + File.separator + "treeview");
-
+		File r = new File(folderPhyloRenderLocation + File.separator + "r");
+		
 		DirectoryStream<Path> clustersStream = null;
 		DirectoryStream<Path> xmlStream = null;
 		DirectoryStream<Path> treeviewStream = null;
+		DirectoryStream<Path> rStream = null;
 		
-		
-		if(clusters.isDirectory() && xml.isDirectory() && treeview.isDirectory()){
+		if(clusters.isDirectory() && xml.isDirectory() && treeview.isDirectory() && r.isDirectory()){
 			try {
 				clustersStream = Files.newDirectoryStream(clusters.toPath());
 				xmlStream = Files.newDirectoryStream(xml.toPath());
 				treeviewStream = Files.newDirectoryStream(treeview.toPath());
+				rStream = Files.newDirectoryStream(r.toPath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			if(clustersStream.iterator().hasNext() || xmlStream.iterator().hasNext() || treeviewStream.iterator().hasNext()){
+			if(clustersStream.iterator().hasNext() || xmlStream.iterator().hasNext() || treeviewStream.iterator().hasNext() || rStream.iterator().hasNext()){
 				return false;
 			} else {
 				return true;
@@ -242,10 +244,14 @@ public class PreRendering {
 		} else if(treeview.isFile()) {
 			System.err.println(PreRendering.class + ": The path " + folderPhyloRenderLocation + File.separator + "treeview" + " to the folder seems to direct to a file.");
 			return false;
+		} else if(r.isFile()) {
+			System.err.println(PreRendering.class + ": The path " + folderPhyloRenderLocation + File.separator + "r" + " to the folder seems to direct to a file.");
+			return false;
 		} else {
 			clusters.mkdirs();
 			xml.mkdirs();
 			treeview.mkdirs();
+			r.mkdirs();
 			return true;
 		}
 	}
