@@ -52,7 +52,7 @@ public class PPlacerForm {
 		table = new WTable(dialog.getContents());
 		table.addStyleClass("tablePPlacer", true);
 		table.setHeaderCount(1);
-	    table.setWidth(new WLength("100%"));
+	    table.setWidth(new WLength(630));
 	    table.setStyleClass("tableDialog");
 	    
 	    WLabel nucleotideSeqLabel = new WLabel("<b>Nucleotide sequence</b>");
@@ -139,6 +139,7 @@ public class PPlacerForm {
 	public void textArea(WTable table) {
 		textArea = new WTextArea();
 		textArea.setColumns(70);
+		textArea.setWidth(new WLength(440));
 		textArea.setRows(5);
 		textArea.setPlaceholderText("Upload or enter a nucleotide sequence in fasta format that you'd want to PPlace in the tree.");
 //		textArea.disable();
