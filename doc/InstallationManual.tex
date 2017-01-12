@@ -137,14 +137,16 @@ PreRender.jar takes the following arguments:
 \item /path/to/csvFile: Link to the csv file that connects nodes in the tool to attributes. Note: The id in the csv file has to be the same as the id of the nodes in the tree.
 \item /path/to/distance\_matrix: Link to the distance matrix (see section \ref{sec:dm}) that was generated from this tree.
 \item /path/to/folder\_output: Link to the folder where this jar can write its resulting tree files.
+\item /path/to/rBinary: Link to the exact location of the executable to run R 
+\item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R
 \end{itemize}
 PreRender.jar will then create the necessary directories in the folder with name `folder\_output'.
 If those directories already exist, a warning is issued to the user and the process will be aborted.
 
 For example, the following command uses PreRender.jar to perform all the necessary clustering steps (which can be time-consuming) so that the PhyloGeoTool doesn't have to perform these at run time: 
 \begin{verbatim}
-java -jar PreRender.jar phylogenetic.tree csvFile 
-distance\_matrix folder\_output
+java -jar PreRender.jar phylogenetic.tree csvFile
+distance\_matrix folder\_output rBinary folder\_rScripts
 \end{verbatim}
 
 
@@ -165,11 +167,11 @@ Edit the global-conf.xml file to correctly set up all the necessary paths, examp
 \begin{verbatim}
 <?xml version="1.0" encoding="UTF-8"?>
 <phylogeotool-settings>
-  <!-- configPath
+  <!-- basePath
      Root directory containing the pre-rendered files in 
      subdirectories such as given to PreRender.jar.
    -->
-  <property name="configPath">
+  <property name="basePath">
     /Users/phylogeo/Documents/Configs
   </property>
 
