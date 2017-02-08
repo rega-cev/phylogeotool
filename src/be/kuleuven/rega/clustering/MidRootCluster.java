@@ -10,7 +10,7 @@ import be.kuleuven.rega.phylogeotool.core.Tree;
 
 public class MidRootCluster {
 	
-	public static Cluster calculate(Tree tree, Node startNode, Comparator<Node> comparator, int minimumClusterSize, int minNrClusters) {
+	public static Cluster calculate(Tree tree, Node startNode, Cluster parentalCluster, Comparator<Node> comparator, int minimumClusterSize, int minNrClusters) {
 		LinkedList<Node> tempQueue = new LinkedList<Node>();
 		
 		Cluster cluster = null;
@@ -53,7 +53,7 @@ public class MidRootCluster {
 //						clusters.add(new Cluster(tree, tempNode, tree.getLeaves(tempNode)));
 //	//					clusteredEdges.add(tree.getEdge(tempNode.getParent(), tempNode));
 //					}
-					cluster = new Cluster(tree, startNode,tempQueue);
+					cluster = new Cluster(tree, startNode,parentalCluster,tempQueue);
 				}
 				break;
 			}

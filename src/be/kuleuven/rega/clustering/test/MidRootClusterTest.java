@@ -108,25 +108,25 @@ public class MidRootClusterTest {
 	
 	@Test
 	public void testClusterSizes() {
-		assertEquals("", 2, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 1).getBoundaries().size(), 0.0);
-		assertEquals("", 2, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 2).getBoundaries().size(), 0.0);
-		assertEquals("", 3, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 3).getBoundaries().size(), 0.0);
-		assertEquals("", null, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 4));
-		assertEquals("", null, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 5));
-		assertEquals("", null, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 6));
+		assertEquals("", 2, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 1).getBoundaries().size(), 0.0);
+		assertEquals("", 2, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 2).getBoundaries().size(), 0.0);
+		assertEquals("", 3, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 3).getBoundaries().size(), 0.0);
+		assertEquals("", null, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 4));
+		assertEquals("", null, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 5));
+		assertEquals("", null, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 6));
 		
-		assertEquals("", 2, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 3, 1).getBoundaries().size(), 0.0);
-		assertEquals("", 2, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 3, 2).getBoundaries().size(), 0.0);
-		assertEquals("", null, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 3, 3));
+		assertEquals("", 2, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 3, 1).getBoundaries().size(), 0.0);
+		assertEquals("", 2, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 3, 2).getBoundaries().size(), 0.0);
+		assertEquals("", null, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 3, 3));
 	}
 	
 	@Test
 	public void testClusterContent() {
-		assertEquals("", true, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 2).getBoundaries().get(0).equals(t18));
-		assertEquals("", true, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 2).getBoundaries().get(1).equals(t13));
+		assertEquals("", true, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 2).getBoundaries().get(0).equals(t18));
+		assertEquals("", true, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 2).getBoundaries().get(1).equals(t13));
 
-		assertEquals("", true, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 3).getBoundaries().get(0).equals(t13));
-		assertEquals("", true, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 3).getBoundaries().get(1).equals(t17));
-		assertEquals("", true, MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, 3).getBoundaries().get(2).equals(t14));
+		assertEquals("", true, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 3).getBoundaries().get(0).equals(t13));
+		assertEquals("", true, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 3).getBoundaries().get(1).equals(t17));
+		assertEquals("", true, MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, 3).getBoundaries().get(2).equals(t14));
 	}
 }

@@ -50,7 +50,7 @@ public class ColorTree {
 	}
 	
 	private void colorTree(Tree tree, int nrClusters, int minimumClusterSize) throws IOException {
-		Cluster cluster = MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), minimumClusterSize, nrClusters);
+		Cluster cluster = MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), minimumClusterSize, nrClusters);
 //		List<Node> clusters = cluster.getAcceptableClusters(minimumClusterSize);
 		FileWriter fileWriter = new FileWriter("/Users/ewout/Documents/phylogeo/TestCases/Portugal/" + nrClusters + ".nxs");
 		System.out.println("Writing to: " + "/Users/ewout/Documents/phylogeo/TestCases/Portugal/" + nrClusters + ".nxs");

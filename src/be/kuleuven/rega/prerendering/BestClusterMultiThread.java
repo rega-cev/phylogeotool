@@ -50,8 +50,8 @@ public class BestClusterMultiThread {
 //		System.out.println("MaxEntry: " + maxSecondDerivative.getKey() + " Value: " + maxSecondDerivative.getValue());
 //	}
 	
-	public static Cluster getBestCluster(Path rBinary, Path rScripts, Path basePath, int minClusters, int maxClusters, int minClusterSize, Tree tree, Node startNode, DistanceInterface distanceInterface) {
-		List<Double> distances = forkJoinPool.invoke(new PreRenderingThread(minClusters, maxClusters, tree, startNode, distanceInterface, new ClusterSizeComparator(tree), minClusterSize));
+	public static Cluster getBestCluster(Path rBinary, Path rScripts, Path basePath, int minClusters, int maxClusters, int minClusterSize, Tree tree, Node startNode, Cluster parentalCluster, DistanceInterface distanceInterface) {
+		List<Double> distances = forkJoinPool.invoke(new PreRenderingThread(minClusters, maxClusters, tree, startNode, parentalCluster, distanceInterface, new ClusterSizeComparator(tree), minClusterSize));
 		
 		// Calculate SDR plot here
 		StringBuilder sb = new StringBuilder();
@@ -115,7 +115,7 @@ public class BestClusterMultiThread {
 				// Note: sgolay.get(best - 2) because we return the best amount of clusters in ClusterDistance.getMinValueFromList
 				// if(best == 0) nrClusters = 2 => sgolay.get(best - 2)
 				System.out.println("Bumpy function for: " + startNode.getId() + " Best Nr Clusters: " + best+ " Value: " + sgolay.get(best - 2));
-				return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, best);
+				return MidRootCluster.calculate(tree, startNode, parentalCluster, new ClusterSizeComparator(tree), minClusterSize, best);
 			} else {
 				if(sgolay.size() >= 3) {
 					Entry<Integer, Double> maxSecondDerivative = clusterDistance.getMaxSecondDerivative(sgolay);
@@ -125,10 +125,10 @@ public class BestClusterMultiThread {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, maxSecondDerivative.getKey());
+					return MidRootCluster.calculate(tree, startNode, parentalCluster, new ClusterSizeComparator(tree), minClusterSize, maxSecondDerivative.getKey());
 				} else {
 					System.out.println("MaxEntry: " + (sgolay.size() + 1) + " Value: No second derivative");
-					return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, (sgolay.size() + 1));
+					return MidRootCluster.calculate(tree, startNode, parentalCluster, new ClusterSizeComparator(tree), minClusterSize, (sgolay.size() + 1));
 				}
 			}
 		} else {
@@ -136,7 +136,7 @@ public class BestClusterMultiThread {
 			// If distances is of size 1, this means that there is only one cluster big enough to be further split up but obviously we cannot
 			// take the first nor second derivative of this function.
 			System.out.println("MaxEntry: " + (sgolay.size() + 1) + " Value: No first derivative for " + startNode.getId());
-			return MidRootCluster.calculate(tree, startNode, new ClusterSizeComparator(tree), minClusterSize, (sgolay.size() + 1));
+			return MidRootCluster.calculate(tree, startNode, parentalCluster, new ClusterSizeComparator(tree), minClusterSize, (sgolay.size() + 1));
 		}
 	}
 }

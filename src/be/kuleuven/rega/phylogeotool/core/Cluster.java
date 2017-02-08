@@ -15,14 +15,16 @@ public class Cluster {
 	@XStreamOmitField
 	private final Node root;
 	private final int rootId;
+	private final int parentalClusterId;
 	@XStreamOmitField
 	private final List<Node> boundaries;
 	private final List<Integer> boundariesIds;
 	
-	public Cluster(Tree tree, Node root, List<Node> boundaries) {
+	public Cluster(Tree tree, Node root, Cluster parentalCluster, List<Node> boundaries) {
 		this.tree = tree;
 		this.root = root;
 		this.rootId = root.getId();
+		this.parentalClusterId = parentalCluster.getRootId();
 		this.boundaries = boundaries;
 		this.boundariesIds = new ArrayList<Integer>();
 		for(Node boundary:boundaries) {
@@ -30,10 +32,11 @@ public class Cluster {
 		}
 	}
 	
-	public Cluster(Tree tree, int rootId, List<Integer> boundariesIds) {
+	public Cluster(Tree tree, int rootId, int parentalClusterId, List<Integer> boundariesIds) {
 		this.tree = tree;
 		this.root = tree.getNodeById(rootId);
 		this.rootId = rootId;
+		this.parentalClusterId = parentalClusterId;
 		this.boundariesIds = boundariesIds;
 		this.boundaries = new ArrayList<Node>();
 		for(Integer boundaryId:boundariesIds) {
@@ -49,6 +52,9 @@ public class Cluster {
 	}
 	public int getRootId() {
 		return rootId;
+	}
+	public int getParentalClusterRootId() {
+		return parentalClusterId;
 	}
 	public List<Node> getBoundaries() {
 		return Collections.unmodifiableList(this.boundaries);

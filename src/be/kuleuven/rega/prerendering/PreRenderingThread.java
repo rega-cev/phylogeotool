@@ -19,15 +19,17 @@ public class PreRenderingThread extends RecursiveTask<List<Double>> {
 	private final int max;
 	private final Tree tree;
 	private final Node startNode;
+	private final Cluster parentalCluster;
 	private final DistanceInterface distanceInterface;
 	private final Comparator<Node> comparator;
 	private int minimumClusterSize;
 	
-	public PreRenderingThread(int min, int max, Tree tree, Node startNode, DistanceInterface distanceInterface, Comparator<Node> comparator, int minimumClusterSize) {
+	public PreRenderingThread(int min, int max, Tree tree, Node startNode, Cluster parentalCluster, DistanceInterface distanceInterface, Comparator<Node> comparator, int minimumClusterSize) {
 		this.min = min;
 		this.max = max;
 		this.tree = tree;
 		this.startNode = startNode;
+		this.parentalCluster = parentalCluster;
 //		jebl.evolution.trees.Tree jeblTree = ReadNewickTree.readNewickTree(new FileReader("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree"));
 		this.distanceInterface = distanceInterface;
 		this.comparator = comparator;
@@ -40,7 +42,7 @@ public class PreRenderingThread extends RecursiveTask<List<Double>> {
 		List<Double> sdrDistances = new ArrayList<Double>();
 		
 		for(int i = min; i <= max; i++) {
-			Cluster cluster = MidRootCluster.calculate(tree, startNode, comparator, minimumClusterSize, i);
+			Cluster cluster = MidRootCluster.calculate(tree, startNode, parentalCluster, comparator, minimumClusterSize, i);
 			if(cluster != null) {
 				CalculateBestClusterTask calculateBestCluster = new CalculateBestClusterTask(i, cluster, distanceInterface, minimumClusterSize);
 //				System.out.println("Adding task: " + i);

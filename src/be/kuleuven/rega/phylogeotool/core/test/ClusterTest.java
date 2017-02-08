@@ -126,7 +126,7 @@ public class ClusterTest {
 		leafs.add(node5);
 		leafs.add(node3);
 		
-		cluster = new Cluster(tree, node1, leafs);
+		cluster = new Cluster(tree, node1, null, leafs);
 	}
 //	
 //	@Test
@@ -162,7 +162,8 @@ public class ClusterTest {
 		testLeafs.add(node11);
 		testLeafs.add(node6);
 		testLeafs.add(node7);
-		Cluster testCluster = new Cluster(tree, node1, testLeafs);
+		// TODO: Change parental cluster. Don't know immediately what it has to be
+		Cluster testCluster = new Cluster(tree, node1, null, testLeafs);
 		assertEquals("", 6, testCluster.getInnerNodes().size(), 0.0);
 		assertEquals("", true, testCluster.getInnerNodes().contains(node2));
 		assertEquals("", true, testCluster.getInnerNodes().contains(node3));
@@ -175,7 +176,7 @@ public class ClusterTest {
 		testLeafs2.add(node8);
 		testLeafs2.add(node9);
 		testLeafs2.add(node5);
-		Cluster testCluster2 = new Cluster(tree, node2, testLeafs2);
+		Cluster testCluster2 = new Cluster(tree, node2, testCluster, testLeafs2);
 		assertEquals("", 1, testCluster2.getInnerNodes().size(), 0.0);
 		assertEquals("", true, testCluster2.getInnerNodes().contains(node4));
 	}
@@ -198,7 +199,8 @@ public class ClusterTest {
 		testLeafs2.add(node8);
 		testLeafs2.add(node9);
 		testLeafs2.add(node5);
-		Cluster testCluster2 = new Cluster(tree, node2, testLeafs2);
+		// TODO: Change parental cluster. Don't know immediately what it has to be
+		Cluster testCluster2 = new Cluster(tree, node2, null, testLeafs2);
 		assertEquals("", 1, testCluster2.getInnerNodes().size(), 0.0);
 		assertEquals("", 5, testCluster2.getAllNodes().size(), 0.0);
 		assertEquals("", true, testCluster2.getAllNodes().contains(node2));

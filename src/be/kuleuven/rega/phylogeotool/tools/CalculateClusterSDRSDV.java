@@ -48,7 +48,7 @@ public class CalculateClusterSDRSDV {
 		
 		CalculateClusterSDRSDV calculateClusterSDRSDV = new CalculateClusterSDRSDV();
 		Tree tree = calculateClusterSDRSDV.init(treeLocation);
-		Cluster cluster = MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, nrClusters);
+		Cluster cluster = MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, nrClusters);
 		double sdr = calculateClusterSDRSDV.calculateStatistics(cluster);
 		
 		System.out.println("SDR: " + sdr);

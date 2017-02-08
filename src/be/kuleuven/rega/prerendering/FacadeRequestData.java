@@ -48,7 +48,9 @@ public class FacadeRequestData {
 		} else {
 			// TODO: Change the nr 12 and add SDRCalculations
 //			return MidRootCluster.calculate(tree, tree.getNodeById(Integer.parseInt(clusterId)), new ClusterSizeComparator(tree), minimumClusterSize, 12);
-			return BestClusterMultiThread.getBestCluster(Paths.get(Settings.getInstance().getRBinary()), Paths.get(Settings.getInstance().getScriptFolder()), Paths.get(Settings.getInstance().getBasePath()), minimumClusterSize, 50, 2, ReadTree.getTreeDrawTree(), ReadTree.getTreeDrawTree().getNodeById(Integer.parseInt(clusterId)), distanceInterface);
+//			return BestClusterMultiThread.getBestCluster(Paths.get(Settings.getInstance().getRBinary()), Paths.get(Settings.getInstance().getScriptFolder()), Paths.get(Settings.getInstance().getBasePath()), minimumClusterSize, 50, 2, ReadTree.getTreeDrawTree(), ReadTree.getTreeDrawTree().getNodeById(Integer.parseInt(clusterId)), distanceInterface);
+			// TODO: Implement this else
+			throw new RuntimeException("This else is not implemented yet!");
 		}
 	}
 	

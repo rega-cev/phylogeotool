@@ -42,13 +42,15 @@ public class MainSingleThread {
 		main.process(tree, distanceInterface);
 	}
 	
+	
+	// TODO: Check why only 50 clusters from the rootNode are made here and not the full process (until the end).
 	public void process(Tree tree, DistanceInterface distanceInterface) {
 		
 //		List<Tree> clusters = new ArrayList<Tree>();
 		Cluster[] clusters = new Cluster[50];
 		
 		for(int k = 2; k < 50; k++) {
-			clusters[k] = MidRootCluster.calculate(tree, tree.getRootNode(), new ClusterSizeComparator(tree), 2, k);
+			clusters[k] = MidRootCluster.calculate(tree, tree.getRootNode(), null, new ClusterSizeComparator(tree), 2, k);
 		}
 		
 		Double[] sdrValues = new Double[50];

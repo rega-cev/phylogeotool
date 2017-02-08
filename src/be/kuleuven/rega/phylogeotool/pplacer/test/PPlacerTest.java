@@ -52,7 +52,7 @@ public class PPlacerTest {
 	
 	@Test
 	public void testClusterContainsSequence() {
-		Cluster cluster = new Cluster(pplacer.getTree(), pplacer.getTree().getRootNode(), pplacer.getTree().getLeaves());
+		Cluster cluster = new Cluster(pplacer.getTree(), pplacer.getTree().getRootNode(), null, pplacer.getTree().getLeaves());
 		assertEquals(true, pplacer.clusterContainsPPlacerSequence(cluster));
 	}
 }

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -118,7 +119,7 @@ public class PreRendering {
 		cluster = (Cluster)xStream.fromXML(new File(Settings.getClusterPath(basePath) + File.separator + clusterId + ".xml"));
 //		Tree tree = getTreeFromXML("1");
 		Tree tree = ReadTree.getTreeDrawTree();
-		return new Cluster(tree, cluster.getRootId(), cluster.getBoundariesIds());
+		return new Cluster(tree, cluster.getRootId(), cluster.getParentalClusterRootId(), cluster.getBoundariesIds());
 	}
 	
 	public Cluster getClusterFromXML(Tree tree, String clusterId) {
@@ -126,7 +127,7 @@ public class PreRendering {
 //			byte[] encoded = Files.readAllBytes(Paths.get(folderLocation + File.separator + clusterId + ".xml"));
 //			newTree = (Tree)xStream.fromXML(new String(encoded));
 		cluster = (Cluster)xStream.fromXML(new File(Settings.getClusterPath(basePath) + File.separator + clusterId + ".xml"));
-		return new Cluster(tree, cluster.getRootId(), cluster.getBoundariesIds());
+		return new Cluster(tree, cluster.getRootId(), cluster.getParentalClusterRootId(), cluster.getBoundariesIds());
 	}
 	
 	public void preRender(String treeLocation, String csvLocation, String distanceMatrixLocation, Path rBinary, Path rScripts) throws IOException {
@@ -163,11 +164,18 @@ public class PreRendering {
 		
 		System.err.println("Start calculations");
 		
+		/**
+		 * We need to keep track of the connection between clusters. Which cluster is connected to which other cluster?
+		 * To do this we create a hashmap that connects a root of a cluster (rootNode) to it's parent
+		 */
+		
+		Map<Node, Cluster> clusterToParent = new HashMap<Node, Cluster>();
+		
 		while(toDo.peek() != null) {
 			currentNode = toDo.pop();
 //			currentNode = tree.getNodeById(1);
 			// Do multi thread here
-			Cluster cluster = BestClusterMultiThread.getBestCluster(rBinary, rScripts, Paths.get(basePath), minimumClusterSize, 50, 2, tree, currentNode, distanceInterface);
+			Cluster cluster = BestClusterMultiThread.getBestCluster(rBinary, rScripts, Paths.get(basePath), minimumClusterSize, 50, 2, tree, currentNode, clusterToParent.get(currentNode), distanceInterface);
 			if(cluster != null) {
 				this.writeClusterToXML(cluster);
 				System.err.println("Cluster " + cluster.getRootId() + " structure written to file");
@@ -183,26 +191,26 @@ public class PreRendering {
 					// Inner node
 					if(node.getImmediateChildren().size() != 0) {
 						toDo.add(tree.getNodeById(node.getId()));
+						clusterToParent.put(node, cluster);
 					// Leaf
 					} else {
 						// Include NA, we can later on always decide not to show it. We can at least render it
 						this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, true);
-						this.writeClusterToXML(new Cluster(tree, node, new ArrayList<Node>()));
+						this.writeClusterToXML(new Cluster(tree, node, cluster, new ArrayList<Node>()));
 					}
 				}
 				// Case that the amount of nodes is too small to make a cluster
 			} else {
-				List<Node> boundaries = new ArrayList<Node>();
-				for(Node node:tree.getLeaves(currentNode)) {
-					// Include NA, we can later on always decide not to show it. We can at least render it
-					this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, true);
-					boundaries.add(node);
-					this.writeClusterToXML(new Cluster(tree, node, new ArrayList<Node>()));
-				}
-				Cluster fakeCluster = new Cluster(tree, currentNode, boundaries);
+				Cluster fakeCluster = new Cluster(tree, currentNode, clusterToParent.get(currentNode), tree.getLeaves(currentNode));
 				this.writeClusterToXML(fakeCluster);
 				// Include NA, we can later on always decide not to show it. We can at least render it
 				this.prepareCSV(fakeCluster.getRoot().getId(), tree.getLeaves(fakeCluster.getRoot()), csvLocation, true);
+
+				for(Node node:tree.getLeaves(currentNode)) {
+					// Include NA, we can later on always decide not to show it. We can at least render it
+					this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, true);
+					this.writeClusterToXML(new Cluster(tree, node, fakeCluster, new ArrayList<Node>()));
+				}
 			}
 //			break;
 //			toDo.addAll(tempTree.getLeaves());
