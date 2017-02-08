@@ -1,7 +1,7 @@
 package be.kuleuven.rega.comparator;
 
 public enum SortingOptions {
-	ALPHABETICAL_ASCENDING("Alphabetical - Ascending [A-Z]"), ALPHABETICAL_DESCENDING("Alphabetical - Descending [Z-A]"), FREQUENCY_ASCENDING("Frequency - Ascending"), FREQUENCY_DESCENDING("Frequency - Descending");
+	ALPHABETICAL_ASCENDING("Alphabetical - [A-Z]"), ALPHABETICAL_DESCENDING("Alphabetical - [Z-A]"), FREQUENCY_ASCENDING("Frequency - Ascending"), FREQUENCY_DESCENDING("Frequency - Descending");
 	private final String description;
 	
 	private SortingOptions(String description) {
