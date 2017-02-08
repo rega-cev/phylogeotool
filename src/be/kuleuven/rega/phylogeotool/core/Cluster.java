@@ -24,7 +24,10 @@ public class Cluster {
 		this.tree = tree;
 		this.root = root;
 		this.rootId = root.getId();
-		this.parentalClusterId = parentalCluster.getRootId();
+		if(parentalCluster != null)
+			this.parentalClusterId = parentalCluster.getRootId();
+		else
+			this.parentalClusterId = 1;
 		this.boundaries = boundaries;
 		this.boundariesIds = new ArrayList<Integer>();
 		for(Node boundary:boundaries) {
