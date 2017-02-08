@@ -157,7 +157,6 @@ public class ColorClusters {
 				tree = null;
 			}
 		}
-		try {
 			if (graphicsFormat == null) {
 				NexusExporter.export(cluster, tree, new OutputStreamWriter(output), minimumClusterSize, colorTree);
 			} else {
@@ -210,6 +209,8 @@ public class ColorClusters {
 				
 				try {
 					FigTreeFrame.exportGraphics(graphicsFormat, ((TreePane) comp), output);
+				} catch (IOException io) {
+					io.printStackTrace();
 				} catch (DocumentException e) {
 					e.printStackTrace();
 				}
@@ -224,9 +225,6 @@ public class ColorClusters {
 				// fileName + ".png");
 				// ImageIO.write(bi, "PNG", file);
 			}
-		} catch (IOException ioe) {
-			throw new RuntimeException("Error writing graphic file: " + ioe);
-		}
 	}
 
 }
