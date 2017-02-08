@@ -18,12 +18,18 @@ firstDerivative <- 0
 
 # Calculate for the first point
 # (y2-y1)/(x2-x1)
-x <- c(1:(length(SDR[[1]]) - 1))
+x <- c(1:(length(SDR[[1]])))
 firstDerivative[1] <- (as.numeric(SDR[[1]][2]) - as.numeric(SDR[[1]][1]))
+print(paste0("1", 1, ": value: ", firstDerivative[1]))
 for (i in 2:(length(SDR[[1]]) - 1) ) {
   firstDerivative[i] <- ((as.numeric(SDR[[1]][i+1]) - as.numeric(SDR[[1]][i-1])) / ((i+1) - (i-1)))
   print(paste0("i", i, ": value: ", firstDerivative[i]))
 }
+# Calculate the last point
+# (yn-yn-1)/(xn-xn-1)
+firstDerivative[length(SDR[[1]])] <- ((as.numeric(SDR[[1]][length(SDR[[1]])]) - as.numeric(SDR[[1]][length(SDR[[1]]) - 1])) / (length(SDR[[1]]) - (length(SDR[[1]]) - 1)))
+print(paste0("i", length(SDR[[1]]), ": value: ", firstDerivative[length(SDR[[1]])]))
+
 sum(firstDerivative)
 firstDerivativeDF <- matrix(unlist(firstDerivative))
 png(file=paste(paste(outputFolder,"/r/",clusterId, sep=""),"_firstderivative.png", sep=""), bg="transparent")
