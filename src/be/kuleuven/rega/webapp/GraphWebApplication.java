@@ -208,8 +208,8 @@ public class GraphWebApplication extends WApplication {
 		
 //		graphWidget.setMaximumSize(new WLength(100.0, Unit.Percentage), new WLength(100.0, Unit.Percentage));
 		graphWidget.setMinimumSize(new WLength(500.0, Unit.Pixel), new WLength(100.0, Unit.Percentage));
-		wPushButton.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(15));
-		pplaceButton.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(15));
+//		wPushButton.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(15));
+//		pplaceButton.setMaximumSize(new WLength(50.0, Unit.Percentage), new WLength(15));
 //		treeLevel.setMaximumSize(new WLength(1.0, Unit.Pixel), new WLength(15));
 //		treeLevel.setWidth(new WLength(30.0));
 		//TODO: Change this exact value
