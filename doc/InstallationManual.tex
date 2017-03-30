@@ -99,6 +99,25 @@ A comma-separated value (CSV) file, containing an ID column that contains IDs th
 Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as geographic location, virus genotype/subtype, patient attributes (age, ethnicity), \ldots \\
 Information on the geography of taxa can be visualized in a map (Google Charts). For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (more information: section \ref{sssec:config_file}). The geographic values need to be formatted with the code or country name as defined in the ISO\_3166-1\_alpha-2 standard \footnote{\url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}}.  
 
+\subsubsection{Extra prerequisites for PPlacer support}
+\subsubsection*{Taxtastic}
+The installation of 'Taxtastic' is explained at \href{http://fhcrc.github.io/taxtastic/installation.html}.
+The easiest way is to run:
+\begin{verbatim}
+pip install taxtastic
+\end{verbatim}
+Installation can be tested, running
+\begin{verbatim}
+taxit -h
+\end{verbatim}
+\subsubsection*{Mafft}
+Mafft is being used to profile align the newly uploaded sequences to our reference dataset. It can easily be installed through the Ubuntu package manager.
+\begin{verbatim}
+sudo apt-get install mafft
+\end{verbatim}
+\subsubsection*{PPlacer}
+The binary of the lastest version of PPlacer can be downloaded from \href{github.com/matsen/pplacer/releases}.
+
 \subsection{Building the project - Ubuntu Linux}
 
 \subsubsection{Clone the git repository}
@@ -278,6 +297,7 @@ sudo service tomcat7 restart
 This enables browser access to a localhost version of the PhyloGeoTool.
 Open a browser and enter the following URL: \url{http://localhost:8080/phylogeotool/PhyloGeoTool}.
 The browser should show something similar to Figure \ref{fig:01}.
+
 
 
 \begin{figure}[!htbp]
