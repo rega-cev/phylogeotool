@@ -53,7 +53,7 @@ User Reference Manual} % Subtitle
 
 This document explains how to use the PhyloGeoTool software. PhyloGeoTool is a web application that is installed on a web server, and can be accessed via a web browser. 
 Most users will access a publicly accessible instance of the PhyloGeoTool that was already deployed on a web server. 
-An example of a publicly available instance of the PhyloGeoTool that allows to explore a large HIV cohort (i.e. EuResist \cite{Zazzi2012}) can be found at \url{http://regatools.med.kuleuven.be/phylogeotool/PhyloGeoTool}.
+An example of a publicly available instance of the PhyloGeoTool that allows to explore a large HIV cohort (i.e. EuResist \cite{Zazzi2012}) can be found at \url{http://phylogeotool.gbiomed.kuleuven.be/euresist/}.
 It is however also possible to install your own instance of the PhyloGeoTool; for this, we refer to the installation manual \footnote{(TODO: add link)}.
 
 
@@ -62,13 +62,14 @@ It is however also possible to install your own instance of the PhyloGeoTool; fo
 PhyloGeoTool implements a visual method to explore large phylogenetic trees and to depict characteristics of strains and clades, including their geographic context and other attributes, in an interactive way.
 The tool also provides the possibility to insert new virus strains into the existing phylogenetic tree, allowing users to gain insight in the placement of such new strains without the need to reconstruct the phylogeny.
 
-A particular PhyloGeoTool instance can be used by navigating the browser to the URL at which this instance has been deployed. For example, the aforementioned public EuResist instance of the PhyloGeoTool is deployed at \url{http://regatools.med.kuleuven.be/phylogeotool/PhyloGeoTool}, and thus, you should navigate your browser to this exact URL.
+A particular PhyloGeoTool instance can be used by navigating the browser to the URL at which this instance has been deployed. For example, the aforementioned public EuResist instance of the PhyloGeoTool is deployed at \url{http://phylogeotool.gbiomed.kuleuven.be/euresist/}, and thus, you should navigate your browser to this exact URL.
 \footnote{TODO: explaining what instances are all about, is easier if you can mention more than 1 instance. 
 Perhaps Lize will have a HCV/DENV instance ready soon, that we can add here, but maybe we should both deploy the EuResist and PT tool, such that we can list them in this section.}
 Note that any browser (Chrome, Firefox, Internet Explorer) should do; if you experience any problems with your browser, please contact us (\footnote{TODO: link to the contact section}).
 
 
 \section{Core functionality and user interface}
+\label{sec:core_func_user_interface}
 %TODO: update all images when the software is ready
 %TODO: all images are 400x400px, why not use a percentage, and let the images be their natural dimenions?
 \begin{figure}[H]
@@ -84,7 +85,8 @@ The PhyloGeoTool is divided into different panels (see Figure \ref{fig:initialvi
 \begin{itemize}
   \item The top left panel shows a map where each country is colored according to a gradient, where a darker color signifies that more sequences are originating from this country. 
   A drop-down box allows you to select the geographic region on which you want to focus (e.g. Europe, North America, \ldots).
-  \item The bottom left panel shows a bar chart which shows a certain attribute (i.e. characteristic) from all sequences currently visualized in the tree panel on the right. 
+  \item The bottom left panel shows a histogram or bar chart depending on the chosen attribute. If the attribute is represented by a continuous dataset, a histogram will be shown while a discrete dataset is displayed by a bar chart plot.
+  The histogram or bar chart shows a certain attribute (i.e. characteristic) from all sequences currently visualized in the tree panel on the right. 
   A drop-down box allows you to select the attribute to be plotted on the bar chart. 
   The attributes available for selection depend on the attributes made available by the PhyloGeoTool instance.
   \item The right panel shows a top-level view of the clustering of the tree (initially the root of the tree), as determined by our clustering algorithm. %GB: need to say where the readers can find our clustering algorithm
@@ -101,13 +103,13 @@ The PhyloGeoTool is divided into different panels (see Figure \ref{fig:initialvi
 \label{fig:hovernode}
 \end{figure}
 
-When the user hovers the mouse over a node in the cluster phylogeny, both the attribute bar chart and the map are updated. 
-The attribute bar chart will be extended (i.e. extra bars will be shown for each value) with the data that is located in the cluster over which the mouse hovers. %GB: extended?
+When the user hovers the mouse over a node in the cluster phylogeny, both the attribute histogram or bar chart and the map are updated. 
+The attribute chart will be extended (i.e. extra bars will be shown on top of the original chart for each value) with the data that is located in the cluster over which the mouse hovers. %GB: extended?
 The map, on the other hand, will only show the geographic distribution of the sequences found in the cluster over which the mouse hovers.
 
 When you click on a node in the clustered phylogenetic tree, the PhyloGeoTool will navigate to the clustering of this particular node (i.e. will zoom in on the node on the clustered phylogenetic tree).
 A counter on the bottom left of the cluster panel keeps track of the depth of the navigation. 
-As you can visit a cluster node by clicking it, you can go back to into your navigational path by using the browser’s ’Back’ button.
+As you can visit a cluster node by clicking it, you can go back to into your navigational path by using the browser's 'Back' button.
 This information is also shown when you hover over the '?' which is shown next to 'Level: '
 
 Additionally, the URL encodes the level of descent in the clustered phylogenetic tree. 
@@ -133,7 +135,7 @@ You can select your geographical region of interest in the drop-down box on top 
 \caption{Change the attribute in the drop down box}
 \label{fig:change_attr}
 \end{figure}
-You can select an attribute of interest in the drop-down box on top of the attribute bar chart (see Figure \ref{fig:change_attr}).
+You can select an attribute of interest in the drop-down box on top of the attribute chart (see Figure \ref{fig:change_attr}).
 
 
 \subsection{Visualize the phylogenetic tree}
@@ -145,16 +147,46 @@ You can select an attribute of interest in the drop-down box on top of the attri
 \label{fig:view_tree}
 \end{figure}
 
-When the 'View Tree' button (located at the top of the clustered phylogeny panel) is clicked, a pop-up window is shown (Figure \ref{fig:view_tree}) \footnote{(Update figure with current view)}that visualizes the phylogeny as a radial phylogenetic tree. 
-The colours in the radial tree correspond to the colours of the clusters in the panel showing the clustered phylogenetic tree. %GB: you alternate between American and British English in the document; do you prefer 'color' or 'colour'?
+\subsection{Export the phylogenetic tree}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.50]{images/export_tree.PNG}
+\vspace{-0.25cm}
+\caption{Form displaying the preferred settings to export the shown phylogenetic tree.}
+\label{fig:export_tree}
+\end{figure}
 
-From this window, the tree can be exported into various formats (PDF, SVG, NEXUS and PNG) by clicking on the 'Export' button. 
+When the 'View Tree' button (located at the top of the clustered phylogeny panel) is clicked, a pop-up window is shown (Figure \ref{fig:view_tree}) that visualizes the phylogeny as a radial phylogenetic tree. 
+The colours in the radial tree correspond to the colors of the clusters in the panel showing the clustered phylogenetic tree. %GB: you alternate between American and British English in the document; do you prefer 'color' or 'colour'?
+\break
+\break
+On the bottom of the popup window, there are two buttons: 'Export' and 'Exit'.
+The button with label 'Export' will call a window similar to the one shown in Figure \ref{fig:export_tree}. There are three options available that help to customize the export.
+\begin{itemize}  
+\item Color Tree
+\begin{itemize} 
+\item Yes: Download a phylogenetic tree where the clusters shown in the Phylogeotool are colored on top of it.
+\item No: Download a phylogenetic tree with no coloring.
+\end{itemize}
+\item Show node tips
+\begin{itemize} 
+\item Yes: Include leaf names in the phylogenetic tree.
+\item No: Do not include leaf names in the phylogenetic tree.
+\end{itemize}
+\item Output Format: The output format in which you want your tree to be downloaded
+\begin{itemize} 
+\item PDF
+\item PNG
+\item NEXUS
+\item SVG
+\end{itemize}
+\end{itemize}
+
 Note that exports in the NEXUS file format can be visualized in programs such as FigTree (\url{http://tree.bio.ed.ac.uk/software/figtree/}).  
-
 
 \subsection{Automated phylogenetic placement of sequences}
 Phylogenetic placement enables the placement of unknown query sequences onto an existing phylogenetic tree, without the need to re-compute the entire phylogeny (which is a time-consuming process, especially when a large number of sequences is involved). 
-In PhyloGeoTool, we use phylogenetic placement to position new sequences onto the phylogeny, in a reasonable amount of time (i.e. minutes). 
+In the PhyloGeoTool, we use phylogenetic placement to position new sequences onto the phylogeny, in a reasonable amount of time (i.e. minutes). 
 We implement this placement using the well-known pplacer software package \cite{Matsen2010} \footnote{(TODO: should we mention the type of score we use? likelihood-based/posterior-based?)}.
 
 To place your sequences on the cluster phylogeny, click the 'Phylo-place' button in the clustering window. 
@@ -176,7 +208,6 @@ There are two ways to add a new sequence to the tree:
 Currently, we only support the submission of 1 sequence at a time.
 If you submit more than 1 sequence to be added to the phylogenetic tree, a warning will be generated as shown in Figure \ref{fig:pplacer-warning}.
 
-
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.50]{images/pplacer-warning.png}
@@ -185,7 +216,16 @@ If you submit more than 1 sequence to be added to the phylogenetic tree, a warni
 \label{fig:pplacer-warning}
 \end{figure}
 
+Once the pplacer process finished you can review the result by clicking the link that is sent to you by email.
+You will be taken to the original PhyloGeoTool webpage (such as described in Section \ref{sec:core_func_user_interface}) with this difference that the cluster, which contains the pplaced sequence, is surrounded by a dashed line (see Figure \ref{fig:pplacer-view}). 
 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.1875]{images/pplaced_sequence.png}
+\vspace{-0.75cm}
+\caption{Start and main view of the PhyloGeoTool with a pplaced sequence.}
+\label{fig:pplacer-view}
+\end{figure}
 
 \section{Example: exploring a large HIV-1 dataset}
 
@@ -207,8 +247,8 @@ Video scenario:\\
 % once published: write something like 
 % Please cite ....
 
-Phylogeotool email, 
-
+The PhyloGeoTool is developed and maintained by the Rega Institute KU Leuven.
+You can contact us on \href{mailto:phylogeotool@kuleuven.be}{phylogeotool@kuleuven.be}
 
 
 
