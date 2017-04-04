@@ -67,8 +67,31 @@ public class GraphWidget extends WPaintedWidget {
 		this.addPreviousRootId(Integer.parseInt(rootNodeId));
 //		this.setTreeClustered(kMedoidsToPhylo.getGraph(fullTree, rootNode, nrClusters));
 		this.setCluster(facadeRequestData.getCluster(rootNodeId));
+		this.setBreadCrumb();
 			
 //		preRendering.writeTreeToXML(this.getTreeClustered());
+	}
+
+	public void setBreadCrumb() {
+		breadCrumb = 0;
+		if(!cluster.getRoot().equals(cluster.getTree().getRootNode())) {
+			Cluster tempCluster = cluster;
+			while(tempCluster.getRoot() != cluster.getTree().getRootNode()) {
+				breadCrumb++;
+				tempCluster = facadeRequestData.getCluster(Integer.toString(tempCluster.getParentalClusterRootId()));
+			}
+		} else {
+			breadCrumb = 0;
+		}
+		System.out.println("Breadcrumb: " + breadCrumb);
+	}
+	
+	public void setBreadCrumb(int breadCrumb) {
+		this.breadCrumb = breadCrumb;
+	}
+	
+	public int getBreadCrumb() {
+		return this.breadCrumb;
 	}
 
 	public Integer getPreviousRootId() {
@@ -303,10 +326,11 @@ public class GraphWidget extends WPaintedWidget {
 		WApplication.getInstance().setInternalPath("/root_" + nodeId);
 //		WApplication.getInstance().getInternalPath();
 		switch(deeper) {
-			case -1: treeLevel.setText("Level: " + ++breadCrumb);break;
-			case 0:  treeLevel.setText("Level: " + breadCrumb);break;
-			case 1:  treeLevel.setText("Level: " + --breadCrumb);break;
+			case -1: setBreadCrumb(++breadCrumb);break;
+			case 0:  break;
+			case 1:  setBreadCrumb(--breadCrumb);break;
 		}
+		treeLevel.setText("Level: " + breadCrumb);
 		this.setPreviousClusterID(id);
 		update();
 	}

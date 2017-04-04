@@ -196,7 +196,7 @@ public class GraphWebApplication extends WApplication {
 		WGroupBox wGroupBox = new WGroupBox();
 		wGroupBox.setMaximumSize(new WLength(200), new WLength(15));
 		treeLevel = new WLabel("Level: ");
-		treeLevel.setText(treeLevel.getText() + String.valueOf(graphWidget.getPreviousClusterID()));
+		treeLevel.setText(treeLevel.getText() + String.valueOf(graphWidget.getBreadCrumb()));
 		treeLevel.setMargin(7, Side.Right);
 		WImage wImage = new WImage(new WLink(getServletContext().getContextPath().concat("/images/question_mark.png")));
 		wImage.setToolTip("Use the webbrowser back button to move up one level. Use the webbrowser forward button to move down again.");
