@@ -19,12 +19,9 @@ import javax.servlet.ServletContext;
 import be.kuleuven.rega.comparator.SortingOptions;
 import be.kuleuven.rega.form.MyComboBox;
 import be.kuleuven.rega.phylogeotool.core.Node;
-import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
 import be.kuleuven.rega.phylogeotool.pplacer.PPlacer;
-import be.kuleuven.rega.phylogeotool.pplacer.StreamGobbler;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
-import be.kuleuven.rega.phylogeotool.treeexporter.TreeExportJobScheduler;
 import be.kuleuven.rega.prerendering.FacadeRequestData;
 import be.kuleuven.rega.prerendering.PreRendering;
 import be.kuleuven.rega.url.UrlManipulator;
@@ -48,7 +45,6 @@ import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WCheckBox;
 import eu.webtoolkit.jwt.WColor;
 import eu.webtoolkit.jwt.WComboBox;
-import eu.webtoolkit.jwt.WCssTextRule;
 import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WEnvironment;
 import eu.webtoolkit.jwt.WGroupBox;
@@ -132,7 +128,7 @@ public class GraphWebApplication extends WApplication {
 		WVBoxLayout rootLayout = new WVBoxLayout(this.getRoot());
 		// Added for design
 		rootLayout.setContentsMargins(2, 0, 2, 2);
-		rootLayout.setSpacing(-6);
+		rootLayout.setSpacing(-5);
 		WTemplate header = createHeader();
 		header.setMargin(-2, EnumSet.of(Side.Right, Side.Left));
 		rootLayout.addWidget(header);
@@ -170,7 +166,7 @@ public class GraphWebApplication extends WApplication {
 			}
 		});
 		
-		WPushButton pplaceButton = new WPushButton("Phylo-place");
+		WPushButton pplaceButton = new WPushButton("Place your sequence");
 		if(Settings.getInstance().getPPlacerSupport()) {
 			pplaceButton.clicked().addListener(this, new Signal.Listener() {
 				public void trigger() {
@@ -555,14 +551,13 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	private void setCSS() {
-		this.getStyleSheet().addRule(new WCssTextRule("body", "background-color: #BEBEBE"));
-		this.getStyleSheet().addRule(new WCssTextRule(".label", "background: #FFFFFF;margin-left: 0px; margin-top: 0px;border: 0px;"));
-//		this.getStyleSheet().addRule(new WCssTextRule(".card", "background: #FFFFFF;margin-left: 0px; margin-top: 0px; border: 0px;box-shadow: 5px 0px 15px #444444;"));
-//		this.getStyleSheet().addRule(new WCssTextRule(".card", "background: #FFFFFF;margin-left: 0px; margin-top: 0px; border: 0px;box-shadow: 5px 0px 5px #444444;"));
-		this.getStyleSheet().addRule(new WCssTextRule(".card", "background: #FFFFFF;margin-left: 0px; margin-top: 0px; border: 0px"));
-		this.getStyleSheet().addRule(new WCssTextRule(".nostyle", "margin-left: 0px; margin-top: 0px; border: 0px"));
-//		this.getStyleSheet().addRule(new WCssTextRule(".tableDialog", "font-weight: bold; border-spacing: 10px 10px; border-collapse: separate"));
-		this.getStyleSheet().addRule(new WCssTextRule(".tableDialog", "margin-top: -15px; margin-left: -15px; border-spacing: 10px 10px; border-collapse: separate"));
+//		this.getStyleSheet().addRule(new WCssTextRule("body", "background-color: #BEBEBE"));
+//		this.getStyleSheet().addRule(new WCssTextRule("button", "font-size: 14px;"));
+//		this.getStyleSheet().addRule(new WCssTextRule(".label", "font-size: 18px;background: #FFFFFF;margin-left: 0px; margin-top: 0px;border: 0px;"));
+//		this.getStyleSheet().addRule(new WCssTextRule(".card", "background: #FFFFFF;margin-left: 0px; margin-top: 0px; border: 0px"));
+//		this.getStyleSheet().addRule(new WCssTextRule(".nostyle", "margin-left: 0px; margin-top: 0px; border: 0px"));
+//		this.getStyleSheet().addRule(new WCssTextRule(".tableDialog", "margin-top: -15px; margin-left: -15px; border-spacing: 10px 10px; border-collapse: separate"));
+		this.useStyleSheet(new WLink(getServletContext().getContextPath().concat("/style/stylesheet.css")));
 	}
 	
 //	private final void showReport(List<String> ids, List<String> headersToShow) {

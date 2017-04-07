@@ -83,7 +83,6 @@ public class GraphWidget extends WPaintedWidget {
 		} else {
 			breadCrumb = 0;
 		}
-		System.out.println("Breadcrumb: " + breadCrumb);
 	}
 	
 	public void setBreadCrumb(int breadCrumb) {
