@@ -6,4 +6,5 @@ lib/EUResist
 lib/EUResistCorrect
 lib/EwoutTrees
 lib/Test
+src/com/neovisionaries/i18n
 *.DS_STORE
