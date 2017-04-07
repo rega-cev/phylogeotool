@@ -102,7 +102,18 @@ Information on the geography of taxa can be visualized in a map (Google Charts).
 \subsubsection{Extra prerequisites for PPlacer support}
 \subsubsection*{Taxtastic}
 The installation of 'Taxtastic' is explained at \url{http://fhcrc.github.io/taxtastic/installation.html}.
-The easiest way is to run:
+There are two prerequisites to this installation.
+\begin{enumerate}
+\item pip. If pip isn't installed it can be done running the following command:
+\begin{verbatim}
+sudo apt-get install python-pip
+\end{verbatim}
+\item easy\textunderscore install. If easy\textunderscore install isn't installed it can be done running the following command:
+\begin{verbatim}
+sudo apt-get install python-setuptools
+\end{verbatim}
+\end{enumerate}
+Finally the installation of 'Taxtastic' shouldn't be more than running the command:
 \begin{verbatim}
 pip install taxtastic
 \end{verbatim}
@@ -269,7 +280,20 @@ Edit the global-conf.xml file to correctly set up all the necessary paths, examp
   Indication if PPlacer should be supported in the PhyloGeoTool
  -->
  <property name="pplacer_support">
- true
+   true
+ </property>
+ 
+ <!-- Statistics Support  Indication if you want to offer the possibility 
+ to users to download the generated statistics files.
+ -->
+ <property name="statistics_support">
+   true
+ </property>
+ 
+ <!-- Full url that users should use to navigate to the tool. 
+ This property is used in the mailing function of PPlacer. -->
+ <property name="full_url">
+        http://localhost:8080/phylogeotool/PhyloGeoTool/
  </property>
 
  <!--
