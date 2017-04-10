@@ -1,4 +1,6 @@
-pdflatex InstallManual.tex
-bibtex InstallManual.aux
-pdflatex InstallManual.tex
-pdflatex InstallManual.tex
+fn=InstallationManual
+
+pdflatex $fn.tex
+bibtex $fn.aux
+pdflatex $fn.tex
+pdflatex $fn.tex
