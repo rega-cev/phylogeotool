@@ -36,7 +36,7 @@ Installation Reference Manual} % Subtitle
 \author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, Guy Baele} % Author
 \\{\textit{Rega Institute for Medical Research, KU Leuven}}} % Institution
 
-\date{September 2016} % Date
+\date{April 2017} % Date
 
 %----------------------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ Installation Reference Manual} % Subtitle
 \section{Installation}
 
 \subsection{Using pre-built JAR files}
-If you don't want to build the JARs/WAR from source, you can skip the following sections and proceed to section \ref{sec:jars}.
+If you don't want to build the JARs/WAR from source, you can skip the following sections and proceed to section \ref{sec:dm}.
 
 \subsection{Prerequisites for building your own}
 
@@ -67,7 +67,7 @@ sudo apt-get install oracle-java8-installer
 \end{verbatim}
 
 \subsubsection*{Tomcat}
-Download and install the latest Tomcat version from \url{http://tomcat.apache.org}.
+Download and install the latest Tomcat version from \url{http://tomcat.apache.org} or install it using apt-get as follows:
 For example:
 \begin{verbatim}
 sudo apt-get update
@@ -84,7 +84,7 @@ sudo apt-get install git-all
 \end{verbatim}
 
 \subsubsection*{Ant}
-Download and install the newest Ant version from \url{http://ant.apache.org/} as we will use it to build our project.
+Download and install the latest Ant version from \url{http://ant.apache.org/} as we will use it to build our project.
 The current version of PhyloGeoTool was built using Ant 1.9.4.
 Ant can be installed as follows:
 \begin{verbatim}
@@ -92,11 +92,11 @@ sudo apt-get install ant
 \end{verbatim}
 
 \subsubsection*{Phylogenetic tree}
-A rooted binary phylogenetic tree in either Nexus or Newick format, which may or may not be time-stamped.
+A rooted binary phylogenetic tree in either Nexus or Newick format, which can be time-stamped but this is not mandatory.
 
 \subsubsection*{CSV file}
 A comma-separated value (CSV) file, containing an ID column that contains IDs that correspond to the taxa names of the provided phylogenetic tree.
-Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as geographic location, virus genotype/subtype, patient attributes (age, ethnicity), \ldots \\
+Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as geographic location, virus genotype/subtype, patient attributes (age, ethnicity, \ldots), \ldots \\
 Information on the geography of taxa can be visualized in a map (Google Charts). For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (more information: section \ref{sssec:config_file}). The geographic values need to be formatted with the code or country name as defined in the ISO\_3166-1\_alpha-2 standard \footnote{\url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}}.  
 
 \subsubsection{Extra prerequisites for PPlacer support}
@@ -117,12 +117,13 @@ Finally the installation of 'Taxtastic' shouldn't be more than running the comma
 \begin{verbatim}
 pip install taxtastic
 \end{verbatim}
-Installation can be tested, running
+Installation can be tested by running:
 \begin{verbatim}
 taxit -h
 \end{verbatim}
 \subsubsection*{Mafft}
-Mafft is being used to profile align the newly uploaded sequences to our reference dataset. It can easily be installed through the Ubuntu package manager.
+Mafft is being used to profile align the newly uploaded sequences to our reference dataset. 
+It can easily be installed through the Ubuntu package manager:
 \begin{verbatim}
 sudo apt-get install mafft
 \end{verbatim}
@@ -158,7 +159,7 @@ java -jar DistanceMatrix.jar tree.newick distances.csv
 
 
 \subsubsection{PreRender.jar}
-A major goal of the PhyloGeoTool is to cluster the tree index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree. 
+A major goal of the PhyloGeoTool is to cluster the tree and to index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree. 
 However, this computation can be performed before the installation of the web-tool, using PreRender.jar and making use of the DistanceMatrix.jar, allowing the web-tool to render both clusters and annotations instantaneously.
 
 PreRender.jar takes the following arguments: 
@@ -167,16 +168,15 @@ PreRender.jar takes the following arguments:
 \item /path/to/csvFile: Link to the csv file that connects nodes in the tool to attributes. Note: The id in the csv file has to be the same as the id of the nodes in the tree.
 \item /path/to/distance\_matrix: Link to the distance matrix (see section \ref{sec:dm}) that was generated from this tree.
 \item /path/to/folder\_output: Link to the folder where this jar can write its resulting tree files.
-\item /path/to/rBinary: Link to the exact location of the executable to run R 
-\item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R
+\item /path/to/rBinary: Link to the exact location of the executable to run R.
+\item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R.
 \end{itemize}
 PreRender.jar will then create the necessary directories in the folder with name `folder\_output'.
 If those directories already exist, a warning is issued to the user and the process will be aborted.
-
 For example, the following command uses PreRender.jar to perform all the necessary clustering steps (which can be time-consuming) so that the PhyloGeoTool doesn't have to perform these at run time: 
 \begin{verbatim}
 java -jar PreRender.jar phylogenetic.tree csvFile
-distance\_matrix folder\_output rBinary folder\_rScripts
+distance_matrix folder_output rBinary folder_rScripts
 \end{verbatim}
 
 
@@ -191,8 +191,6 @@ touch global-conf.xml
 
 An example of such a configuration file can be found here: \url{https://github.com/rega-cev/phylogeotool/blob/master/examples/global-conf.xml}.
 In the XML file, we assume a user name 'phylogeo' to perform the installation.
-
-%GB: Ewout, can you replace the XML code below by the latest version of such a global-conf.xml file?
 Edit the global-conf.xml file to correctly set up all the necessary paths, example content of global-conf.xml is shown here (assuming that all the data resides in subfolders of /Users/phylogeo/Documents/):
 \begin{verbatim}
 <?xml version="1.0" encoding="UTF-8"?>
@@ -223,7 +221,7 @@ Edit the global-conf.xml file to correctly set up all the necessary paths, examp
   <!-- alignmentFile
    Pointer to the location of the alignment file that was used 
    to build the phylogenetic tree used in this tool.
-   This is only needed in case the user of PPlacer 
+   This is only needed in case the use of PPlacer 
    should be supported in the tool.
   -->
   <property name="alignmentFile">
@@ -310,7 +308,7 @@ Edit the global-conf.xml file to correctly set up all the necessary paths, examp
 
 
 
-\subsubsection{Start Tomcat server and load phylogeotool}
+\subsubsection{Start Tomcat server and load PhyloGeoTool}
 
 Copy the phylogeotool-01.war to the webapps folder of Tomcat and start Tomcat:
 \begin{verbatim}
