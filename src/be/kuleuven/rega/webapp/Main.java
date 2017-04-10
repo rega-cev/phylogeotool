@@ -60,6 +60,7 @@ public class Main extends WtServlet implements javax.servlet.ServletContextListe
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.err.println("Phylogeotool started");
+		Settings.getInstance(arg0.getServletContext());
 		ReadTree.setJeblTree(Settings.getInstance().getPhyloTree());
 //		System.out.println(ReadTree.getJeblTree().getTaxa().size());
 		ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
