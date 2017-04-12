@@ -38,11 +38,45 @@
   </property>
 
   <!-- scriptFolder
-   Pointer to the location of the shell scripts that are used to to initiate the PPlacer
-   This folder contains init.sh, place.sh
+   Pointer to the directory where the shell scripts for pplacer can be created. Make sure this folder is writable.
   -->
   <property name="scriptFolder">
     /Users/phylogeo/Documents/PPlacer
+  </property>
+  
+  <!-- mafft binary
+    Pointer to the location of the binary for MAFFT
+  -->
+  <property name="mafftBinary">
+    /usr/local/bin/mafft
+  </property>
+
+  <!-- taxit binary
+    Pointer to the location of the binary for taxit 
+  -->
+  <property name="taxitBinary">
+    /usr/local/bin/taxit
+  </property>
+  
+  <!-- pplacer binary
+    Pointer to the location of the binary for pplacer
+  -->
+  <property name="pplacerBinary">
+    /Users/phylogeo/Documents/pplacer-Darwin-v1.1.alpha17-6-g5cecf99/pplacer
+  </property>
+
+  <!-- guppy binary
+    Pointer to the location of the binary for guppy (part of the pplacer software package)
+  -->
+  <property name="guppyBinary">
+    /Users/phylogeo/Documents/pplacer-Darwin-v1.1.alpha17-6-g5cecf99/guppy
+  </property>
+  
+  <!-- rBinary (Optional. Only needed if data wasn't prerendered)
+   Pointer to the exact location of your R installation
+  -->
+  <property name="rBinary">
+    /usr/local/bin/Rscript
   </property>
 
 

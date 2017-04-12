@@ -143,6 +143,22 @@ public class Settings {
 		return visualizeGeography;
 	}
 	
+	public String getMafftBinary() {
+		return mafftBinary;
+	}
+	
+	public String getTaxitBinary() {
+		return taxitBinary;
+	}
+	
+	public String getPPlacerBinary() {
+		return pplacerBinary;
+	}
+	
+	public String getGuppyBinary() {
+		return guppyBinary;
+	}
+	
 	public String getRBinary() {
 		return rBinary;
 	}
@@ -161,6 +177,10 @@ public class Settings {
 	private String alignmentLocation;
 	private String logfileLocation;
 	private String scriptFolder;
+	private String mafftBinary;
+	private String taxitBinary;
+	private String pplacerBinary;
+	private String guppyBinary;
 	private String rBinary;
 	private boolean showNAData;
 	private String visualizeGeography;
@@ -203,6 +223,14 @@ public class Settings {
             	logfileLocation = e.getValue().trim();
             } else if(name.equals("scriptFolder")) {
             	scriptFolder = e.getValue().trim();
+            } else if(name.equals("mafftBinary")){
+            	mafftBinary = e.getValue().trim();
+            } else if(name.equals("taxitBinary")){
+            	taxitBinary = e.getValue().trim();
+            } else if(name.equals("pplacerBinary")){
+            	pplacerBinary = e.getValue().trim();
+            } else if(name.equals("guppyBinary")){
+            	guppyBinary = e.getValue().trim();
             } else if(name.equals("rBinary")) {
             	rBinary = e.getValue().trim();
             } else if(name.equals("visualizeGeography")) {
