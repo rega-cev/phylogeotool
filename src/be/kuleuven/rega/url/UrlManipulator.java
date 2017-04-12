@@ -1,5 +1,8 @@
 package be.kuleuven.rega.url;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import eu.webtoolkit.jwt.WApplication;
 
 public class UrlManipulator {
@@ -9,8 +12,14 @@ public class UrlManipulator {
 	}
 	
 	public static String getId(String url) {
-		if (WApplication.getInstance().getInternalPath().contains("/root")) {
-			return url.split("/")[1].split("_")[1];
+//		System.out.println("Bookmark URL: " + WApplication.getInstance().getBookmarkUrl());
+//		System.out.println("Url: " + url);
+		String pattern = "/(\\d+)";
+		Pattern r = Pattern.compile(pattern);
+		Matcher m = r.matcher(url);
+		
+		if (m.find( )) {
+			return m.group(0).split("/")[1];
 		} else {
 			return "1";
 		}

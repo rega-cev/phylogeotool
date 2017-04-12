@@ -322,7 +322,11 @@ public class GraphWidget extends WPaintedWidget {
 		Cluster tempCluster = facadeRequestData.getCluster(nodeId);
 		this.setCluster(tempCluster);
 		//TODO: check if pplacer is part of link
-		WApplication.getInstance().setInternalPath("/root_" + nodeId);
+//		if(WApplication.getInstance().getBookmarkUrl().contains("root")) {
+//			WApplication.getInstance().setInternalPath("/" + nodeId);
+//		} else {
+		WApplication.getInstance().setInternalPath("/root/" + nodeId);
+//		}
 //		WApplication.getInstance().getInternalPath();
 		switch(deeper) {
 			case -1: setBreadCrumb(++breadCrumb);break;
