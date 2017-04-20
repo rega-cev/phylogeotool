@@ -28,14 +28,14 @@ else
 fi
 
 # Run mafft profile alignment
-/usr/local/bin/mafft --add "$sequence_file" --keeplength --thread -1 "$tmp_dir/alignment.short.fasta" > "$tmp_dir/alignment.block.fasta"
+${mafftBinary} --add "$sequence_file" --keeplength --thread -1 "$tmp_dir/alignment.short.fasta" > "$tmp_dir/alignment.block.fasta"
 # Bring everything to one line
 sed -e 's/\(^>.*$\)/#\1#/' "$tmp_dir/alignment.block.fasta" | tr -d "\r" | tr -d "\n" | sed -e 's/$/#/' | tr "#" "\n" | sed -e '/^$/d' > "$tmp_dir/alignment.full.fasta"
 # Write the new sequence to the file sequences.fasta
 tail -n 2 "$tmp_dir/alignment.full.fasta" > "$tmp_dir/sequences.fasta"
 
 # Create reference package
-/usr/local/bin/taxit create -a Rega -P "$tmp_dir/reference.refpkg" -l HIV-1 --aln-fasta "$alignment_file" --tree-stats "$log_file" --tree-file "$tree_file" 2>> $monitor_file
+${taxitBinary} create -a Rega -P "$tmp_dir/reference.refpkg" -l HIV-1 --aln-fasta "$alignment_file" --tree-stats "$log_file" --tree-file "$tree_file" 2>> $monitor_file
 
 echo "Reference package created"
 echo "Starting pplacing"
@@ -44,12 +44,12 @@ echo "Starting pplacing"
 # cp $sequence_file $tmp_dir 
 
 # Start PPlacer
-echo "/Users/phylogeo/Documents/pplacer-Darwin-v1.1.alpha17-6-g5cecf99/pplacer --mmap-file $tmp_dir --out-dir $tmp_dir -c $tmp_dir/reference.refpkg $sequence_file"
-/Users/phylogeo/Documents/pplacer-Darwin-v1.1.alpha17-6-g5cecf99/pplacer --mmap-file "$tmp_dir" --out-dir "$tmp_dir" -c "$tmp_dir/reference.refpkg" -o "$tmp_dir/sequences.jplace" "$tmp_dir/sequences.fasta"
+echo "${pplacerBinary} --mmap-file $tmp_dir --out-dir $tmp_dir -c $tmp_dir/reference.refpkg $sequence_file"
+${pplacerBinary} --mmap-file "$tmp_dir" --out-dir "$tmp_dir" -c "$tmp_dir/reference.refpkg" -o "$tmp_dir/sequences.jplace" "$tmp_dir/sequences.fasta"
 echo "PPlacing done"
 echo "Creating tree"
 
 #Start Guppy
-/Users/phylogeo/Documents/pplacer-Darwin-v1.1.alpha17-6-g5cecf99/guppy tog --out-dir "$tmp_dir" -o sequences.tog.tre "$tmp_dir/sequences.jplace" 2>> $monitor_file
+${guppyBinary} tog --out-dir "$tmp_dir" -o sequences.tog.tre "$tmp_dir/sequences.jplace" 2>> $monitor_file
 
 echo "Tree created at: $tmp_dir/sequences.tog.tre"

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -142,6 +143,22 @@ public class Settings {
 		return visualizeGeography;
 	}
 	
+	public String getMafftBinary() {
+		return mafftBinary;
+	}
+	
+	public String getTaxitBinary() {
+		return taxitBinary;
+	}
+	
+	public String getPPlacerBinary() {
+		return pplacerBinary;
+	}
+	
+	public String getGuppyBinary() {
+		return guppyBinary;
+	}
+	
 	public String getRBinary() {
 		return rBinary;
 	}
@@ -160,6 +177,10 @@ public class Settings {
 	private String alignmentLocation;
 	private String logfileLocation;
 	private String scriptFolder;
+	private String mafftBinary;
+	private String taxitBinary;
+	private String pplacerBinary;
+	private String guppyBinary;
 	private String rBinary;
 	private boolean showNAData;
 	private String visualizeGeography;
@@ -202,6 +223,14 @@ public class Settings {
             	logfileLocation = e.getValue().trim();
             } else if(name.equals("scriptFolder")) {
             	scriptFolder = e.getValue().trim();
+            } else if(name.equals("mafftBinary")){
+            	mafftBinary = e.getValue().trim();
+            } else if(name.equals("taxitBinary")){
+            	taxitBinary = e.getValue().trim();
+            } else if(name.equals("pplacerBinary")){
+            	pplacerBinary = e.getValue().trim();
+            } else if(name.equals("guppyBinary")){
+            	guppyBinary = e.getValue().trim();
             } else if(name.equals("rBinary")) {
             	rBinary = e.getValue().trim();
             } else if(name.equals("visualizeGeography")) {
@@ -253,28 +282,28 @@ public class Settings {
 //		PhyloClusterAnalysis.puzzleCommand = s.getTreePuzzleCmd();
 //		treeGraphCommand = s.getTreeGraphCmd();
 //	}
-
+    
 	public static Settings getInstance() {
 		if(settingsInstance != null)
 			return settingsInstance;
-		else
+		else {
 			return getInstance(null);
+		}
 	}
 	
 //	public static Settings getInstanceByPath(String configLocation) {
 //		return new Settings(new File(configLocation + File.separatorChar + "global-conf.xml"));
 //	}
 
-	public static Settings getInstance(ServletConfig config) {
+	public static Settings getInstance(ServletContext servletContext) {
+		String configFile = null;
+		String confDir = null;
         if(settingsInstance == null) {
-			String configFile = null;
-	        
-	        if (config != null) {
-	        	configFile = config.getInitParameter("configFile");
-	        	if (configFile != null) {
-	        		settingsInstance = new Settings(new File(configFile));
-	        		return settingsInstance;
-	        	}
+			confDir = servletContext.getInitParameter("conf-dir");
+			if(confDir != null & confDir != "") {
+				configFile = confDir + File.separatorChar + "global-conf.xml";
+	        	settingsInstance = new Settings(new File(configFile));
+	        	return settingsInstance;
 	        } 
 	        
 	//        if (configFile == null) {
@@ -282,16 +311,16 @@ public class Settings {
 	//        	configFile = System.getenv("REGA_GENOTYPE_CONF_DIR");
 	//        }
 	        
-	        if (configFile == null) {
+	        if (confDir == null) {
 	            String osName = System.getProperty("os.name");
 	            osName = osName.toLowerCase();
 	            if (osName.startsWith("windows"))
-	                configFile = "C:\\Program files\\phylogeotool\\";
+	            	confDir = "C:\\Program files\\phylogeotool\\";
 	            else
-	                configFile = "/etc/phylogeotool/";
+	            	confDir = "/etc/phylogeotool/";
 	        }
 	
-	       	configFile += File.separatorChar + "global-conf.xml";
+	       	configFile = confDir + File.separatorChar + "global-conf.xml";
 	        
 	        settingsInstance = new Settings(new File(configFile));
         }

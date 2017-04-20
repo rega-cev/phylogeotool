@@ -125,13 +125,13 @@ public class WBarChartMine extends Chart {
 			}
 			for(Map.Entry<String, Integer> entry:reduced_map.entrySet()) {
 				if(fullDataset.containsKey("NA")) {
-					hoveredModel.setData(columnNr - 2, 2, (Integer)hoveredModel.getData(columnNr - 2, 2) + entry.getValue());
+					hoveredModel.setData(columnNr - 1, 2, (Integer)hoveredModel.getData(columnNr - 1, 2) + entry.getValue());
 					// Because of flipping the graphs, we also need to lower the max height of the full dataset chart here
-					hoveredModel.setData(columnNr - 2, 1, (Integer)hoveredModel.getData(columnNr - 2, 1) - entry.getValue());
+					hoveredModel.setData(columnNr - 1, 1, (Integer)hoveredModel.getData(columnNr - 1, 1) - entry.getValue());
 				} else {
-						hoveredModel.setData(columnNr - 1, 2, (Integer)hoveredModel.getData(columnNr - 1, 2) + entry.getValue());
-						// Because of flipping the graphs, we also need to lower the max height of the full dataset chart here
-						hoveredModel.setData(columnNr - 1, 1, (Integer)hoveredModel.getData(columnNr - 1, 1) - entry.getValue());
+					hoveredModel.setData(columnNr, 2, (Integer)hoveredModel.getData(columnNr, 2) + entry.getValue());
+					// Because of flipping the graphs, we also need to lower the max height of the full dataset chart here
+					hoveredModel.setData(columnNr, 1, (Integer)hoveredModel.getData(columnNr, 1) - entry.getValue());
 				}
 			}
 			this.setSecondBarColor(wColor);

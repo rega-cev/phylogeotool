@@ -38,7 +38,7 @@ public class Mail {
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
 			message.setSubject("Your PPlacing job has finished");
 			message.setText("Dear User,"
-					+ "\n\n Your PPlacing job has recently finished and can be reviewed here: " + Settings.getInstance().getFull_url() + File.separator + "root_1?pplacer="
+					+ "\n\n Your PPlacing job has recently finished and can be reviewed here: " + Settings.getInstance().getFull_url() + File.separator + "root/1?pplacer="
 					+ pplacerId);
 
 			Transport.send(message);

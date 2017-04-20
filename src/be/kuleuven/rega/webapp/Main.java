@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
+import be.kuleuven.rega.phylogeotool.pplacer.GeneratePPlacerScript;
 import be.kuleuven.rega.phylogeotool.pplacer.JobScheduler;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
 import be.kuleuven.rega.phylogeotool.treeexporter.TreeExportJobScheduler;
@@ -60,6 +61,9 @@ public class Main extends WtServlet implements javax.servlet.ServletContextListe
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		System.err.println("Phylogeotool started");
+		Settings.getInstance(arg0.getServletContext());
+		GeneratePPlacerScript generatePPlacerScript = new GeneratePPlacerScript();
+		generatePPlacerScript.generateScript(arg0.getServletContext());
 		ReadTree.setJeblTree(Settings.getInstance().getPhyloTree());
 //		System.out.println(ReadTree.getJeblTree().getTaxa().size());
 		ReadTree.setTreeDrawTree(ReadTree.getJeblTree());
