@@ -5,6 +5,8 @@
 \usepackage{hyperref}
 \usepackage{float}
 
+\usepackage[british]{babel}
+
 \usepackage{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Required for accented characters
 \linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
@@ -30,8 +32,10 @@
 %	TITLE
 %----------------------------------------------------------------------------------------
 
+\hyphenation{Phylo-Geo-Tool}
+
 \title{\textbf{Phylogeotool}\\ % Title
-Installation Reference Manual} % Subtitle
+Installation Manual} % Subtitle
 
 \author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, Guy Baele} % Author
 \\{\textit{Rega Institute for Medical Research, KU Leuven}}} % Institution
@@ -49,298 +53,104 @@ Installation Reference Manual} % Subtitle
 \tableofcontents
 \newpage
 
+%TODO (PL): spell check
+%TODO (PL) mention which platforms are supported: windows, linux, macos
+%-> Ewout is this correct.
+
 \section{Installation}
+\subsection{Prerequisites}
+\subsection*{Java}
+Install the Java Development Kit (JDK) with version $\geq 1.7$.\\
 
-\subsection{Using pre-built JAR files}
-If you don't want to build the JARs/WAR from source, you can skip the following sections and proceed to section \ref{sec:dm}.
-
-\subsection{Prerequisites for building your own}
-
-\subsubsection*{Java}
-Download and install the newest Java Development Kit (JDK) from \url{http://www.oracle.com/technetwork/java/javase/downloads/index.html}.
-The current version of PhyloGeoTool was built using JDK 1.8.0\_31, but any Java version $>$7 should work.
-For example, on Ubuntu Linux, Oracle Java 8 can be installed as follows (although OpenJDK should work just fine):
+\noindent For example, on Ubuntu Linux, Oracle Java 8 can be installed as follows:
 \begin{verbatim} 
 sudo add-apt-repository ppa:webupd8team/java
 sudo apt-get update
 sudo apt-get install oracle-java8-installer
 \end{verbatim}
 
-\subsubsection*{Tomcat}
-Download and install the latest Tomcat version from \url{http://tomcat.apache.org} or install it using apt-get as follows:
-For example:
+\subsection*{Tomcat}
+Install Tomcat version $\geq 7$.\\
+
+\noindent For example, on Ubuntu Linux, Tomcat 7 can be installed as follows:
 \begin{verbatim}
 sudo apt-get update
 sudo apt-get install tomcat7
 \end{verbatim}
 
-\subsubsection*{Github}
-Download the code from \url{https://github.com/rega-cev/phylogeotool/}. 
-The project is currently still private. 
-During the trial period you can send an email to \href{mailto:phylogeotool@kuleuven.be}  {phylogeotool@kuleuven.be} with your Github account name to get read rights on the project.
-Git is readily available on most operating systems; if not, it can be installed as follows:
-\begin{verbatim}
-sudo apt-get install git-all
-\end{verbatim}
+%TODO (PL): add R?
 
-\subsubsection*{Ant}
-Download and install the latest Ant version from \url{http://ant.apache.org/} as we will use it to build our project.
-The current version of PhyloGeoTool was built using Ant 1.9.4.
-Ant can be installed as follows:
-\begin{verbatim}
-sudo apt-get install ant
-\end{verbatim}
+\subsection*{PPlacer and its dependencies}
+ Install the python package manager \textbf{pip}. \\
 
-\subsubsection*{Phylogenetic tree}
-A rooted binary phylogenetic tree in either Nexus or Newick format, which can be time-stamped but this is not mandatory.
-
-\subsubsection*{CSV file}
-A comma-separated value (CSV) file, containing an ID column that contains IDs that correspond to the taxa names of the provided phylogenetic tree.
-Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree, such as geographic location, virus genotype/subtype, patient attributes (age, ethnicity, \ldots), \ldots \\
-Information on the geography of taxa can be visualized in a map (Google Charts). For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (more information: section \ref{sssec:config_file}). The geographic values need to be formatted with the code or country name as defined in the ISO\_3166-1\_alpha-2 standard \footnote{\url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}}.  
-
-\subsubsection{Extra prerequisites for PPlacer support}
-\subsubsection*{Taxtastic}
-The installation of 'Taxtastic' is explained at \url{http://fhcrc.github.io/taxtastic/installation.html}.
-There are two prerequisites to this installation.
-\begin{enumerate}
-\item pip. If pip isn't installed it can be done running the following command:
+\noindent For example, on Ubuntu Linux, \textbf{pip} can be installed as follows:
 \begin{verbatim}
 sudo apt-get install python-pip
 \end{verbatim}
-\item easy\textunderscore install. If easy\textunderscore install isn't installed it can be done running the following command:
-\begin{verbatim}
-sudo apt-get install python-setuptools
-\end{verbatim}
-\end{enumerate}
-Finally the installation of 'Taxtastic' shouldn't be more than running the command:
-\begin{verbatim}
-pip install taxtastic
-\end{verbatim}
-Installation can be tested by running:
-\begin{verbatim}
-taxit -h
-\end{verbatim}
-\subsubsection*{Mafft}
-Mafft is being used to profile align the newly uploaded sequences to our reference dataset. 
-It can easily be installed through the Ubuntu package manager:
+
+\noindent Install \textbf{taxtastic} as explained at \url{http://fhcrc.github.io/taxtastic/installation.html}.\\
+
+\noindent Install \textbf{Mafft}  (TODO (Ewout): which version?) to align sequences to be classified by PPlacer. 
+For example, on Ubuntu Linux, Mafft can be installed as follows:
 \begin{verbatim}
 sudo apt-get install mafft
 \end{verbatim}
-\subsubsection*{PPlacer}
-The binary of the lastest version of PPlacer can be downloaded from \url{http://github.com/matsen/pplacer/releases}.
 
-\subsection{Building the project - Ubuntu Linux}
+\noindent Install PPlacer (TODO (Ewout): which version) (website: \url{http://github.com/matsen/pplacer/releases}).
 
-\subsubsection{Clone the git repository}
-We here outline the various steps necessary for a successful build of the project.
-The build process here is described as it was performed on an Ubuntu 14.04 LTS (Trusty Tahr) installation.
-\begin{itemize}
-\item Create an empty directory
-\item {In that directory, clone the git repository: 
-\begin{verbatim}
-git clone https://github.com/rega-cev/phylogeotool/
-cd phylogeotool
-ant
-\end{verbatim}
-\item This build process generates a phylogeotool-01.war, DistanceMatrix.jar and PreRender.jar in the dist directory.
-}
-\end{itemize}
+\subsubsection*{Phylogenetic tree}
+A rooted phylogenetic tree in either Nexus or Newick format. It is important that the tree is \textbf{binary}.
 
+\subsubsection*{CSV file}
+A comma-separated value (CSV) file, containing an ID column that contains identifiers that correspond to the taxa names of the provided phylogenetic tree.
+Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree. Examples of such annotations are: geographic location, virus genotype/subtype and patient attributes (age, ethnicity, \ldots). \\
+Information on the geography of taxa can be visualized in a map (Google Charts). For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (more information: section \ref{sssec:config_file}). The geographic values need to be formatted with the code or country name as defined in the ISO\_3166-1\_alpha-2 standard \footnote{\url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}}.
 
-\subsubsection{DistanceMatrix.jar}
-\label{sec:dm}
-This jar file contains a tool to create a distance matrix, which will be used in the next section, based on the phylogenetic tree that will be used in the PhyloGeoTool.
-DistanceMatrix.jar uses one input file, a phylogenetic tree to be used in the PhyloGeoTool, and will output the distance matrix that is derived from the phylogenetic tree.
-For example, the following command uses DistanceMatrix.jar to generate a distance matrix (to be stored in a file called distances.csv in the command below) from a previously reconstructed phylogenetic tree in Newick format: 
+\subsection{Create a distance matrix and determine clusters}
+A major goal of the PhyloGeoTool is to cluster the tree and to index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree (TODO (Ewout): computational complexity is ?). 
+However, this computation can be performed before the installation of the web-tool (using PreRender.jar).
+
+To be able to support this computation a distance matrix needs to be constructed (using DistanceMatrix.jar).
+Performing this clustering procedure before the installation of the web-tool, allows the web-tool to render both clusters and annotations instantaneously.
+To infer a distance matrix based from the phylogenetic tree, the program DistanceMatrix.jar is used. DistanceMatrix.jar can be downloaded from (TODO (Ewout): add link to website) or built from source (TODO (KT): refer to the proper section). The following command uses DistanceMatrix.jar to generate a distance matrix (to be stored in a file called distances.csv in the command below) from a previously constructed phylogenetic tree in Newick format (i.e. tree.newick): 
 \begin{verbatim}
 java -jar DistanceMatrix.jar tree.newick distances.csv
 \end{verbatim}
 
-
-\subsubsection{PreRender.jar}
-A major goal of the PhyloGeoTool is to cluster the tree and to index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree. 
-However, this computation can be performed before the installation of the web-tool, using PreRender.jar and making use of the DistanceMatrix.jar, allowing the web-tool to render both clusters and annotations instantaneously.
-
-PreRender.jar takes the following arguments: 
+To subsequently partition the tree in clusters, the program PreRender.jar is used. PreRender.jar can be downloaded from (TODO (Ewout): add link to website) or built from source (TODO(PL): refer to the proper section). PreRender.jar accepts the following parameters:
 \begin{itemize}
-\item /path/to/phylogenetic.tree: Link to the phylogenetic tree used in the PhyloGeoTool.
-\item /path/to/csvFile: Link to the csv file that connects nodes in the tool to attributes. Note: The id in the csv file has to be the same as the id of the nodes in the tree.
-\item /path/to/distance\_matrix: Link to the distance matrix (see section \ref{sec:dm}) that was generated from this tree.
-\item /path/to/folder\_output: Link to the folder where this jar can write its resulting tree files.
-\item /path/to/rBinary: Link to the exact location of the executable to run R.
-\item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R.
+\item tree.newick: Location of the phylogenetic tree used in the PhyloGeoTool.
+\item attributes.csv: Location of the CSV file that connects nodes in the tool to attributes \footnote{The identifiers in the CSV file (in the ID column) have to correspond with the identifiers of the nodes in the tree.}.
+\item distances.csv: Location of to the distance matrix that was generated from this tree.
+\item /path/to/cluster\_output: Location of the folder where this the PreRender.jar program has to write its output files (TODO (Ewout): list files here).
+\item /path/to/rBinary: Link to the exact location of the R executable.
+\item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R (TODO (GB): where can these scripts be faund ...).
 \end{itemize}
-PreRender.jar will then create the necessary directories in the folder with name `folder\_output'.
+PreRender.jar will create the necessary directories in the folder with name `folder\_output'.
 If those directories already exist, a warning is issued to the user and the process will be aborted.
-For example, the following command uses PreRender.jar to perform all the necessary clustering steps (which can be time-consuming) so that the PhyloGeoTool doesn't have to perform these at run time: 
+For example, the following command uses PreRender.jar to perform all the necessary clustering steps (which can be time-consuming) such that the PhyloGeoTool doesn't have to perform these at run time: 
 \begin{verbatim}
 java -jar PreRender.jar phylogenetic.tree csvFile
 distance_matrix folder_output rBinary folder_rScripts
 \end{verbatim}
 
 
-\subsubsection{Create a config file} \label{sssec:config_file}
+\subsection{Configure Phylogeotool} \label{sssec:config_file}
 
-In the /etc folder, create a directory `phylogeotool', which is the default location for the config file:
-\begin{verbatim}
-sudo mkdir phylogeotool
-cd phylogeotool
-touch global-conf.xml
-\end{verbatim}
+In the /etc folder, create a directory `phylogeotool', which is the default location for the config file (TODO: (Ewout) this is only for unix?, what for windows?). 
 
-An example of such a configuration file can be found here: \url{https://github.com/rega-cev/phylogeotool/blob/master/examples/global-conf.xml}.
+An example of such a configuration file can be found here: \url{https://github.com/rega-cev/phylogeotool/blob/master/examples/global-conf.xml}. In this example file all different configuration concepts are explained.
 In the XML file, we assume a user name 'phylogeo' to perform the installation.
-Edit the global-conf.xml file to correctly set up all the necessary paths, example content of global-conf.xml is shown here (assuming that all the data resides in subfolders of /Users/phylogeo/Documents/):
+Edit the example global-conf.xml file to correctly set up all the necessary paths.
+
+
+\subsection{Install the PhyloGeoTool WAR file in Tomcat}
+The PhyloGeoTool WAR file (i.e. phylogeotool.war) can be downloaded from (TODO(Ewout): add link to website) or built from source (TODO (PL): refer to the proper section). 
+
+%TODO (PL): change ant to generate a war with name phylogeotool.war
+Copy the phylogeotool.war to the webapps folder of Tomcat and start (or restart) Tomcat:
 \begin{verbatim}
-<?xml version="1.0" encoding="UTF-8"?>
-<phylogeotool-settings>
-  <!-- basePath
-     Root directory containing the pre-rendered files in 
-     subdirectories such as given to PreRender.jar.
-   -->
-  <property name="basePath">
-    /Users/phylogeo/Documents/Configs
-  </property>
-
-  <!-- metadataFile
-   Pointer to the location of the csv file containing all the 
-   information on the individual sequences.
-  -->
-  <property name="metadataFile">
-   /Users/phylogeo/Documents/Configs/metadataFile.csv
-  </property>
-
-  <!-- phyloTreeFile
-   Pointer to the location of the phylogenetic tree file.
-  -->
-  <property name="phyloTreeFile">
-   /Users/phylogeo/Documents/Configs/phylo.tree
-  </property>
-
-  <!-- alignmentFile
-   Pointer to the location of the alignment file that was used 
-   to build the phylogenetic tree used in this tool.
-   This is only needed in case the use of PPlacer 
-   should be supported in the tool.
-  -->
-  <property name="alignmentFile">
-    /Users/phylogeo/Documents/Configs/alignment.fasta
-  </property>
-  
-  <!-- logFile
-   Pointer to the logfile file that was returned by the tree 
-   building program to build the phylogenetic tree used in this 
-   tool, as for example generated by FastTree if specified 
-   as an option (RAxML and PhyML generate it by default).
-   This file is only needed in case PPlacer should be 
-   supported in the tool.
-  -->
-  <property name="logFile">
-    /Users/phylogeo/Documents/Configs/logFile.log
-  </property>
-
-  <!-- scriptFolder
-   Pointer to the location of the shell scripts that are 
-   used to initiate PPlacer.
-   This folder should contain fasta_subsample.pl, init.sh 
-   and place.sh, which can be found here:
-   https://github.com/rega-cev/phylogeotool/blob/master/scripts/
-  -->
-  <property name="scriptFolder">
-    /Users/phylogeo/Documents/PPlacer
-  </property>
-  
-  <!-- mafft binary
-    Pointer to the location of the binary for MAFFT
-  -->
-  <property name="mafftBinary">
-    /usr/local/bin/mafft
-  </property>
-
-  <!-- taxit binary
-    Pointer to the location of the binary for taxit
-  -->
-  <property name="taxitBinary">
-    /usr/local/bin/taxit
-  </property>
-
-  <!-- pplacer binary
-    Pointer to the location of the binary for pplacer
-  -->
-  <property name="pplacerBinary">
-    /Users/phylogeo/Documents/pplacer-Darwin-v1.1.alpha17-6-g5cecf99/pplacer
-  </property>
-
-  <!-- guppy binary
-    Pointer to the location of the binary for guppy (part of the pplacer software package)
-  -->
-  <property name="guppyBinary">
-    /Users/phylogeo/Documents/pplacer-Darwin-v1.1.alpha17-6-g5cecf99/guppy
-  </property>
-
-  <!-- showNAData 
-   Include Non Assigned (NA) data in the graphs
-  -->
-  <property name="showNAData">
-    false
-  </property>
-  
-  <!-- visualizeGeography 
-   Fill in the field that has to be visualized on the map in the tool.
-  -->
-  <property name="visualizeGeography">
-  	COUNTRY_OF_ORIGIN_EN
-  </property>
-
-  <!-- 
-   Color codes used for the google chart
-  -->
-  <property name="colorCodes">
-    <chart name="datalessregion">#FFFFFF</chart>
-    <chart name="backgroundcolor">#FFFFFF</chart>    
-    <chart name="colorAxis">#e9e9e9,red</chart>
-  </property>
-  
-  <!-- PPlacer Support
-  Indication if PPlacer should be supported in the PhyloGeoTool
- -->
- <property name="pplacer_support">
-   true
- </property>
- 
- <!-- Statistics Support  Indication if you want to offer the possibility 
- to users to download the generated statistics files.
- -->
- <property name="statistics_support">
-   true
- </property>
- 
- <!-- Full url that users should use to navigate to the tool. 
- This property is used in the mailing function of PPlacer. -->
- <property name="full_url">
-        http://localhost:8080/phylogeotool/PhyloGeoTool/
- </property>
-
- <!--
-   How the csv field should be represented in the tool.
-   A number field will be shown in a histogram
-   A string field will be shown as a category chart
- -->
- <property name="csvFieldRepresentation">
-   <dataField name="header1" type="number">PATIENT_ID</dataField>
-   <dataField name="header2" type="string">GENDER</dataField>
- </property>
-</phylogeotool-settings>
-\end{verbatim}
-
-
-
-\subsubsection{Start Tomcat server and load PhyloGeoTool}
-
-Copy the phylogeotool-01.war to the webapps folder of Tomcat and start Tomcat:
-\begin{verbatim}
-sudo cp phylogeotool-01.war /var/lib/tomcat7/webapps/
+sudo cp phylogeotool.war /var/lib/tomcat7/webapps/
 cd /var/lib/tomcat7/
 sudo service tomcat7 restart
 \end{verbatim}
@@ -348,16 +158,65 @@ This enables browser access to a localhost version of the PhyloGeoTool.
 Open a browser and enter the following URL: \url{http://localhost:8080/phylogeotool/PhyloGeoTool}.
 The browser should show something similar to Figure \ref{fig:01}.
 
-
-
 \begin{figure}[!htbp]
 \includegraphics[scale=0.19]{images/defaultScreenshot.png}
 \caption{Screenshot of the PhyloGeoTool application when the application is started for the first time.}
 \label{fig:01} 
 \end{figure}
 
+%TODO (PL): Say something how this can actually be served (apache + tomcat, why: no tomcat on port 80.)
+
+\section{Building from source}
+
+\subsection{Prerequisites}
+Install the Java Development Kit (JDK) with a version $\geq v 1.7$.\\
+
+\noindent For example, on Ubuntu Linux, Oracle Java 8 can be installed as follows:
+\begin{verbatim} 
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+\end{verbatim}
+
+\subsubsection*{Git}
+Install git.\\
+
+\noindent For example, on Ubuntu Linux, git can be installed as follows:
+\begin{verbatim}
+sudo apt-get install git-all
+\end{verbatim}
+
+\subsubsection*{Ant}
+Install Ant version $\geq 1.9.4$ as we will use it to build the source code.\\
+
+\noindent For example, on Ubuntu Linux, Ant can be installed as follows:
+\begin{verbatim}
+sudo apt-get install ant
+\end{verbatim}
+
+\subsection{Clone the git repository and build the JAR files and WAR file}
+We here outline the various steps necessary for a successful build of the project.
+\begin{itemize}
+\item {Clone the git repository: 
+\begin{verbatim}
+git clone https://github.com/rega-cev/phylogeotool/
+cd phylogeotool
+\end{verbatim}
+\item{Start the build process by running ant}
+\begin{verbatim}
+ant
+\end{verbatim}
+\item This build process generates a phylogeotool.war, DistanceMatrix.jar and PreRender.jar in the dist directory.
+}
+\end{itemize}
+
+% TODO (GB) once published: write something like 
+% Please cite ....
+
+\section{Contact Information and support }
 
 
-
+The PhyloGeoTool is developed and maintained by the Rega Institute KU Leuven.
+You can contact us on \href{mailto:phylogeotool@kuleuven.be}{phylogeotool@kuleuven.be}
 
 \end{document}
