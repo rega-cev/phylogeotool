@@ -237,12 +237,22 @@ public class PreRendering {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+			
+			boolean directoryEmpty = true;
 			if(clustersStream.iterator().hasNext() || xmlStream.iterator().hasNext() || treeviewStream.iterator().hasNext() || rStream.iterator().hasNext()){
-				return false;
+				directoryEmpty = false;
 			} else {
-				return true;
+				directoryEmpty = true;
 			}
+			try {
+				clustersStream.close();
+				xmlStream.close();
+				treeviewStream.close();
+				rStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return directoryEmpty;
 		} else if(clusters.isFile()) {
 			System.err.println(PreRendering.class + ": The path " + folderPhyloRenderLocation + File.separator + "clusters" + " to the folder seems to direct to a file.");
 			return false;
@@ -358,14 +368,15 @@ public class PreRendering {
 //			e.printStackTrace();
 //		}
 //	}
-	
+	static boolean isClosed;
 	public HashMap<String, Integer> readCsv(int clusterId, String key, boolean readNA) {
 		HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
 		FileInputStream fileInputStream = null;
+		DirectoryStream<Path> dirStream = null;
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			DirectoryStream<Path> dirStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(Settings.getXmlPath(basePath)));
+			dirStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(Settings.getXmlPath(basePath)));
 //			System.out.println(new File(folderLocationCsvs + File.separator + clusterId + ".xml"));
 			if(Settings.getXmlPath(basePath) != null && !Settings.getXmlPath(basePath).equals("") && dirStream.iterator().hasNext()) {
 				File file = new File(Settings.getXmlPath(basePath) + File.separator + clusterId + ".xml");
@@ -419,12 +430,20 @@ public class PreRendering {
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} finally {
-			if(fileInputStream != null)
+			if(fileInputStream != null) {
 				try {
 					fileInputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+			}
+			if(dirStream != null) {
+				try {
+					dirStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return hashMap;
 	}

@@ -42,7 +42,7 @@ public class WConfirmationDialog extends WDialog {
 		}
 			
 		this.ok = new WPushButton("Cancel");
-		this.ok.setMaximumSize(new WLength(50), new WLength(30));
+		this.ok.setMaximumSize(new WLength(60), new WLength(30));
 		// TODO: Improve this part to put the Exit button in the middle by not using margin
 		this.ok.setMargin(200, Side.Left);
 		
