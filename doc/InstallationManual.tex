@@ -5,6 +5,8 @@
 \usepackage{hyperref}
 \usepackage{float}
 
+\usepackage[british]{babel}
+
 \usepackage{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Required for accented characters
 \linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
@@ -29,6 +31,8 @@
 %----------------------------------------------------------------------------------------
 %	TITLE
 %----------------------------------------------------------------------------------------
+
+\hyphenation{Phylo-Geo-Tool}
 
 \title{\textbf{Phylogeotool}\\ % Title
 Installation Manual} % Subtitle
@@ -56,7 +60,7 @@ Installation Manual} % Subtitle
 \section{Installation}
 \subsection{Prerequisites}
 \subsection*{Java}
-Install the Java Development Kit (JDK) with a version $\geq v 1.7$.\\
+Install the Java Development Kit (JDK) with version $\geq 1.7$.\\
 
 \noindent For example, on Ubuntu Linux, Oracle Java 8 can be installed as follows:
 \begin{verbatim} 
@@ -86,13 +90,13 @@ sudo apt-get install python-pip
 
 \noindent Install \textbf{taxtastic} as explained at \url{http://fhcrc.github.io/taxtastic/installation.html}.\\
 
-\noindent Install \textbf{Mafft} to align sequences to be classified by PPlacer. 
-For example, on Ubuntu Linux, Mafft (TODO (Ewout): which version?) can be installed as follows:
+\noindent Install \textbf{Mafft}  (TODO (Ewout): which version?) to align sequences to be classified by PPlacer. 
+For example, on Ubuntu Linux, Mafft can be installed as follows:
 \begin{verbatim}
 sudo apt-get install mafft
 \end{verbatim}
 
-\noindent Install PPlacer (TODO: which version) (website: \url{http://github.com/matsen/pplacer/releases}).
+\noindent Install PPlacer (TODO (Ewout): which version) (website: \url{http://github.com/matsen/pplacer/releases}).
 
 \subsubsection*{Phylogenetic tree}
 A rooted phylogenetic tree in either Nexus or Newick format. It is important that the tree is \textbf{binary}.
@@ -103,22 +107,22 @@ Remaining columns may contain additional information/annotation for the taxa in 
 Information on the geography of taxa can be visualized in a map (Google Charts). For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (more information: section \ref{sssec:config_file}). The geographic values need to be formatted with the code or country name as defined in the ISO\_3166-1\_alpha-2 standard \footnote{\url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}}.
 
 \subsection{Create a distance matrix and determine clusters}
-A major goal of the PhyloGeoTool is to cluster the tree and to index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree (TODO: computational complexity is ?). 
-However, this computation can be performed before the installation of the web-tool (using PreRender.jar). \\
+A major goal of the PhyloGeoTool is to cluster the tree and to index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree (TODO (Ewout): computational complexity is ?). 
+However, this computation can be performed before the installation of the web-tool (using PreRender.jar).
+
 To be able to support this computation a distance matrix needs to be constructed (using DistanceMatrix.jar).
 Performing this clustering procedure before the installation of the web-tool, allows the web-tool to render both clusters and annotations instantaneously.
-
-To infer a distance matrix based from the phylogenetic tree, the program DistanceMatrix.jar is used. DistanceMatrix.jar can be downloaded from (TODO: add link to website) or built from source (TODO (KT): refer to the proper section). The following command uses DistanceMatrix.jar to generate a distance matrix (to be stored in a file called distances.csv in the command below) from a previously constructed phylogenetic tree in Newick format (i.e. tree.newick): 
+To infer a distance matrix based from the phylogenetic tree, the program DistanceMatrix.jar is used. DistanceMatrix.jar can be downloaded from (TODO (Ewout): add link to website) or built from source (TODO (KT): refer to the proper section). The following command uses DistanceMatrix.jar to generate a distance matrix (to be stored in a file called distances.csv in the command below) from a previously constructed phylogenetic tree in Newick format (i.e. tree.newick): 
 \begin{verbatim}
 java -jar DistanceMatrix.jar tree.newick distances.csv
 \end{verbatim}
 
-To subsequently partition the tree in clusters, the program PreRender.jar is used. PreRender.jar can be downloaded from (TODO: add link to website) or built from source (TODO: refer to the proper section). PreRender.jar accepts the following parameters:
+To subsequently partition the tree in clusters, the program PreRender.jar is used. PreRender.jar can be downloaded from (TODO (Ewout): add link to website) or built from source (TODO(PL): refer to the proper section). PreRender.jar accepts the following parameters:
 \begin{itemize}
 \item tree.newick: Location of the phylogenetic tree used in the PhyloGeoTool.
-\item attributes.csv: Location of the CSV file that connects nodes in the tool to attributes \footnote{The identifiers in the CSV file (TODO: ID column right?) have to correspond with the identifiers of the nodes in the tree.}.
+\item attributes.csv: Location of the CSV file that connects nodes in the tool to attributes \footnote{The identifiers in the CSV file (in the ID column) have to correspond with the identifiers of the nodes in the tree.}.
 \item distances.csv: Location of to the distance matrix that was generated from this tree.
-\item /path/to/cluster\_output: Location of the folder where this the PreRender.jar program has to write its output files (TODO: list files here).
+\item /path/to/cluster\_output: Location of the folder where this the PreRender.jar program has to write its output files (TODO (Ewout): list files here).
 \item /path/to/rBinary: Link to the exact location of the R executable.
 \item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R (TODO (GB): where can these scripts be faund ...).
 \end{itemize}
@@ -133,7 +137,7 @@ distance_matrix folder_output rBinary folder_rScripts
 
 \subsection{Configure Phylogeotool} \label{sssec:config_file}
 
-In the /etc folder, create a directory `phylogeotool', which is the default location for the config file (TODO: (Ewout) this is only for unix?). 
+In the /etc folder, create a directory `phylogeotool', which is the default location for the config file (TODO: (Ewout) this is only for unix?, what for windows?). 
 
 An example of such a configuration file can be found here: \url{https://github.com/rega-cev/phylogeotool/blob/master/examples/global-conf.xml}. In this example file all different configuration concepts are explained.
 In the XML file, we assume a user name 'phylogeo' to perform the installation.
@@ -141,9 +145,9 @@ Edit the example global-conf.xml file to correctly set up all the necessary path
 
 
 \subsection{Install the PhyloGeoTool WAR file in Tomcat}
-The PhyloGeoTool WAR file (i.e. phylogeotool.war) can be downloaded from (TODO: add link to website) or built from source (TODO: refer to the proper section). 
+The PhyloGeoTool WAR file (i.e. phylogeotool.war) can be downloaded from (TODO(Ewout): add link to website) or built from source (TODO (PL): refer to the proper section). 
 
-%TODO: change ant to generate a war with name phylogeotool.war
+%TODO (PL): change ant to generate a war with name phylogeotool.war
 Copy the phylogeotool.war to the webapps folder of Tomcat and start (or restart) Tomcat:
 \begin{verbatim}
 sudo cp phylogeotool.war /var/lib/tomcat7/webapps/
@@ -193,8 +197,7 @@ sudo apt-get install ant
 \subsection{Clone the git repository and build the JAR files and WAR file}
 We here outline the various steps necessary for a successful build of the project.
 \begin{itemize}
-\item Create an empty directory
-\item {In that directory, clone the git repository: 
+\item {Clone the git repository: 
 \begin{verbatim}
 git clone https://github.com/rega-cev/phylogeotool/
 cd phylogeotool
@@ -206,5 +209,14 @@ ant
 \item This build process generates a phylogeotool.war, DistanceMatrix.jar and PreRender.jar in the dist directory.
 }
 \end{itemize}
+
+% TODO (GB) once published: write something like 
+% Please cite ....
+
+\section{Contact Information and support }
+
+
+The PhyloGeoTool is developed and maintained by the Rega Institute KU Leuven.
+You can contact us on \href{mailto:phylogeotool@kuleuven.be}{phylogeotool@kuleuven.be}
 
 \end{document}
