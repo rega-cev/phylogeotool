@@ -90,13 +90,13 @@ sudo apt-get install python-pip
 
 \noindent Install \textbf{taxtastic} as explained at \url{http://fhcrc.github.io/taxtastic/installation.html}.\\
 
-\noindent Install \textbf{Mafft}  (TODO (Ewout): which version?) to align sequences to be classified by PPlacer. 
+\noindent Install \textbf{Mafft v7.271} to align sequences to be classified by PPlacer. 
 For example, on Ubuntu Linux, Mafft can be installed as follows:
 \begin{verbatim}
 sudo apt-get install mafft
 \end{verbatim}
 
-\noindent Install PPlacer (TODO (Ewout): which version) (website: \url{http://github.com/matsen/pplacer/releases}).
+\noindent Install PPlacer v1.1 (website: \url{http://github.com/matsen/pplacer/releases}).
 
 \subsubsection*{Phylogenetic tree}
 A rooted phylogenetic tree in either Nexus or Newick format. It is important that the tree is \textbf{binary}.
@@ -122,7 +122,13 @@ To subsequently partition the tree in clusters, the program PreRender.jar is use
 \item tree.newick: Location of the phylogenetic tree used in the PhyloGeoTool.
 \item attributes.csv: Location of the CSV file that connects nodes in the tool to attributes \footnote{The identifiers in the CSV file (in the ID column) have to correspond with the identifiers of the nodes in the tree.}.
 \item distances.csv: Location of to the distance matrix that was generated from this tree.
-\item /path/to/cluster\_output: Location of the folder where this the PreRender.jar program has to write its output files (TODO (Ewout): list files here).
+\item /path/to/cluster\_output: Location of the folder where this the PreRender.jar program has to write its output files. The files are stored in four different folders.
+\begin{enumerate}
+	\item clusters: Contains the files that stores the best clustering representation in XML format for a specific level.
+	\item r: Contains the graphs (SDR, First Derivative and Second Derivative) which are generated during the clustering phase of the tool.
+	\item treeview: Contains images that display a coloured phylogenetic tree, where each colour is parallel to the cluster shown on that level.
+	\item xml: Contains a summary of the attributes which are displayed at each specific level of the tool.
+\end{enumerate}
 \item /path/to/rBinary: Link to the exact location of the R executable.
 \item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R (TODO (GB): where can these scripts be faund ...).
 \end{itemize}
@@ -137,8 +143,21 @@ distance_matrix folder_output rBinary folder_rScripts
 
 \subsection{Configure Phylogeotool} \label{sssec:config_file}
 
-In the /etc folder, create a directory `phylogeotool', which is the default location for the config file (TODO: (Ewout) this is only for unix?, what for windows?). 
+In the /etc folder, create a directory `phylogeotool', which is the default location for the config file. 
+\\
+In the case of a Windows installation, create this directory under C:\textbackslash \textbackslash Program files such that the full path becomes C:\textbackslash \textbackslash Program files\textbackslash \textbackslash phylogeotool\textbackslash \textbackslash.
+\\
+You can also set your own preferred folder by extending the web.xml file in your deployed application with the following information.
 
+\begin{verbatim}
+<context-param>
+    <param-name>conf-dir</param-name>
+    <param-value>/path/to/conf/file/phylogeotool</param-value>
+</context-param>
+\end{verbatim}
+
+The param-name should be 'conf-dir' and the param-value indicates where the program has to look for the configuration.
+\\
 An example of such a configuration file can be found here: \url{https://github.com/rega-cev/phylogeotool/blob/master/examples/global-conf.xml}. In this example file all different configuration concepts are explained.
 In the XML file, we assume a user name 'phylogeo' to perform the installation.
 Edit the example global-conf.xml file to correctly set up all the necessary paths.
