@@ -190,15 +190,26 @@ public class GraphWebApplication extends WApplication {
 		
 //		WHBoxLayout treeLevelHBox = new WHBoxLayout();
 		WGroupBox wGroupBox = new WGroupBox();
-		wGroupBox.setMaximumSize(new WLength(200), new WLength(15));
+		wGroupBox.setMaximumSize(new WLength(200), new WLength(20));
 		treeLevel = new WLabel("Level: ");
 		treeLevel.setText(treeLevel.getText() + String.valueOf(graphWidget.getBreadCrumb()));
 		treeLevel.setMargin(7, Side.Right);
-		WImage wImage = new WImage(new WLink(getServletContext().getContextPath().concat("/images/question_mark.png")));
+		
+		final WImage wImage = new WImage(new WLink(getServletContext().getContextPath().concat("/images/question_mark.png")));
 		wImage.setToolTip("Use the webbrowser back button to move up one level. Use the webbrowser forward button to move down again.");
 		wImage.setMaximumSize(new WLength(15), new WLength(15));
-		wGroupBox.addWidget(treeLevel);
+		wImage.setMargin(7, Side.Right);
+		WPushButton restartButton = new WPushButton("Restart");
+		restartButton.setMargin(5, Side.Bottom);
+		restartButton.clicked().addListener(this, new Signal.Listener() {
+			public void trigger() {
+				graphWidget.setBreadCrumb(0);
+				graphWidget.setCluster(1, treeLevel, 0);
+			}
+		});
 		wGroupBox.addWidget(wImage);
+		wGroupBox.addWidget(treeLevel);
+		wGroupBox.addWidget(restartButton);
 		wGroupBox.setStyleClass("card");
 //		wGroupBox.setLayout(treeLevelHBox);
 		
