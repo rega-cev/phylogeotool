@@ -54,10 +54,12 @@ Installation Manual} % Subtitle
 \newpage
 
 %TODO (PL): spell check
-%TODO (PL) mention which platforms are supported: windows, linux, macos
-%-> Ewout is this correct.
 
 \section{Installation}
+
+\subsection{Supported platforms}
+Phylogetool is supported on GNU/Linux, MacOS and Microsoft Windows. These installation instructions are tested on all of these platforms.
+
 \subsection{Prerequisites}
 \subsection*{Java}
 Install the Java Development Kit (JDK) with version $\geq 1.7$.\\
@@ -78,7 +80,13 @@ sudo apt-get update
 sudo apt-get install tomcat7
 \end{verbatim}
 
+\subsection*{R runtime}
+Install the R runtime (version $\geq $ TODO:Ewout).\\
+
+\noindent For example, on Ubuntu Linux, the R runtime can be installed as follows:
+\begin{verbatim}
 %TODO (PL): add R?
+\end{verbatim}
 
 \subsection*{PPlacer and its dependencies}
  Install the python package manager \textbf{pip}. \\
@@ -135,7 +143,7 @@ PreRender.jar accepts the following parameters:
 	\item xml: Contains a summary of the attributes which are displayed at each specific level of the tool.
 \end{enumerate}
 \item /path/to/rBinary: Link to the exact location of the R executable.
-\item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R (TODO (GB): where can these scripts be faund ...).
+\item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R (TODO (GB): where can these scripts be found ...).
 \end{itemize}
 PreRender.jar will create the necessary directories in the folder with name `folder\_output'.
 If those directories already exist, a warning is issued to the user and the process will be aborted.
@@ -171,7 +179,6 @@ Edit the example global-conf.xml file to correctly set up all the necessary path
 \subsection{Install the PhyloGeoTool WAR file in Tomcat}
 The PhyloGeoTool WAR file (i.e. phylogeotool.war) can be downloaded from (TODO(Ewout): add link to website) or built from source (see section \ref{sec:source}). 
 
-%TODO (PL): change ant to generate a war with name phylogeotool.war
 Copy the phylogeotool.war to the webapps folder of Tomcat and start (or restart) Tomcat:
 \begin{verbatim}
 sudo cp phylogeotool.war /var/lib/tomcat7/webapps/
@@ -188,7 +195,8 @@ The browser should show something similar to Figure \ref{fig:01}.
 \label{fig:01} 
 \end{figure}
 
-%TODO (PL): Say something how this can actually be served (apache + tomcat, why: no tomcat on port 80.)
+The PhyloGeoTool can be installed in a Tomcat container. When the application is to be used on a local computer, the container can safely be accessed with a local web browser. However, to host your own instance to be accessed by external users (i.e. an online instance), it is important to setup your instance in a secure way.
+It \textbf{is insecure to let Tomcat run directly on \textbf{port 80}. Therefore, you need to run it on a port that does not require root acces (e.g. port 8080) and use an Apache webserver as a reverse proxy. (TODO, add reference)
 
 \section{Building from source}
 \label{sec:source}
