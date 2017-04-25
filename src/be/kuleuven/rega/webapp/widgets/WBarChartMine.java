@@ -262,7 +262,10 @@ public class WBarChartMine extends Chart {
 			} else {
 				// This should be the last element of the array
 				if(entry.getKey().equals("NA")) {
-					mapToReturn.put(remainingValuesColumnName, totalOtherValue);
+					// Only add if the values are actually over 0
+					if(totalOtherValue > 0) {
+						mapToReturn.put(remainingValuesColumnName, totalOtherValue);
+					}
 					mapToReturn.put("NA", entry.getValue());
 					return mapToReturn;
 				} else {
@@ -270,7 +273,10 @@ public class WBarChartMine extends Chart {
 				}
 			}
 		}
-		mapToReturn.put(remainingValuesColumnName, totalOtherValue);
+		// Only add if the values are actually over 0
+		if(totalOtherValue > 0) {
+			mapToReturn.put(remainingValuesColumnName, totalOtherValue);
+		}
 		
 		return mapToReturn;
 	}
