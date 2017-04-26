@@ -58,7 +58,7 @@ Installation Manual} % Subtitle
 \section{Installation}
 
 \subsection{Supported platforms}
-Phylogetool is supported on GNU/Linux, MacOS and Microsoft Windows. These installation instructions are tested on all of these platforms.
+PhyloGeoTool is supported on GNU/Linux, MacOS and Microsoft Windows. These installation instructions are tested on all of these platforms.
 
 \subsection{Prerequisites}
 \subsection*{Java}
@@ -154,9 +154,9 @@ distance_matrix folder_output rBinary folder_rScripts
 \end{verbatim}
 
 
-\subsection{Configure Phylogeotool} \label{sssec:config_file}
+\subsection{Configure PhyloGeoTool} \label{sssec:config_file}
 
-In the /etc folder, create a directory `phylogeotool', which is the default location for the config file. 
+In the /etc folder, create a directory `phylogeotool', which is the default location for the configuration file. 
 \\
 In the case of a Windows installation, create this directory under C:\textbackslash \textbackslash Program files such that the full path becomes C:\textbackslash \textbackslash Program files\textbackslash \textbackslash phylogeotool\textbackslash \textbackslash.
 \\
@@ -196,7 +196,7 @@ The browser should show something similar to Figure \ref{fig:01}.
 \end{figure}
 
 The PhyloGeoTool can be installed in a Tomcat container. When the application is to be used on a local computer, the container can safely be accessed with a local web browser. However, to host your own instance to be accessed by external users (i.e. an online instance), it is important to setup your instance in a secure way.
-It \textbf{is insecure to let Tomcat run directly on \textbf{port 80}. Therefore, you need to run it on a port that does not require root acces (e.g. port 8080) and use an Apache webserver as a reverse proxy as explained at \footnote{\url{https://wiki.apache.org/httpd/TomcatReverseProxy}}. 
+It \textbf{is insecure to let Tomcat run directly on \textbf{port 80}. Therefore, you need to run it on a port that does not require root access (e.g. port 8080) and use an Apache web-server as a reverse proxy as explained at \footnote{\url{https://wiki.apache.org/httpd/TomcatReverseProxy}}. 
 
 \section{Building from source}
 \label{sec:source}
