@@ -6,9 +6,9 @@
         		<div id="ee_menup">
             		<div class="ee_br">
                 		<ul>
-                    		<li><a href="${server}/data_analysis/">EuResist Engine</a>\</li> 
-                    		<li><a href="${server}/front/contact/">Contact</a>\</li>
-                    		<li><a href="${server}/front/disclaimer">Disclaimer</a></li>
+                    		<li><a href="${euresist_server}/">EuResist Engine</a>\</li> 
+                    		<li><a href="${euresist_server}/front/contact/">Contact</a>\</li>
+                    		<li><a href="${euresist_server}/front/disclaimer">Disclaimer</a></li>
                 		</ul>
             		</div>
         		</div>

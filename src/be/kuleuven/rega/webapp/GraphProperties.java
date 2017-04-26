@@ -51,7 +51,8 @@ public class GraphProperties {
 						toReturn.put(node, Color.WHITE);
 					}
 				} else {
-					toReturn.put(node, Color.BLACK);
+					toReturn.put(node, new Color(193, 191, 191));
+//					toReturn.put(node, Color.BLACK);
 				}
 		}
 		return toReturn;
