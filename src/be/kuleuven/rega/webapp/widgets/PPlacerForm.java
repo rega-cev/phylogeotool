@@ -55,7 +55,7 @@ public class PPlacerForm {
 	    table.setWidth(new WLength(630));
 	    table.setStyleClass("tableDialog");
 	    
-	    WLabel nucleotideSeqLabel = new WLabel("<b>Nucleotide sequence</b>");
+	    WLabel nucleotideSeqLabel = new WLabel("<b>Nucleotide sequence</b><br />(FASTA format)");
 	    nucleotideSeqLabel.setTextFormat(TextFormat.XHTMLText);
 //	    nucleotideSeqLabel.setStyleClass("bold");
 //	    nucleotideSeqLabel.setBuddy(textArea);
