@@ -16,7 +16,7 @@ public class WDownloadResource extends WFileResource {
 	private ByteArrayOutputStream byteArrayOutputStream;
 	
 	public WDownloadResource(WObject parent, String fileName, GraphicFormat graphicFormat, ByteArrayOutputStream byteArrayOutputStream) {
-		super("image/pdf", fileName, parent);
+		super("application/pdf", fileName, parent);
 		this.graphicFormat = graphicFormat;
 		this.byteArrayOutputStream = byteArrayOutputStream;
 	}

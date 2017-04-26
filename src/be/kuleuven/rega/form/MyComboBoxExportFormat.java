@@ -26,6 +26,8 @@ public class MyComboBoxExportFormat extends WComboBox {
 					graphicFormat = GraphicFormat.PNG;
 				} else if(getCurrentText().equals("SVG")) {
 					graphicFormat = GraphicFormat.SVG;
+				} else if(getCurrentText().equals("NEXUS")) {
+					graphicFormat = null;
 				}
 				
 				setGraphicFormat(graphicFormat);
