@@ -450,6 +450,7 @@ public class GraphWebApplication extends WApplication {
 		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		button.clicked().addListener(dialog, new Signal1.Listener<WMouseEvent>() {
 			public void trigger(WMouseEvent e1) {
+				byteArrayOutputStream.reset();
 				button.disable();
 				
 				final WConfirmationDialog wConfirmationDialog = new WConfirmationDialog("Confirmation", "Your file is being prepared for download. Your download link will appear shortly. Please be patient.");
