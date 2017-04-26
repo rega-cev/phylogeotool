@@ -21,6 +21,7 @@ public class SDRVisualizer {
 		wDialog.setHeight(new WLength(504));
 		wDialog.getContents().setOverflow(Overflow.OverflowAuto);
 		wDialog.setMaximumSize(new WLength(504), new WLength(504));
+		wDialog.setClosable(true);
 		
 		WPushButton wPushButton = new WPushButton("OK");
 		wPushButton.setWidth(new WLength(75));

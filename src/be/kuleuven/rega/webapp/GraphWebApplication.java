@@ -399,6 +399,7 @@ public class GraphWebApplication extends WApplication {
 	    dialog.getContents().addWidget(wTreeDownloader.getWidget());
 	    
 	    dialog.rejectWhenEscapePressed();
+	    dialog.setClosable(true);
 	    
 	    buttonCallDialog.clicked().addListener(dialog, 
 	    		new Signal1.Listener<WMouseEvent>() {
@@ -476,6 +477,7 @@ public class GraphWebApplication extends WApplication {
 		
 	    WPushButton cancel = new WPushButton("Exit");
 	    dialog.rejectWhenEscapePressed();
+	    dialog.setClosable(true);
 	    cancel.clicked().addListener(dialog,
 	            new Signal1.Listener<WMouseEvent>() {
 	                public void trigger(WMouseEvent e1) {
@@ -531,6 +533,7 @@ public class GraphWebApplication extends WApplication {
 	private final void showISO3166Warning() {
 		final WDialog wDialog = new WDialog("Warning");
 		wDialog.setWidth(new WLength(500));
+		wDialog.setClosable(true);
 		WImage wImage = new WImage(new WLink(getServletContext().getContextPath().concat("/images/warning.png")));
 		wImage.setWidth(new WLength(50));
 		wImage.setHeight(new WLength(50));
