@@ -254,6 +254,7 @@ public class PPlacerForm {
 					wDialog.setPopup(true);
 					wDialog.rejectWhenEscapePressed();
 					wDialog.show();
+					break;
 				}
 			}
 		} catch (Exception e) {
