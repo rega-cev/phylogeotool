@@ -190,7 +190,7 @@ public class GraphWebApplication extends WApplication {
 		
 //		WHBoxLayout treeLevelHBox = new WHBoxLayout();
 		WGroupBox wGroupBox = new WGroupBox();
-		wGroupBox.setMaximumSize(new WLength(200), new WLength(20));
+		wGroupBox.setMaximumSize(new WLength(250), new WLength(25));
 		treeLevel = new WLabel("Level: ");
 		treeLevel.setText(treeLevel.getText() + String.valueOf(graphWidget.getBreadCrumb()));
 		treeLevel.setMargin(7, Side.Right);
@@ -199,9 +199,22 @@ public class GraphWebApplication extends WApplication {
 		wImage.setToolTip("Use the webbrowser back button to move up one level. Use the webbrowser forward button to move down again.");
 		wImage.setMaximumSize(new WLength(15), new WLength(15));
 		wImage.setMargin(7, Side.Right);
-		WPushButton restartButton = new WPushButton("Restart");
-		restartButton.setMargin(5, Side.Bottom);
-		restartButton.clicked().addListener(this, new Signal.Listener() {
+		wImage.clicked().addListener(this, new Signal.Listener() {
+			public void trigger() {
+				WDialog wDialog = new WDialog("Help");
+				wDialog.setClosable(true);
+				wDialog.rejectWhenEscapePressed(true);
+				WText explanation = new WText("Use the webbrowser back button to move up one level. <br />Use the webbrowser forward button to move down again. <br />Use the home button (to the right of the indicated level) to go back to the beginning.");
+				wDialog.getContents().addWidget(explanation);
+				wDialog.show();
+			}
+		});
+		
+//		final WImage wImageHome = new WImage(new WLink(getServletContext().getContextPath().concat("/images/home.png")));
+//		wImageHome.setMaximumSize(new WLength(20), new WLength(20));
+		final WPushButton wPushbuttonHome = new WPushButton("Back to level 0");
+		wImage.setMaximumSize(new WLength(50), new WLength(15));
+		wPushbuttonHome.clicked().addListener(this, new Signal.Listener() {
 			public void trigger() {
 				graphWidget.setBreadCrumb(0);
 				graphWidget.setCluster(1, treeLevel, 0);
@@ -209,7 +222,7 @@ public class GraphWebApplication extends WApplication {
 		});
 		wGroupBox.addWidget(wImage);
 		wGroupBox.addWidget(treeLevel);
-		wGroupBox.addWidget(restartButton);
+		wGroupBox.addWidget(wPushbuttonHome);
 		wGroupBox.setStyleClass("card");
 //		wGroupBox.setLayout(treeLevelHBox);
 		
