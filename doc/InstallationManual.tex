@@ -34,7 +34,7 @@
 
 \hyphenation{Phylo-Geo-Tool}
 
-\title{\textbf{Phylogeotool}\\ % Title
+\title{\textbf{PhyloGeoTool}\\ % Title
 Installation Manual} % Subtitle
 
 \author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, Guy Baele} % Author
@@ -54,10 +54,12 @@ Installation Manual} % Subtitle
 \newpage
 
 %TODO (PL): spell check
-%TODO (PL) mention which platforms are supported: windows, linux, macos
-%-> Ewout is this correct.
 
 \section{Installation}
+
+\subsection{Supported platforms}
+Phylogetool is supported on GNU/Linux, MacOS and Microsoft Windows. These installation instructions are tested on all of these platforms.
+
 \subsection{Prerequisites}
 \subsection*{Java}
 Install the Java Development Kit (JDK) with version $\geq 1.7$.\\
@@ -78,7 +80,13 @@ sudo apt-get update
 sudo apt-get install tomcat7
 \end{verbatim}
 
-%TODO (PL): add R?
+\subsection*{R runtime}
+Install the R runtime (version $\geq 3.2.1$).\\
+
+\noindent For example, on Ubuntu Linux, the R runtime can be installed as follows:
+\begin{verbatim}
+ sudo apt-get install r-base r-base-dev
+\end{verbatim}
 
 \subsection*{PPlacer and its dependencies}
  Install the python package manager \textbf{pip}. \\
@@ -103,21 +111,26 @@ A rooted phylogenetic tree in either Nexus or Newick format. It is important tha
 
 \subsubsection*{CSV file}
 A comma-separated value (CSV) file, containing an ID column that contains identifiers that correspond to the taxa names of the provided phylogenetic tree.
-Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree. Examples of such annotations are: geographic location, virus genotype/subtype and patient attributes (age, ethnicity, \ldots). \\
-Information on the geography of taxa can be visualized in a map (Google Charts). For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (more information: section \ref{sssec:config_file}). The geographic values need to be formatted with the code or country name as defined in the ISO\_3166-1\_alpha-2 standard \footnote{\url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}}.
+Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree. 
+Examples of such annotations are: geographic location, virus genotype/subtype and patient attributes (age, ethnicity, \ldots). \\
+Information on the geography of taxa can be visualized in a map (Google Charts). 
+For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (more information: section \ref{sssec:config_file}). 
+The geographic values need to be formatted with the code or country name as defined in the ISO\_3166-1\_alpha-2 standard \footnote{\url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}}.
 
 \subsection{Create a distance matrix and determine clusters}
-A major goal of the PhyloGeoTool is to cluster the tree and to index the taxa annotations, of which the computation takes a long time and its runtime depends on the size of the phylogenetic tree (TODO (Ewout): computational complexity is ?). 
+A major goal of the PhyloGeoTool is to cluster the tree and to index the taxa annotations, of which the computation takes a long time and the runtime depends on the size of the phylogenetic tree (computational complexity is $\mathcal{O}(n^3)$). 
 However, this computation can be performed before the installation of the web-tool (using PreRender.jar).
 
-To be able to support this computation a distance matrix needs to be constructed (using DistanceMatrix.jar).
-Performing this clustering procedure before the installation of the web-tool, allows the web-tool to render both clusters and annotations instantaneously.
-To infer a distance matrix based from the phylogenetic tree, the program DistanceMatrix.jar is used. DistanceMatrix.jar can be downloaded from (TODO (Ewout): add link to website) or built from source (TODO (KT): refer to the proper section). The following command uses DistanceMatrix.jar to generate a distance matrix (to be stored in a file called distances.csv in the command below) from a previously constructed phylogenetic tree in Newick format (i.e. tree.newick): 
+To be able to support this computation, a distance matrix needs to be constructed (using DistanceMatrix.jar).
+Performing this clustering procedure before the installation of the web-tool allows the web-tool to render both clusters and annotations instantaneously.
+To infer a distance matrix based from the phylogenetic tree, the program DistanceMatrix.jar is used. DistanceMatrix.jar can be downloaded from our website our website \footnote{\url{https://github.com/rega-cev/phylogeotool/releases/tag/1}} or built from source (see section \ref{sec:source}). 
+The following command uses DistanceMatrix.jar to generate a distance matrix (to be stored in a file called distances.csv in the command below) from a previously constructed phylogenetic tree in Newick format (i.e. tree.newick): 
 \begin{verbatim}
 java -jar DistanceMatrix.jar tree.newick distances.csv
 \end{verbatim}
 
-To subsequently partition the tree in clusters, the program PreRender.jar is used. PreRender.jar can be downloaded from (TODO (Ewout): add link to website) or built from source (TODO(PL): refer to the proper section). PreRender.jar accepts the following parameters:
+To subsequently partition the tree in clusters, the program PreRender.jar is used. PreRender.jar can be downloaded from our website \footnote{\url{https://github.com/rega-cev/phylogeotool/releases/tag/1}} or built from source (see section \ref{sec:source}). 
+PreRender.jar accepts the following parameters:
 \begin{itemize}
 \item tree.newick: Location of the phylogenetic tree used in the PhyloGeoTool.
 \item attributes.csv: Location of the CSV file that connects nodes in the tool to attributes \footnote{The identifiers in the CSV file (in the ID column) have to correspond with the identifiers of the nodes in the tree.}.
@@ -130,7 +143,7 @@ To subsequently partition the tree in clusters, the program PreRender.jar is use
 	\item xml: Contains a summary of the attributes which are displayed at each specific level of the tool.
 \end{enumerate}
 \item /path/to/rBinary: Link to the exact location of the R executable.
-\item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R (TODO (GB): where can these scripts be faund ...).
+\item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R (i.e. https://github.com/rega-cev/phylogeotool/tree/master/scripts).
 \end{itemize}
 PreRender.jar will create the necessary directories in the folder with name `folder\_output'.
 If those directories already exist, a warning is issued to the user and the process will be aborted.
@@ -164,9 +177,8 @@ Edit the example global-conf.xml file to correctly set up all the necessary path
 
 
 \subsection{Install the PhyloGeoTool WAR file in Tomcat}
-The PhyloGeoTool WAR file (i.e. phylogeotool.war) can be downloaded from (TODO(Ewout): add link to website) or built from source (TODO (PL): refer to the proper section). 
+The PhyloGeoTool WAR file (i.e. phylogeotool.war) can be downloaded from our website \footnote{\url{https://github.com/rega-cev/phylogeotool/releases/tag/1}} or built from source (see section \ref{sec:source}). 
 
-%TODO (PL): change ant to generate a war with name phylogeotool.war
 Copy the phylogeotool.war to the webapps folder of Tomcat and start (or restart) Tomcat:
 \begin{verbatim}
 sudo cp phylogeotool.war /var/lib/tomcat7/webapps/
@@ -183,9 +195,11 @@ The browser should show something similar to Figure \ref{fig:01}.
 \label{fig:01} 
 \end{figure}
 
-%TODO (PL): Say something how this can actually be served (apache + tomcat, why: no tomcat on port 80.)
+The PhyloGeoTool can be installed in a Tomcat container. When the application is to be used on a local computer, the container can safely be accessed with a local web browser. However, to host your own instance to be accessed by external users (i.e. an online instance), it is important to setup your instance in a secure way.
+It \textbf{is insecure to let Tomcat run directly on \textbf{port 80}. Therefore, you need to run it on a port that does not require root acces (e.g. port 8080) and use an Apache webserver as a reverse proxy. (TODO, add reference)
 
 \section{Building from source}
+\label{sec:source}
 
 \subsection{Prerequisites}
 Install the Java Development Kit (JDK) with a version $\geq v 1.7$.\\

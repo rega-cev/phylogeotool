@@ -9,7 +9,6 @@
   <property name="lib" location="lib"/>
   
   <property name="proj.name" value="phylogeotool"/>
-  <property name="proj.version" value="0.1"/>
 
 <!--	<junit printsummary="yes" haltonfailure="yes">
 	    <classpath>
@@ -51,7 +50,7 @@
     	<fileset dir="lib"/>
     </copy>
 
-    <war destfile="${dist}/${proj.name}-${proj.version}.war" 
+    <war destfile="${dist}/${proj.name}.war" 
 	 webxml="WebRoot/WEB-INF/web.xml">
    	 <metainf file="WebRoot/META-INF/context.xml" />
 	 <fileset dir="${src}"/>
