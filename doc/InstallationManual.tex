@@ -196,7 +196,7 @@ The browser should show something similar to Figure \ref{fig:01}.
 \end{figure}
 
 The PhyloGeoTool can be installed in a Tomcat container. When the application is to be used on a local computer, the container can safely be accessed with a local web browser. However, to host your own instance to be accessed by external users (i.e. an online instance), it is important to setup your instance in a secure way.
-It \textbf{is insecure to let Tomcat run directly on \textbf{port 80}. Therefore, you need to run it on a port that does not require root acces (e.g. port 8080) and use an Apache webserver as a reverse proxy. (TODO, add reference)
+It \textbf{is insecure to let Tomcat run directly on \textbf{port 80}. Therefore, you need to run it on a port that does not require root acces (e.g. port 8080) and use an Apache webserver as a reverse proxy as explained at \footnote{\url{https://wiki.apache.org/httpd/TomcatReverseProxy}}. 
 
 \section{Building from source}
 \label{sec:source}
