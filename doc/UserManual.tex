@@ -60,7 +60,7 @@ This document explains how to use the PhyloGeoTool software.
 PhyloGeoTool is a web application that is installed on a web server, and can be accessed via a web browser. 
 Most users will access a publicly accessible instance of the PhyloGeoTool (i.e. an instance that was already deployed on a web server) and have no need to install an instance themselves. 
 An example of a publicly available instance of the PhyloGeoTool that allows to explore a large HIV cohort (i.e. EuResist \cite{Zazzi2012}) can be found at \url{http://phylogeotool.gbiomed.kuleuven.be/euresist/}.
-It is however also possible to install your own instance of the PhyloGeoTool; for this, we refer to the installation manual. % \footnote{(TODO (Ewout): add link)}. 
+It is however also possible to install your own instance of the PhyloGeoTool; for this, we refer to the installation manual \footnote{https://github.com/rega-cev/phylogeotool}. 
 Such an instance can be used to investigate a dataset on a local computer or to host your own public PhyloGeoTool instance.
 
 
@@ -87,7 +87,7 @@ Note that any browser (Chrome, Firefox, Internet Explorer) should do.\\
 \includegraphics[scale=0.1875]{images/defaultScreenshot.png}
 \vspace{-0.75cm}
 \caption{Start and main view of the PhyloGeoTool. 
-The panel on the upper left shows a map that depicts the geographical distribution of the sequences of the partitioned phylogeny; the lower left panel shows a bar chart that depicts the value distribution for one of the sequence attributes; and the right panel shows a top-level view of the clustering of the tree, as determined by our clustering algorithm. %(TODO (Ewout): add reference to our paper as a footnote) .
+The panel on the upper left shows a map that depicts the geographical distribution of the sequences of the partitioned phylogeny; the lower left panel shows a bar chart that depicts the value distribution for one of the sequence attributes; and the right panel shows a top-level view of the clustering of the tree, as determined by our clustering algorithm. 
 }
 \label{fig:initialview}
 \end{figure}
@@ -96,8 +96,8 @@ The PhyloGeoTool is divided into different panels (see Figure \ref{fig:initialvi
 \begin{itemize}
   \item The top left panel shows a map where each country is colored according to a gradient, where a darker color signifies that more sequences are originating from this country. 
     A drop-down box allows you to select the geographic region on which you want to focus (e.g. Europe, North America, \ldots).
-  \item The right panel shows a top-level view of the clustering of the tree (initially the root of the tree), as determined by our clustering algorithm (see supplementary materials accompanying the PhyloGeoTool paper).
-  A button allows you to visualise the phylogenetic tree in its entirety, colored according to the shown clusters.
+  \item The right panel shows a top-level view of the clustering of the tree (initially the root of the tree), as determined by our clustering algorithm.We provided a detailed explation about the working of our clustering algorithm in a manuscript that is currently being reviewed. %(TODO : later : add reference to our paper as a footnote).
+A button allows you to visualise the phylogenetic tree in its entirety, colored according to the shown clusters.
   \item The bottom left panel shows a histogram or bar chart depending on the chosen attribute. If the attribute is represented by a continuous dataset, a histogram will be shown while a discrete dataset is displayed by a bar chart plot.
   The histogram or bar chart shows a certain attribute (i.e. characteristic) from all sequences currently visualized in the tree panel on the right. 
   A drop-down box allows you to select the attribute to be plotted on the bar chart. 
@@ -173,7 +173,6 @@ You can select an attribute of interest in the drop-down box on top of the attri
 When the 'View Tree' button (located at the top of the clustered phylogeny panel) is clicked, a pop-up window is shown (Figure \ref{fig:view_tree}) that visualizes the phylogeny as a radial phylogenetic tree. 
 The colours in the radial tree correspond to the colors of the clusters.
 
-(TODO PL, you alternate between American and British English in the document; do you prefer 'color' or 'colour'?, will check with a spell checker and use British)
 \break
 \break
 On the bottom of the popup window, there are two buttons: 'Export' and 'Exit'.
@@ -193,7 +192,7 @@ Phylogenetic placement enables the placement of unknown query sequences onto an 
 In the PhyloGeoTool, we use phylogenetic placement to position new sequences onto the phylogeny, in a reasonable amount of time (i.e. minutes). 
 We implement this placement using the well-known pplacer software package \cite{Matsen2010}.
 
-To place your sequences on the cluster phylogeny, click the 'Phylo-place' button (TODO (PL) update button name) in the clustering window. 
+To place your sequences on the cluster phylogeny, click the 'Place your sequence' button in the clustering window. 
 A window (see Figure \ref{fig:pplacerwindow}) will pop up that enables you to place your sequences. 
 
 \begin{figure}[H]
