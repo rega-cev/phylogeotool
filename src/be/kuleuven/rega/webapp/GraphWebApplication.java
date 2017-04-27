@@ -646,6 +646,7 @@ public class GraphWebApplication extends WApplication {
 		// Added for design
 		wvBoxLayout.setSpacing(2);
 		wComboBoxRegions = new WComboBoxRegions();
+		wComboBoxRegions.setMargin(7, Side.Right);
 		wComboBoxRegions.changed().addListener(this, new Signal.Listener() {
 			public void trigger() {
 				GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
@@ -668,6 +669,7 @@ public class GraphWebApplication extends WApplication {
 		WText regionLabel = new WText("Select region: ");
 		wgroupboxRegion.addWidget(regionLabel);
 		wgroupboxRegion.addWidget(wComboBoxRegions);
+		wgroupboxRegion.addWidget(new WText("<b>Attribute visualized:</b> " + Settings.getInstance().getVisualizeGeography()));
 		
 		googleChartWidget = new GoogleChartWidget(countries, region, Settings.getInstance().getDatalessRegionColor(), Settings.getInstance().getBackgroundcolor(), Settings.getInstance().getColorAxis());
 		googleChartWidget.setMinimumSize(new WLength(30.0, Unit.Percentage), new WLength(300.0, Unit.Pixel));
