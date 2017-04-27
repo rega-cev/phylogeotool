@@ -219,6 +219,8 @@ public class GraphWebApplication extends WApplication {
 			public void trigger() {
 				graphWidget.setBreadCrumb(0);
 				graphWidget.setCluster(1, treeLevel, 0);
+				setGoogleChart(1);
+				setStatisticGraph(1, true);
 			}
 		});
 		wGroupBox.addWidget(wImage);
