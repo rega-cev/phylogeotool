@@ -46,6 +46,7 @@ import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WCheckBox;
 import eu.webtoolkit.jwt.WColor;
 import eu.webtoolkit.jwt.WComboBox;
+import eu.webtoolkit.jwt.WContainerWidget;
 import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WEnvironment;
 import eu.webtoolkit.jwt.WGroupBox;
@@ -60,9 +61,12 @@ import eu.webtoolkit.jwt.WMouseEvent;
 import eu.webtoolkit.jwt.WObject;
 import eu.webtoolkit.jwt.WPushButton;
 import eu.webtoolkit.jwt.WString;
+import eu.webtoolkit.jwt.WTable;
+import eu.webtoolkit.jwt.WTableCell;
 import eu.webtoolkit.jwt.WTemplate;
 import eu.webtoolkit.jwt.WText;
 import eu.webtoolkit.jwt.WVBoxLayout;
+import eu.webtoolkit.jwt.WWidget;
 import eu.webtoolkit.jwt.WXmlLocalizedStrings;
 import eu.webtoolkit.jwt.chart.WCartesianChart;
 import figtree.application.GraphicFormat;
@@ -783,11 +787,26 @@ public class GraphWebApplication extends WApplication {
 		return this.pplacer;
 	}
 	
-	public void treeExportFinished(WObject parent, final WConfirmationDialog wConfirmationDialog, ByteArrayOutputStream byteArrayOutputStream, String fileName, GraphicFormat graphicFormat) {
+	public void treeExportFinished(final WObject parent, final WConfirmationDialog wConfirmationDialog, ByteArrayOutputStream byteArrayOutputStream, String fileName, GraphicFormat graphicFormat) {
 		UpdateLock updateLock = this.getUpdateLock();
 		WDownloadResource wDownloadResource = new WDownloadResource(parent, fileName, graphicFormat, byteArrayOutputStream);
 		WAnchor wAnchor = new WAnchor(wDownloadResource, "Download File");
-		wAnchor.setTarget(AnchorTarget.TargetNewWindow);
+		wAnchor.setTarget(AnchorTarget.TargetDownload);
+		
+		wAnchor.clicked().addListener(wConfirmationDialog,
+	            new Signal1.Listener<WMouseEvent>() {
+            public void trigger(WMouseEvent e1) {
+            	wConfirmationDialog.reject();
+            	// TODO: Improve this code. Maybe it'll be easier to just pass the correct button here or use observer pattern.
+            	WTableCell cell = ((WTable)((WContainerWidget)parent).getChildren().get(0)).getElementAt(4, 3);
+            	for(WWidget wwWidget:cell.getChildren()) {
+            		if(wwWidget instanceof WPushButton && ((WPushButton)wwWidget).isDisabled()) {
+            			((WPushButton)wwWidget).enable();
+            		}
+            	}
+            }
+        });
+		
 		wConfirmationDialog.addWidget(wAnchor);
 		wConfirmationDialog.getOkButton().show();
 		this.triggerUpdate();
