@@ -205,7 +205,7 @@ public class GraphWebApplication extends WApplication {
 				WDialog wDialog = new WDialog("Help");
 				wDialog.setClosable(true);
 				wDialog.rejectWhenEscapePressed(true);
-				WText explanation = new WText("Use the webbrowser back button to move up one level. <br />Use the webbrowser forward button to move down again. <br />Use the home button (to the right of the indicated level) to go back to the beginning.");
+				WText explanation = new WText("Use the webbrowser back button to move up one level. <br />Use the webbrowser forward button to move down again.");
 				wDialog.getContents().addWidget(explanation);
 				wDialog.show();
 			}
