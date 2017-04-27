@@ -1,5 +1,5 @@
 PhyloGeoTool is Java web-application to interactively navigate large phylogenies and to explore associated clinical and epidemiological data. PhyloGeoTool implements an algorithm that automatically partitions a phylogeny into an optimal number of clusters, thereby recursively partitioning each identified cluster. A graphical user interface provides a concise visualisation of the different levels of the phylogenetic tree and the attributes (geographical, clinical, demographical) associated with the sequences.
 
-PhyloGeoTool has been built to be user-friendly in use, only requiring the upload of phylogenetic tree and a text file describing the attributes of the sequences. An installation manual and an user instruction manual are available to provide details for the deployment and the use of the application. 
+PhyloGeoTool has been built to be user-friendly in use, only requiring the upload of a phylogenetic tree and a text file describing the attributes of the sequences. An installation manual and an user instruction manual are available to provide details for the deployment and the use of the application. 
 
 The methodology paper describing PhyloGeoTool has been submitted for peer-review. A citation to cite PhyloGeoTool will be provided as soon as the paper has become publicly available.
