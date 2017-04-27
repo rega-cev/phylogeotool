@@ -37,6 +37,7 @@ import be.kuleuven.rega.webapp.widgets.WExportTreeForm;
 import be.kuleuven.rega.webapp.widgets.WHistogramMine;
 import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
 import be.kuleuven.rega.webapp.widgets.WTreeDownloaderForm;
+import eu.webtoolkit.jwt.AnchorTarget;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
@@ -782,6 +783,7 @@ public class GraphWebApplication extends WApplication {
 		UpdateLock updateLock = this.getUpdateLock();
 		WDownloadResource wDownloadResource = new WDownloadResource(parent, fileName, graphicFormat, byteArrayOutputStream);
 		WAnchor wAnchor = new WAnchor(wDownloadResource, "Download File");
+		wAnchor.setTarget(AnchorTarget.TargetNewWindow);
 		wConfirmationDialog.addWidget(wAnchor);
 		wConfirmationDialog.getOkButton().show();
 		this.triggerUpdate();
