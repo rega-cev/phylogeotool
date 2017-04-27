@@ -42,6 +42,10 @@ public class Settings {
 		return basePath;
 	}
 	
+	public String getStylesheetDir() {
+		return stylesheetDir;
+	}
+	
 	public static String getXmlPath(String basePath) {
 		return basePath + File.separator + "xml";
 	}
@@ -171,6 +175,7 @@ public class Settings {
 		return this.csvColumnRepresentation;
 	}
 	
+	private String stylesheetDir;
 	private String basePath;
 	private String metaDataFile;
 	private String phyloTreeFile;
@@ -211,7 +216,9 @@ public class Settings {
         String name;
         for (Element e : children) {
             name = e.getAttributeValue("name");
-            if (name.equals("basePath")) {
+            if (name.equals("stylesheetDir")) {
+            	stylesheetDir = e.getValue().trim();
+            } else if (name.equals("basePath")) {
             	basePath = e.getValue().trim();
             } else if(name.equals("metadataFile")) {
             	metaDataFile = e.getValue().trim();

@@ -7,6 +7,13 @@
     /Users/phylogeo/Documents/Configs
   </property>
 
+  <!-- stylesheetDir
+       The directory that is used to define the styling of specific instances (e.g. logo and CSS). 
+   -->
+  <property name="stylesheetDir">
+    euresist  
+  </property>
+
   <!-- metadataFile
    Pointer to the location of the csv file containing all the information on the individual sequences.
   -->
