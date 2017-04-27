@@ -26,13 +26,17 @@ public class WDownloadResource extends WFileResource {
 		if (graphicFormat == null) {
 			// NEXUS
 			response.setContentType("text/plain");
+			this.suggestFileName(getFileName() + ".nxs");
 		} else {
 			if (graphicFormat.equals(GraphicFormat.PDF)) {
 				response.setContentType("application/pdf");
+				this.suggestFileName(getFileName() + ".pdf");
 			} else if (graphicFormat.equals(GraphicFormat.PNG)) {
 				response.setContentType("image/png");
+				this.suggestFileName(getFileName() + ".png");
 			} else if (graphicFormat.equals(GraphicFormat.SVG)) {
 				response.setContentType("image/svg+xml");
+				this.suggestFileName(getFileName() + ".svg");
 			}
 		}
 		try {

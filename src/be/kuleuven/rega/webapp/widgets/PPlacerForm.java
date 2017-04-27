@@ -1,12 +1,15 @@
 package be.kuleuven.rega.webapp.widgets;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.EnumSet;
 
-import org.apache.commons.lang3.StringUtils;
 import org.yeastrc.fasta.FASTAEntry;
 import org.yeastrc.fasta.FASTAReader;
 
@@ -117,14 +120,19 @@ public class PPlacerForm {
 		fileUpload.uploaded().addListener(dialog, new Signal.Listener() {
 			public void trigger() {
 				out.setText("File upload is finished.");
-				WFileResource wFileResource = new WFileResource("text/plain", fileUpload.getSpoolFileName());
-				
+//				WFileResource wFileResource = new WFileResource("text/plain", fileUpload.getSpoolFileName());
 				try {
-					FASTAReader fastaReader = FASTAReader.getInstance(wFileResource.getFileName());
-					checkWTextArea(fastaReader);
-				} catch (Exception e) {
+					byte[] encoded = Files.readAllBytes(Paths.get(fileUpload.getSpoolFileName()));
+					textArea.setText(new String(encoded));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+//				try {
+//					checkWTextArea(new FileInputStream(new File(wFileResource.getFileName())));
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
 
 //				uploadButton.enable();
 			}
@@ -148,14 +156,6 @@ public class PPlacerForm {
 		textArea.changed().addListener(dialog, new Signal.Listener() {
 			public void trigger() {
 				out.setText("<p>Text area changed at " + WDate.getCurrentDate().toString() + ".</p>");
-				InputStream stream = new ByteArrayInputStream(textArea.getText().getBytes(StandardCharsets.UTF_8));
-				try {
-					FASTAReader fastaReader = FASTAReader.getInstance(stream);
-					checkWTextArea(fastaReader);
-					stream.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 		});
 		table.getElementAt(1, 2).setColumnSpan(2);
@@ -193,7 +193,8 @@ public class PPlacerForm {
 	public boolean isFormValid() {
 		if (!email.getText().equals("") && email.validate() == WValidator.State.Valid) {
 			if(textArea.getText() != null && !textArea.getText().equals("")) {
-				if(StringUtils.countMatches(textArea.getText(), ">") == 1) {
+				InputStream stream = new ByteArrayInputStream(textArea.getText().getBytes(StandardCharsets.UTF_8));
+				if(checkWTextArea(stream)) {
 					return true;
 				} else {
 					out.setText("<font color=\"red\">Please upload a fasta file or paste sequence in fasta format in text area.</font>");
@@ -209,8 +210,38 @@ public class PPlacerForm {
 		}
 	}
 	
-	private void checkWTextArea(FASTAReader fastaReader) {
+	private boolean checkWTextArea(InputStream stream) {
+		// We first need to make a copy of the input stream such that we can use it multiple times.
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] bytes = null;
 		try {
+			org.apache.commons.io.IOUtils.copy(stream, baos);
+			bytes = baos.toByteArray();
+			baos.close();
+			stream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// Check if the input is correct
+		ByteArrayInputStream byteArrayInputStream = null;
+		try {
+			byteArrayInputStream = new ByteArrayInputStream(bytes);
+			FASTAReader fastaReader = FASTAReader.getInstance(byteArrayInputStream);
+			fastaReader.readNext();
+		} catch (Exception e) {
+			return false;
+		} finally {
+			try {
+				byteArrayInputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			byteArrayInputStream = new ByteArrayInputStream(bytes);
+			FASTAReader fastaReader = FASTAReader.getInstance(byteArrayInputStream);
 			FASTAEntry fastaEntry;
 			int counter = 0;
 			int maxSequences = 1;
@@ -254,11 +285,20 @@ public class PPlacerForm {
 					wDialog.setPopup(true);
 					wDialog.rejectWhenEscapePressed();
 					wDialog.show();
-					break;
+					return true;
 				}
 			}
 		} catch (Exception e) {
-			out.setText("File format not recognised as fasta file");
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				stream.close();
+				byteArrayInputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		return true;
 	}
 }

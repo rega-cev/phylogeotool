@@ -37,6 +37,7 @@ import be.kuleuven.rega.webapp.widgets.WExportTreeForm;
 import be.kuleuven.rega.webapp.widgets.WHistogramMine;
 import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
 import be.kuleuven.rega.webapp.widgets.WTreeDownloaderForm;
+import eu.webtoolkit.jwt.AnchorTarget;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
@@ -45,6 +46,7 @@ import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WCheckBox;
 import eu.webtoolkit.jwt.WColor;
 import eu.webtoolkit.jwt.WComboBox;
+import eu.webtoolkit.jwt.WContainerWidget;
 import eu.webtoolkit.jwt.WDialog;
 import eu.webtoolkit.jwt.WEnvironment;
 import eu.webtoolkit.jwt.WGroupBox;
@@ -59,9 +61,12 @@ import eu.webtoolkit.jwt.WMouseEvent;
 import eu.webtoolkit.jwt.WObject;
 import eu.webtoolkit.jwt.WPushButton;
 import eu.webtoolkit.jwt.WString;
+import eu.webtoolkit.jwt.WTable;
+import eu.webtoolkit.jwt.WTableCell;
 import eu.webtoolkit.jwt.WTemplate;
 import eu.webtoolkit.jwt.WText;
 import eu.webtoolkit.jwt.WVBoxLayout;
+import eu.webtoolkit.jwt.WWidget;
 import eu.webtoolkit.jwt.WXmlLocalizedStrings;
 import eu.webtoolkit.jwt.chart.WCartesianChart;
 import figtree.application.GraphicFormat;
@@ -204,7 +209,7 @@ public class GraphWebApplication extends WApplication {
 				WDialog wDialog = new WDialog("Help");
 				wDialog.setClosable(true);
 				wDialog.rejectWhenEscapePressed(true);
-				WText explanation = new WText("Use the webbrowser back button to move up one level. <br />Use the webbrowser forward button to move down again. <br />Use the home button (to the right of the indicated level) to go back to the beginning.");
+				WText explanation = new WText("Use the webbrowser back button to move up one level. <br />Use the webbrowser forward button to move down again.");
 				wDialog.getContents().addWidget(explanation);
 				wDialog.show();
 			}
@@ -218,6 +223,8 @@ public class GraphWebApplication extends WApplication {
 			public void trigger() {
 				graphWidget.setBreadCrumb(0);
 				graphWidget.setCluster(1, treeLevel, 0);
+				setGoogleChart(1);
+				setStatisticGraph(1, true);
 			}
 		});
 		wGroupBox.addWidget(wImage);
@@ -643,6 +650,7 @@ public class GraphWebApplication extends WApplication {
 		// Added for design
 		wvBoxLayout.setSpacing(2);
 		wComboBoxRegions = new WComboBoxRegions();
+		wComboBoxRegions.setMargin(7, Side.Right);
 		wComboBoxRegions.changed().addListener(this, new Signal.Listener() {
 			public void trigger() {
 				GraphWebApplication.this.googleChartWidget.setOptions(wComboBoxRegions.getCurrentText().getValue());
@@ -665,6 +673,7 @@ public class GraphWebApplication extends WApplication {
 		WText regionLabel = new WText("Select region: ");
 		wgroupboxRegion.addWidget(regionLabel);
 		wgroupboxRegion.addWidget(wComboBoxRegions);
+		wgroupboxRegion.addWidget(new WText("<b>Attribute visualized:</b> " + Settings.getInstance().getVisualizeGeography()));
 		
 		googleChartWidget = new GoogleChartWidget(countries, region, Settings.getInstance().getDatalessRegionColor(), Settings.getInstance().getBackgroundcolor(), Settings.getInstance().getColorAxis());
 		googleChartWidget.setMinimumSize(new WLength(30.0, Unit.Percentage), new WLength(300.0, Unit.Pixel));
@@ -778,10 +787,26 @@ public class GraphWebApplication extends WApplication {
 		return this.pplacer;
 	}
 	
-	public void treeExportFinished(WObject parent, final WConfirmationDialog wConfirmationDialog, ByteArrayOutputStream byteArrayOutputStream, String fileName, GraphicFormat graphicFormat) {
+	public void treeExportFinished(final WObject parent, final WConfirmationDialog wConfirmationDialog, ByteArrayOutputStream byteArrayOutputStream, String fileName, GraphicFormat graphicFormat) {
 		UpdateLock updateLock = this.getUpdateLock();
 		WDownloadResource wDownloadResource = new WDownloadResource(parent, fileName, graphicFormat, byteArrayOutputStream);
 		WAnchor wAnchor = new WAnchor(wDownloadResource, "Download File");
+		wAnchor.setTarget(AnchorTarget.TargetDownload);
+		
+		wAnchor.clicked().addListener(wConfirmationDialog,
+	            new Signal1.Listener<WMouseEvent>() {
+            public void trigger(WMouseEvent e1) {
+            	wConfirmationDialog.reject();
+            	// TODO: Improve this code. Maybe it'll be easier to just pass the correct button here or use observer pattern.
+            	WTableCell cell = ((WTable)((WContainerWidget)parent).getChildren().get(0)).getElementAt(4, 3);
+            	for(WWidget wwWidget:cell.getChildren()) {
+            		if(wwWidget instanceof WPushButton && ((WPushButton)wwWidget).isDisabled()) {
+            			((WPushButton)wwWidget).enable();
+            		}
+            	}
+            }
+        });
+		
 		wConfirmationDialog.addWidget(wAnchor);
 		wConfirmationDialog.getOkButton().show();
 		this.triggerUpdate();
