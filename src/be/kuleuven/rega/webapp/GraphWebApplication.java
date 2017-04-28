@@ -598,6 +598,7 @@ public class GraphWebApplication extends WApplication {
 		WImage wImage = new WImage(new WLink(getServletContext().getContextPath().concat("/images/warning.png")));
 		wImage.setWidth(new WLength(50));
 		wImage.setHeight(new WLength(50));
+		wImage.setMaximumSize(new WLength(50), new WLength(50));
 		
 		WText wText = new WText("The countries provided under '" + Settings.getInstance().getVisualizeGeography() + "'<br /> are not (all) formatted in the ISO 3166-1 alpha-2 standard.");
 		wText.setMargin(8, Side.Top);
