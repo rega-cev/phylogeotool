@@ -33,7 +33,7 @@ public class BlastAnalysis {
     
     abstract class BlastSequence {
     	abstract int getLength();
-    	abstract void writeFastaOutput(FileOutputStream fos);
+    	abstract File getFileHandle();
     }
     
 	enum AlignmentSequenceType {
@@ -41,7 +41,7 @@ public class BlastAnalysis {
 	}
     abstract class Alignment {
     	abstract AlignmentSequenceType getSequenceType();
-    	abstract void writeFastaOutput(FileOutputStream fos);
+    	abstract File getFileHandle();
     }
 
     /**
@@ -256,21 +256,9 @@ public class BlastAnalysis {
         Process blast = null;
         try {
             if (sequence.getLength() != 0) {
-                File db = getTempFile("db.fasta");
-                FileOutputStream dbFile = new FileOutputStream(db);
-                //FileDescriptor fd = dbFile.getFD();
-                alignment.writeFastaOutput(dbFile);
-                //dbFile.flush();
-                //fd.sync();
-                dbFile.close();
+                File db = alignment.getFileHandle();
 
-                File query = getTempFile("query.fasta");
-                FileOutputStream queryFile = new FileOutputStream(query);
-                //FileDescriptor fd2 = dbFile.getFD();
-                sequence.writeFastaOutput(queryFile);
-                //queryFile.flush();
-                //fd2.sync();
-                queryFile.close();
+                File query = sequence.getFileHandle();
                         
                 String cmd = blastPath + formatDbCommand + " " + formatDbOptions + " -o T -i " + db.getAbsolutePath();
                 System.err.println(cmd);
