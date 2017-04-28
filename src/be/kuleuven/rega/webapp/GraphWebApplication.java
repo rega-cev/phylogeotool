@@ -673,7 +673,7 @@ public class GraphWebApplication extends WApplication {
 		WText regionLabel = new WText("Select region: ");
 		wgroupboxRegion.addWidget(regionLabel);
 		wgroupboxRegion.addWidget(wComboBoxRegions);
-		wgroupboxRegion.addWidget(new WText("<b>Attribute visualized:</b> " + Settings.getInstance().getVisualizeGeography()));
+		wgroupboxRegion.addWidget(new WText("Visualized attribute: " + Settings.getInstance().getVisualizeGeography()));
 		
 		googleChartWidget = new GoogleChartWidget(countries, region, Settings.getInstance().getDatalessRegionColor(), Settings.getInstance().getBackgroundcolor(), Settings.getInstance().getColorAxis());
 		googleChartWidget.setMinimumSize(new WLength(30.0, Unit.Percentage), new WLength(300.0, Unit.Pixel));
