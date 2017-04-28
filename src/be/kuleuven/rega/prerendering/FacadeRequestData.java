@@ -2,20 +2,21 @@ package be.kuleuven.rega.prerendering;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import com.neovisionaries.i18n.CountryCode;
-
 import be.kuleuven.rega.phylogeotool.core.Cluster;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.data.csv.CsvUtils;
+import be.kuleuven.rega.phylogeotool.data.csv.CsvUtilsMetadata;
 import be.kuleuven.rega.phylogeotool.io.read.ReadTree;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
 import be.kuleuven.rega.phylogeotool.tree.distance.DistanceInterface;
+
+import com.neovisionaries.i18n.CountryCode;
 
 public class FacadeRequestData {
 
@@ -103,6 +104,42 @@ public class FacadeRequestData {
 			return true;
 		} else {
 			throw new FileNotFoundException("File " + Settings.getInstance().getXmlPath() + File.separator + "1.xml");
+		}
+	}
+	
+	/**
+	 * @return true if the data that is required for filling up the Google Chart panel was successfully retrieved
+	 * @throws IOException 
+	 * 			- FileNotFoundException when the metadatafile could not be found
+	 * 			- IOException when the csv file could not be read properly		
+	 */
+	public boolean isCountryColumnDefined(char csvDelimitor) throws IOException {
+		// First, we need to check if the file where the header names are taken from, exists
+		File metaDataFile = new File(Settings.getInstance().getMetaDataFile());
+		boolean headersFileFound = metaDataFile.exists();
+		// Secondly, we need to check if the variable which will be used in the Google Chart panel, was defined.
+		boolean requiredVariableSet = (Settings.getInstance().getVisualizeGeography() != null && !Settings.getInstance().getVisualizeGeography().equals(""));
+		
+		CsvUtilsMetadata csvUtilsMetadata = new CsvUtilsMetadata(metaDataFile, csvDelimitor);
+		
+		if(headersFileFound && requiredVariableSet) {
+			csvUtilsMetadata = new CsvUtilsMetadata(metaDataFile, csvDelimitor);
+			String header[] = csvUtilsMetadata.getHeader();
+			for(String headerArg:header) {
+				if(headerArg.equals(Settings.getInstance().getVisualizeGeography())) {
+					return true;
+				}
+			}
+			// The variable wasn't found in the metadata file. We could try to retrieve it from the generated cluster xml file as final resort.
+			HashMap<String, Integer> countries = this.readCsv(1, Settings.getInstance().getVisualizeGeography());
+			if(countries.keySet() != null && countries.size() > 1) {
+				return true;
+			} else {
+				return false;
+			}
+			
+		} else {
+			return false;
 		}
 	}
 }

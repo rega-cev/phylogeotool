@@ -37,6 +37,7 @@ import be.kuleuven.rega.webapp.widgets.WExportTreeForm;
 import be.kuleuven.rega.webapp.widgets.WHistogramMine;
 import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
 import be.kuleuven.rega.webapp.widgets.WTreeDownloaderForm;
+import eu.webtoolkit.jwt.AlignmentFlag;
 import eu.webtoolkit.jwt.AnchorTarget;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
@@ -124,6 +125,15 @@ public class GraphWebApplication extends WApplication {
 				showISO3166Warning();
 			}
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			boolean isCountryColumnDefined = facadeRequestData.isCountryColumnDefined(csvDelimitor);
+			if(!isCountryColumnDefined) {
+				showCountryColumnNotDefinedWarning();
+			}
+		} catch(IOException e) {
 			e.printStackTrace();
 		}
 //			jebl.evolution.trees.Tree jeblTree = ReadTree.readTree(new FileReader("/Users/ewout/Documents/TDRDetector/fullPortugal/trees/fullTree.Midpoint.tree"));
@@ -560,6 +570,47 @@ public class GraphWebApplication extends WApplication {
 		wImage.setHeight(new WLength(50));
 		
 		WText wText = new WText("The countries provided under '" + Settings.getInstance().getVisualizeGeography() + "'<br /> are not (all) formatted in the ISO 3166-1 alpha-2 standard.");
+		wText.setMargin(8, Side.Top);
+		
+		WPushButton exit = new WPushButton("Exit");
+		exit.clicked().addListener(wDialog,
+	            new Signal1.Listener<WMouseEvent>() {
+	                public void trigger(WMouseEvent e1) {
+	                    wDialog.reject();
+	                }
+	            });
+		exit.setMaximumSize(new WLength(50), new WLength(30));
+		// TODO: Improve this part to put the Exit button in the middle by not using margin
+		exit.setMargin(200, Side.Left);
+		
+		WHBoxLayout whBoxLayout = new WHBoxLayout();
+		whBoxLayout.addWidget(wImage);
+		whBoxLayout.addWidget(wText);
+		
+		WVBoxLayout wvBoxLayout = new WVBoxLayout();
+		wvBoxLayout.addItem(whBoxLayout);
+		wvBoxLayout.addWidget(exit);
+		
+		wDialog.getContents().setLayout(wvBoxLayout);
+		wDialog.rejectWhenEscapePressed();
+		wDialog.show();
+	}
+	
+	private final void showCountryColumnNotDefinedWarning() {
+		final WDialog wDialog = new WDialog("Warning");
+		wDialog.setWidth(new WLength(500));
+		wDialog.setClosable(true);
+		WImage wImage = new WImage(new WLink(getServletContext().getContextPath().concat("/images/warning.png")));
+		wImage.setWidth(new WLength(50));
+		wImage.setHeight(new WLength(50));
+		wImage.setMaximumSize(new WLength(50), new WLength(50));
+		
+		WText wText = new WText("Could not correctly load the countries. Please check the following configuration settings.<br />"
+				+ "<ul>"
+				+ "<li>Check if your metadata file exists and is correctly defined in your global-conf.xml under the property \"metadataFile\".</li>"
+				+ "<li>Check if the property \"visualizeGeography\" in global-conf.xml was set properly.</li"
+				+ "><li>Check if the name in the header of the metadata file is identical to the \"visualizeGeography\" property.</li>"
+				+ "</ul>");
 		wText.setMargin(8, Side.Top);
 		
 		WPushButton exit = new WPushButton("Exit");
