@@ -246,8 +246,8 @@ public class BlastAnalysis {
         this.referenceTaxa = new HashMap<String, ReferenceTaxus>();
     }
 	
-	private File getTempFile(String f) {
-		return null;
+	private File getTempFile(String f) throws IOException {
+		return File.createTempFile(f, "temp");
 	}
 
     private Result compute(Alignment alignment, BlastSequence sequence, File workingDir)
