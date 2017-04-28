@@ -539,6 +539,36 @@ public class GraphWebApplication extends WApplication {
 	                			Main.getJobScheduler().addPPlacerJob(path.toString(), Settings.getInstance().getScriptFolder(), Settings.getInstance().getPhyloTree(), Settings.getInstance().getAlignmentLocation(),
 	                					pplacerFile.getAbsolutePath(), Settings.getInstance().getLogfileLocation(), PPlacerForm.getEmail());
 	                			dialog.reject();
+	                			
+	                			final WDialog wDialog = new WDialog("Your job has started");
+	        					
+	        					WTable wTable = new WTable(wDialog.getContents());
+	        					wTable.addStyleClass("tablePPlacer", true);
+	        					wTable.setHeaderCount(1);
+	        					wTable.setWidth(new WLength("100%"));
+	        					wTable.setStyleClass("tableDialog");
+	        					
+	        					WImage wImage = new WImage(new WLink(Main.getApp().getServletContext().getContextPath().concat("/images/info.png")));
+	        					wImage.setWidth(new WLength(50));
+	        					wImage.setHeight(new WLength(50));
+	        					
+	        					wTable.getElementAt(1, 1).addWidget(wImage);
+	        					wTable.getElementAt(1, 1).setRowSpan(2);
+	        					
+	        					wTable.getElementAt(1, 2).addWidget(new WText("You will receive an e-mail notification when <br />the phylogenetic placement has been completed."));
+	        					WPushButton wPushButton = new WPushButton("OK");
+	        					wPushButton.setWidth(new WLength(75));
+	        					wPushButton.clicked().addListener(dialog,
+	        				            new Signal1.Listener<WMouseEvent>() {
+	        		                public void trigger(WMouseEvent e1) {
+	        		                	wDialog.reject();
+	        		                }
+	        		            });
+	        					wTable.getElementAt(3, 2).addWidget(wPushButton);
+	        					wTable.getElementAt(3, 2).setContentAlignment(AlignmentFlag.AlignCenter);
+	        					wDialog.setPopup(true);
+	        					wDialog.rejectWhenEscapePressed();
+	        					wDialog.show();
 	                		}
 	                	} else {
 	                		System.err.println("PPlacer not supported. If you want to support PPlacer, please toggle PPlacer support on in your global-conf.xml file");
