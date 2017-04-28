@@ -7,43 +7,28 @@ package be.kuleuven.rega.blast;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
+
+import be.kuleuven.rega.phylogeotool.settings.Settings;
 
 /**
  * Implements similarity based analyses using NCBI blast.
  */
 public class BlastAnalysis {
-	public static String blastPath = "";
+	public static String blastPath = Settings.getInstance().getBlastPath();
     public static String formatDbCommand = "formatdb";
     public static String blastCommand = "blastall";
     
-    abstract class BlastSequence {
-    	abstract int getLength();
-    	abstract File getFileHandle();
-    }
-    
-	enum AlignmentSequenceType {
-		AA, NT
-	}
-    abstract class Alignment {
-    	abstract AlignmentSequenceType getSequenceType();
-    	abstract File getFileHandle();
-    }
-
     /**
      * Defines a region in a reference sequence.
      */
@@ -223,10 +208,26 @@ public class BlastAnalysis {
     	return detailsOptions != null;
     }
 
+    public BlastAnalysis(Alignment alignment, Double cutoff, String blastOptions) {
+    	this.cutoff = cutoff;
+    	this.blastOptions = blastOptions != null ? blastOptions : "";
+    	if (alignment.getSequenceType() == AlignmentSequenceType.AA) {
+        	this.blastOptions = "-p blastx " + this.blastOptions;
+        	if (detailsOptions != null)
+        		this.detailsOptions = "-p blastx " + this.detailsOptions;
+        	this.formatDbOptions = "";
+        } else if (alignment.getSequenceType() == AlignmentSequenceType.NT) {
+        	this.blastOptions = "-p blastn " + this.blastOptions;
+        	if (detailsOptions != null)
+        		this.detailsOptions = "-p blastn " + this.detailsOptions;
+        	this.formatDbOptions = "-p F";
+        }
+    	this.referenceTaxa = new HashMap<String, ReferenceTaxus>();
+    }
 
 	public BlastAnalysis(Alignment alignment, Double cutoff, Double maxPValue,
                          boolean relativeCutoff, String blastOptions,
-                         String detailsOptions, File workingDir) {
+                         String detailsOptions) {
         this.cutoff = cutoff;
         this.maxPValue = maxPValue;
         this.relativeCutoff = relativeCutoff;
@@ -313,8 +314,8 @@ public class BlastAnalysis {
                     throw new Exception("blast exited with error: " + exitResult);
                 }      
 
-                db.delete();                
-                query.delete();
+//                db.delete();                
+//                query.delete();
 
                 if (alignment.getSequenceType() == AlignmentSequenceType.NT) {
                     getTempFile("db.fasta.nhr").delete();
@@ -379,7 +380,7 @@ public class BlastAnalysis {
 
 			if (best == null)
 				best = values;
-
+			
 			ReferenceTaxus referenceTaxus = ba.referenceTaxa
 					.get(values[REFID_IDX]);
 
