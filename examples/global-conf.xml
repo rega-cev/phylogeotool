@@ -86,6 +86,12 @@
     /usr/local/bin/Rscript
   </property>
 
+  <!-- blastPath
+    Pointer to the directory where the blast binaries (blastall and formatdb are situated). Make sure that you end the path with a trailing slash.
+  -->
+  <property name="blastPath">
+   /usr/local/bin/blast/
+  </property>
 
   <!-- showNAData 
    Include Non Assigned (NA) data in the graphs

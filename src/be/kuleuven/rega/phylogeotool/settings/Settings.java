@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.jdom.Document;
@@ -167,6 +166,10 @@ public class Settings {
 		return rBinary;
 	}
 	
+	public String getBlastPath() {
+		return blastPath;
+	}
+	
 	public List<String> getColumnsToExport() {
 		return this.columnsToExport;
 	}
@@ -187,6 +190,7 @@ public class Settings {
 	private String pplacerBinary;
 	private String guppyBinary;
 	private String rBinary;
+	private String blastPath;
 	private boolean showNAData;
 	private String visualizeGeography;
 	private String datalessRegionColor;
@@ -240,6 +244,8 @@ public class Settings {
             	guppyBinary = e.getValue().trim();
             } else if(name.equals("rBinary")) {
             	rBinary = e.getValue().trim();
+            } else if(name.equals("blastPath")) {
+            	blastPath = e.getValue().trim();
             } else if(name.equals("visualizeGeography")) {
             	visualizeGeography = e.getValue().trim();
             } else if(name.equals("showNAData")) {
