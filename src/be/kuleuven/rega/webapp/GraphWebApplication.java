@@ -327,7 +327,8 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	private WTemplate createHeader() {
-		String iFrame = "<iframe src=\"" + getServletContext().getContextPath().concat("/style/euresist/header.html") + "\"></iframe>";
+		String stylePath = "/style/" + Settings.getInstance().getStylesheetDir(); 
+		String iFrame = "<iframe src=\"" + getServletContext().getContextPath().concat(stylePath + "/header.html") + "\"></iframe>";
 		WTemplate wTemplate = new WTemplate();
 		wTemplate.setTemplateText(iFrame, TextFormat.XHTMLUnsafeText);
 		return wTemplate;
