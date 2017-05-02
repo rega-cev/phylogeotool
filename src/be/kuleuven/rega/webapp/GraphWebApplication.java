@@ -42,6 +42,7 @@ import eu.webtoolkit.jwt.AnchorTarget;
 import eu.webtoolkit.jwt.Side;
 import eu.webtoolkit.jwt.Signal;
 import eu.webtoolkit.jwt.Signal1;
+import eu.webtoolkit.jwt.TextFormat;
 import eu.webtoolkit.jwt.WAnchor;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WCheckBox;
@@ -145,7 +146,8 @@ public class GraphWebApplication extends WApplication {
 		rootLayout.setContentsMargins(2, 0, 2, 2);
 		rootLayout.setSpacing(-5);
 		WTemplate header = createHeader();
-		header.setMargin(-2, EnumSet.of(Side.Right, Side.Left));
+		//TODO: this should be incorporated in the header's CSS
+		//header.setMargin(-2, EnumSet.of(Side.Right, Side.Left));
 		rootLayout.addWidget(header);
 		rootLayout.setStretchFactor(header, 0);
 		
@@ -325,14 +327,9 @@ public class GraphWebApplication extends WApplication {
 	}
 	
 	private WTemplate createHeader() {
-		WTemplate wTemplate = new WTemplate(WString.tr("euresist"));
-		WXmlLocalizedStrings resources = new WXmlLocalizedStrings();
-		resources.use("/be/kuleuven/rega/webapp/resources");
-		this.setLocalizedStrings(resources);
-		this.useStyleSheet(new WLink(getServletContext().getContextPath().concat("/style/euresist/euresist.css")));
-//		wTemplate.bindString("server", "http://engine.euresist.org");
-		wTemplate.bindString("euresist_server", new WLink("http://engine.euresist.org").getUrl());
-		wTemplate.bindString("server", new WLink(getServletContext().getContextPath().concat("/style/euresist")).getUrl());
+		String iFrame = "<iframe src=\"" + getServletContext().getContextPath().concat("/style/euresist/header.html") + "\"></iframe>";
+		WTemplate wTemplate = new WTemplate();
+		wTemplate.setTemplateText(iFrame, TextFormat.XHTMLUnsafeText);
 		return wTemplate;
 	}
 
