@@ -35,10 +35,10 @@
 \title{\textbf{PhyloGeoTool}\\ % Title
 User Manual} % Subtitle
 
-\author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, Guy Baele} % Author
+\author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, \\{Guy Baele}} % Author
 \\{\textit{Rega Institute for Medical Research, KU Leuven}}} % Institution
 
-\date{April 2017} % Dates
+\date{May 2017} % Dates
 
 %----------------------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ For example, the aforementioned public EuResist instance of the PhyloGeoTool is 
 Another instance of the software has been set up in the context of Dengue virus, using genetic sequence data that is publicly available in Genbank. 
 For this instance, the E gene was used to build a phylogenetic tree including all four serotypes and additional information associated with each sequence is visualized at \url{http://phylogeotool.gbiomed.kuleuven.be/dengue/}.  
 
-Note that any browser (Chrome, Firefox, Internet Explorer) should do.\\
+Note that any browser (Chrome, Firefox, Internet Explorer) should be able to visualize the PhyloGeoTool application.\\
 
 \noindent If you experience any problems, please contact us: phylogeotool@kuleuven.be.
 
@@ -95,12 +95,12 @@ The PhyloGeoTool is divided into different panels (see Figure \ref{fig:initialvi
 \begin{itemize}
   \item The top left panel shows a map where each country is colored according to a gradient, where a darker color signifies that more sequences are originating from this country. The maximum value of the gradient bar shown denotes the highest number of sequences in the dataset for a single country.  
     A drop-down box allows you to select the geographic region on which you want to focus (e.g. Europe, North America, \ldots).
-  \item The right panel shows a top-level view of the clustering of the tree (initially the root of the tree), as determined by our clustering algorithm.We provided a detailed explanation about the working of our clustering algorithm in a manuscript that is currently being reviewed. %(TODO : later : add reference to our paper as a footnote).
-A button allows you to visualize the phylogenetic tree in its entirety, colored according to the shown clusters.
   \item The bottom left panel shows a histogram or bar chart depending on the chosen attribute. If the attribute is represented by a continuous dataset, a histogram will be shown while a discrete dataset is displayed by a bar chart plot.
   The histogram or bar chart shows a certain attribute (i.e. characteristic) from all sequences currently visualized in the tree panel on the right. 
   A drop-down box allows you to select the attribute to be plotted on the bar chart. 
   The attributes available for selection depend on the attributes made available by the PhyloGeoTool instance.
+  \item The right panel shows a top-level view of the clustering of the tree (initially the root of the tree), as determined by our clustering algorithm.We provided a detailed explanation about the working of our clustering algorithm in a manuscript that is currently being reviewed. %(TODO : later : add reference to our paper as a footnote).
+This panel allows you to visualize the phylogenetic tree in its entirety, colored according to the shown clusters, and to add new sequences to the visualized phylogeny.
 \end{itemize}
 
 
@@ -121,15 +121,15 @@ The map, on the other hand, will only show the geographic distribution of the se
 When you click on a node in the clustered phylogenetic tree, the PhyloGeoTool will navigate to the clustering of this particular node (i.e. will go down one level in the node on the clustered phylogenetic tree).
 A counter on the bottom left of the cluster panel keeps track of the depth of the navigation. 
 As you can visit a cluster node by clicking it, you can go back to into your navigational path by using the browser's 'Back' button.
-The depth of the navigation is also shown when you hover over the '?' symbol which is shown next to 'Level: '. 
-Navigating directly to the root of the tree can be done modifying the URL that it ends with 'root'. 
+The depth of the navigation is also shown when you hover over the `?' symbol which is shown next to `Level: '. 
+Navigating directly to the root of the tree can be done modifying the URL that it ends with `root' or by pressing the button label `Back to level 0'.
 
 Additionally, the URL encodes the level of descent in the clustered phylogenetic tree. 
-A URL can hence be bookmark-ed or shared to go back at the exact location in the clustered phylogenetic tree. 
+A URL can hence be bookmarked or shared to go back at the exact location in the clustered phylogenetic tree. 
 
 
 %TODO Ewout: update this figure to the latest version
-\subsection{Select a geographic region}
+\subsection{Selecting a geographic region}
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.38]{images/change_country.PNG}
@@ -140,7 +140,7 @@ A URL can hence be bookmark-ed or shared to go back at the exact location in the
 You can select your geographical region of interest in the drop-down box on top of the map (see Figure \ref{fig:change_region}). 
 
 
-\subsection{Select a sequence attribute}
+\subsection{Selecting a sequence attribute}
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.38]{images/change_attr.PNG}
@@ -151,7 +151,7 @@ You can select your geographical region of interest in the drop-down box on top 
 You can select an attribute of interest in the drop-down box on top of the attribute chart (see Figure \ref{fig:change_attr}).
 
 
-\subsection{Export the phylogenetic tree}
+\subsection{Exporting the phylogenetic tree}
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.50]{images/view_tree.PNG}
@@ -178,14 +178,12 @@ On the bottom of the pop-up window, there are two buttons: 'Export' and 'Exit'.
 The button with label 'Export' will show a window similar to the one shown in Figure \ref{fig:export_tree}. There are three options available that allows the customization of the export:
 \begin{itemize}
 \item Color Tree: enable/disable the coloring of tree based on the clusters' color.
-
 \item Show node tips: include/exclude leaf names in the phylogenetic tree.
-\item Output Format: the format in which you want your tree to be downloaded (i.e. PDF, NEXUS, SVG, PNG).
+\item Output Format: the format in which you want your tree to be downloaded (i.e. PDF, NEXUS, SVG, PNG). \footnote{Exports in the NEXUS file format can be visualized in programs such as FigTree (\url{http://tree.bio.ed.ac.uk/software/figtree/}).} 
 \end{itemize}
   
 
-\footnote{Exports in the NEXUS file format can be visualized in programs such as FigTree (\url{http://tree.bio.ed.ac.uk/software/figtree/}).}  
-
+ 
 \subsection{Automated phylogenetic placement of sequences}
 Phylogenetic placement enables the placement of unknown query sequences onto an existing phylogenetic tree, without the need to re-compute the entire phylogeny (which is a time-consuming process, especially when a large number of sequences is involved). 
 In the PhyloGeoTool, we use phylogenetic placement to position new sequences onto the phylogeny, in a reasonable amount of time (i.e. minutes). 
@@ -237,7 +235,7 @@ You will be taken to the original PhyloGeoTool web-page (such as described in Se
 
 
 
-\section{Contact Information and support }
+\section{Contact information and support }
 % once published: write something like 
 % Please cite ....
 
