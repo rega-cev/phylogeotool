@@ -146,8 +146,9 @@ public class GraphWebApplication extends WApplication {
 		rootLayout.setContentsMargins(2, 0, 2, 2);
 		rootLayout.setSpacing(-5);
 		WTemplate header = createHeader();
+		header.setMaximumSize(new WLength(99.70, Unit.Percentage), new WLength(81, Unit.Pixel));
 		//TODO: this should be incorporated in the header's CSS
-		//header.setMargin(-2, EnumSet.of(Side.Right, Side.Left));
+		header.setMargin(-2, EnumSet.of(Side.Right, Side.Left));
 		rootLayout.addWidget(header);
 		rootLayout.setStretchFactor(header, 0);
 		
@@ -328,7 +329,7 @@ public class GraphWebApplication extends WApplication {
 	
 	private WTemplate createHeader() {
 		String stylePath = "/style/" + Settings.getInstance().getStylesheetDir(); 
-		String iFrame = "<iframe src=\"" + getServletContext().getContextPath().concat(stylePath + "/header.html") + "\"></iframe>";
+		String iFrame = "<iframe src=\"" + getServletContext().getContextPath().concat(stylePath + "/header.html") + "\" width=\"100%\" height=\"100%\"></iframe>";
 		WTemplate wTemplate = new WTemplate();
 		wTemplate.setTemplateText(iFrame, TextFormat.XHTMLUnsafeText);
 		return wTemplate;

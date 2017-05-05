@@ -25,7 +25,7 @@ public class PPlacerListener implements JobListener {
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
     	System.err.println("Job has finished");
     	System.err.println("Location: " + context.getJobDetail().getJobDataMap().getString(PPlacingJob.TEMPDIR_LOCATION));
-    	mail.sendEmail(context.getJobDetail().getJobDataMap().getString(EMAIL_ADDRESS), context.getJobDetail().getJobDataMap().getString(PPlacingJob.TEMPDIR_LOCATION).split("pplacer")[1]);
+    	mail.sendEmail(context.getJobDetail().getJobDataMap().getString(EMAIL_ADDRESS), context.getJobDetail().getJobDataMap().getString(PPlacingJob.TEMPDIR_LOCATION).split("pplacer")[1],context.getJobDetail().getJobDataMap().getString(PPlacingJob.RESULT));
     	System.err.println("An email was sent to: " + context.getJobDetail().getJobDataMap().getString(EMAIL_ADDRESS));
     }
 

@@ -487,7 +487,7 @@ public class BlastAnalysis {
     	return new Result(sequence, score, length, diffs, start, end, refseq, reverseCompliment);
     }
 
-    Result run(Alignment alignment, BlastSequence sequence, File workingDir) throws Exception {
+    public Result run(Alignment alignment, BlastSequence sequence, File workingDir) throws Exception {
         try {
             return compute(alignment, sequence, workingDir);
         } catch (Exception e) {
