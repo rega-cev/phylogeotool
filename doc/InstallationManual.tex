@@ -37,10 +37,10 @@
 \title{\textbf{PhyloGeoTool}\\ % Title
 Installation Manual} % Subtitle
 
-\author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, Guy Baele} % Author
+\author{\textsc{Ewout Vanden Eynden, Pieter Libin, Kristof Theys, \\{Guy Baele}} % Author
 \\{\textit{Rega Institute for Medical Research, KU Leuven}}} % Institution
 
-\date{April 2017} % Date
+\date{May 2017} % Date
 
 %----------------------------------------------------------------------------------------
 
@@ -114,7 +114,7 @@ A comma-separated value (CSV) file, containing an ID column that contains identi
 Remaining columns may contain additional information/annotation for the taxa in the phylogenetic tree. 
 Examples of such annotations are: geographic location, virus genotype/subtype and patient attributes (age, ethnicity, \ldots). \\
 Information on the geography of taxa can be visualized in a map (Google Charts). 
-For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (more information: section \ref{sssec:config_file}). 
+For this to work, the column containing the geographic information needs to be configured with the "visualizeGeography" property in the XML configuration file (for more information, see section \ref{sssec:config_file}). 
 The geographic values need to be formatted with the code or country name as defined in the ISO\_3166-1\_alpha-2 standard \footnote{\url{https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2}}.
 
 \subsection{Create a distance matrix and determine clusters}
@@ -123,27 +123,27 @@ However, this computation can be performed before the installation of the web-to
 
 To be able to support this computation, a distance matrix needs to be constructed (using DistanceMatrix.jar).
 Performing this clustering procedure before the installation of the web-tool allows the web-tool to render both clusters and annotations instantaneously.
-To infer a distance matrix based from the phylogenetic tree, the program DistanceMatrix.jar is used. DistanceMatrix.jar can be downloaded from our website our website \footnote{\url{https://github.com/rega-cev/phylogeotool/releases/tag/1}} or built from source (see section \ref{sec:source}). 
+To infer a distance matrix based from the phylogenetic tree, the program DistanceMatrix.jar is used. DistanceMatrix.jar can be downloaded from our website \footnote{\url{https://github.com/rega-cev/phylogeotool/releases/tag/1}} or built from source (see section \ref{sec:source}). 
 The following command uses DistanceMatrix.jar to generate a distance matrix (to be stored in a file called distances.csv in the command below) from a previously constructed phylogenetic tree in Newick format (i.e. tree.newick): 
 \begin{verbatim}
 java -jar DistanceMatrix.jar tree.newick distances.csv
 \end{verbatim}
 
-To subsequently partition the tree in clusters, the program PreRender.jar is used. PreRender.jar can be downloaded from our website \footnote{\url{https://github.com/rega-cev/phylogeotool/releases/tag/1}} or built from source (see section \ref{sec:source}). 
+To subsequently partition the tree in clusters, the program PreRender.jar is used. PreRender.jar can be downloaded from our website or built from source (see section \ref{sec:source}). 
 PreRender.jar accepts the following parameters:
 \begin{itemize}
-\item tree.newick: Location of the phylogenetic tree used in the PhyloGeoTool.
-\item attributes.csv: Location of the CSV file that connects nodes in the tool to attributes \footnote{The identifiers in the CSV file (in the ID column) have to correspond with the identifiers of the nodes in the tree.}.
-\item distances.csv: Location of to the distance matrix that was generated from this tree.
-\item /path/to/cluster\_output: Location of the folder where this the PreRender.jar program has to write its output files. The files are stored in four different folders.
+\item tree.newick: location of the phylogenetic tree used in the PhyloGeoTool.
+\item attributes.csv: location of the CSV file that connects nodes in the tool to attributes \footnote{The identifiers in the CSV file (in the ID column) have to correspond with the identifiers of the nodes in the tree.}.
+\item distances.csv: location of the distance matrix that was generated from this tree.
+\item /path/to/cluster\_output: location of the folder where this the PreRender.jar program has to write its output files. The files are stored in four different folders.
 \begin{enumerate}
-	\item clusters: Contains the files that stores the best clustering representation in XML format for a specific level.
-	\item r: Contains the graphs (SDR, First Derivative and Second Derivative) which are generated during the clustering phase of the tool.
-	\item treeview: Contains images that display a colored phylogenetic tree, where each color is parallel to the cluster shown on that level.
-	\item xml: Contains a summary of the attributes which are displayed at each specific level of the tool.
+	\item clusters: contains the files that stores the best clustering representation in XML format for a specific level.
+	\item r: contains the graphs (SDR, First Derivative and Second Derivative) which are generated during the clustering phase of the tool.
+	\item treeview: contains images that display a colored phylogenetic tree, where each color is parallel to the cluster shown on that level.
+	\item xml: contains a summary of the attributes which are displayed at each specific level of the tool.
 \end{enumerate}
-\item /path/to/rBinary: Link to the exact location of the R executable.
-\item /path/to/folder\_rScripts: Link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R (i.e. https://github.com/rega-cev/phylogeotool/tree/master/scripts).
+\item /path/to/rBinary: link to the exact location of the R executable.
+\item /path/to/folder\_rScripts: link to the folder which contain SDR.R, FirstDerivative.R, sgolay.R and SecondDerivative.R (i.e. https://github.com/rega-cev/phylogeotool/tree/master/scripts).
 \end{itemize}
 PreRender.jar will create the necessary directories in the folder with name `folder\_output'.
 If those directories already exist, a warning is issued to the user and the process will be aborted.
@@ -158,7 +158,7 @@ distance_matrix folder_output rBinary folder_rScripts
 
 In the /etc folder, create a directory `phylogeotool', which is the default location for the configuration file. 
 \\
-In the case of a Windows installation, create this directory under C:\textbackslash \textbackslash Program files such that the full path becomes C:\textbackslash \textbackslash Program files\textbackslash \textbackslash phylogeotool\textbackslash \textbackslash.
+In the case of a Windows installation, create this directory under C:\textbackslash \textbackslash Program files such that the full path becomes C:\textbackslash \textbackslash Program files \textbackslash phylogeotool \textbackslash.
 \\
 You can also set your own preferred folder by extending the web.xml file in your deployed application with the following information.
 
@@ -246,7 +246,7 @@ ant
 % TODO (GB) once published: write something like 
 % Please cite ....
 
-\section{Contact Information and support }
+\section{Contact information and support }
 
 
 The PhyloGeoTool is developed and maintained by the Rega Institute KU Leuven.
