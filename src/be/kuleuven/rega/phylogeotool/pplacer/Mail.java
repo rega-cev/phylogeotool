@@ -26,7 +26,7 @@ public class Mail {
 		props.put("mail.smtp.port", "587");
 	}
 	
-	public void sendEmail(String recipient, String pplacerId) {
+	public void sendEmail(String recipient, String pplacerId, String resultMessage) {
 		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(username, password);
@@ -37,9 +37,15 @@ public class Mail {
 			message.setFrom(new InternetAddress("phylogeotool@kuleuven.be"));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
 			message.setSubject("Your PPlacing job has finished");
-			message.setText("Dear User,"
-					+ "\n\n Your PPlacing job has recently finished and can be reviewed here: " + Settings.getInstance().getFull_url() + File.separator + "root/1?pplacer="
-					+ pplacerId);
+			if(resultMessage != null && resultMessage.contains("BLAST")) {
+				message.setText("Dear User,"
+						+ "\n\nPPlacing could not be initiated, since the sequence did not meet the inclusion criteria.\n"
+						+ "\nPlease check that the sequence is sufficiently long and matches the characteristics of the represented dataset.");
+			} else {
+				message.setText("Dear User,"
+						+ "\n\nYour PPlacing job has recently finished and can be reviewed here: " + Settings.getInstance().getFull_url() + File.separator + "root/1?pplacer="
+						+ pplacerId);
+			}
 
 			Transport.send(message);
 		} catch (MessagingException e) {
@@ -49,6 +55,6 @@ public class Mail {
 	
 	public static void main(String[] args) {
 		Mail mail = new Mail();
-		mail.sendEmail("ewout.ve@gmail.com", "CRQdxm0J");
+		mail.sendEmail("ewout.ve@gmail.com", "CRQdxm0J","");
 	}
 }
