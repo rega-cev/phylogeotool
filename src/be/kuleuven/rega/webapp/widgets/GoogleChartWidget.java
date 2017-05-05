@@ -111,15 +111,19 @@ public class GoogleChartWidget extends WCompositeWidget {
 			String colorAxisString = colorAxisBuilder.toString();
 			strm.append(", colorAxis: {colors: [" + colorAxisBuilder.toString().substring(0, colorAxisString.length() - 1) + "]}");	
 		}
+		strm.append(", region: '" +  regionToView  + "'");
 		strm.append("};");
-		strm.append("options['region'] = '" +  regionToView  + "';");
+//		System.out.println(countries.size());
+//		strm.append("options['sizeAxis'] = '{ minValue: 0, maxValue: " + countries.size() + "};");
 		strm.append("var data = google.visualization.arrayToDataTable([");
-		strm.append("['Country', 'Cohort size'],");
-		if(countries != null) {
+		strm.append("['Country', 'Cohort size']");
+		if(countries != null && countries.size() > 0) {
 			for(String country:countries.keySet()) {
-				strm.append("[\"" + country + "\", " + countries.get(country) + "],");
+				strm.append(",[\"" + country + "\", " + countries.get(country) + "]");
 			}
-			strm.deleteCharAt(strm.length() - 1);
+		} else {
+			// We set the count in Malta on 0 (the country is so small that nothing will be visualized).
+			strm.append(",[\"MT\", 0]");
 		}
 		strm.append("]);");
 		return strm.toString();
