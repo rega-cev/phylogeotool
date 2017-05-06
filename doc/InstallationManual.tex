@@ -123,7 +123,7 @@ However, this computation can be performed before the installation of the web-to
 
 To be able to support this computation, a distance matrix needs to be constructed (using DistanceMatrix.jar).
 Performing this clustering procedure before the installation of the web-tool allows the web-tool to render both clusters and annotations instantaneously.
-To infer a distance matrix based from the phylogenetic tree, the program DistanceMatrix.jar is used. DistanceMatrix.jar can be downloaded from our website \footnote{\url{https://github.com/rega-cev/phylogeotool/releases/tag/1}} or built from source (see section \ref{sec:source}). 
+To infer a distance matrix based from the phylogenetic tree, the program DistanceMatrix.jar is used. DistanceMatrix.jar can be downloaded from our website \footnote{\url{https://github.com/rega-cev/phylogeotool/releases/tag/v1.0.0}} or built from source (see section \ref{sec:source}). 
 The following command uses DistanceMatrix.jar to generate a distance matrix (to be stored in a file called distances.csv in the command below) from a previously constructed phylogenetic tree in Newick format (i.e. tree.newick): 
 \begin{verbatim}
 java -jar DistanceMatrix.jar tree.newick distances.csv
@@ -170,14 +170,14 @@ You can also set your own preferred folder by extending the web.xml file in your
 \end{verbatim}
 
 The param-name should be 'conf-dir' and the param-value indicates where the program has to look for the configuration.
-\\
-An example of such a configuration file can be found here: \url{https://github.com/rega-cev/phylogeotool/blob/master/examples/global-conf.xml}. In this example file all different configuration concepts are explained.
+An example of such a configuration file can be found here: \url{https://github.com/rega-cev/phylogeotool/blob/master/examples/global-conf.xml}. 
+In this example file, the various configuration concepts are explained.
 In the XML file, we assume a user name 'phylogeo' to perform the installation.
 Edit the example global-conf.xml file to correctly set up all the necessary paths.
 
 
 \subsection{Install the PhyloGeoTool WAR file in Tomcat}
-The PhyloGeoTool WAR file (i.e. phylogeotool.war) can be downloaded from our website \footnote{\url{https://github.com/rega-cev/phylogeotool/releases/tag/1}} or built from source (see section \ref{sec:source}). 
+The PhyloGeoTool WAR file (i.e. phylogeotool.war) can be downloaded from our website \footnote{\url{https://github.com/rega-cev/phylogeotool/releases/tag/v1.0.0}} or built from source (see section \ref{sec:source}). 
 
 Copy the phylogeotool.war to the webapps folder of Tomcat and start (or restart) Tomcat:
 \begin{verbatim}
@@ -190,7 +190,7 @@ Open a browser and enter the following URL: \url{http://localhost:8080/phylogeot
 The browser should show something similar to Figure \ref{fig:01}.
 
 \begin{figure}[!htbp]
-\includegraphics[scale=0.19]{images/defaultScreenshot.png}
+\includegraphics[scale=0.19]{images/defaultScreenshot.png}\vspace{-0.9cm}
 \caption{Screenshot of the PhyloGeoTool application when the application is started for the first time.}
 \label{fig:01} 
 \end{figure}
@@ -202,7 +202,7 @@ It \textbf{is insecure} to let Tomcat run directly on \textbf{port 80}. Therefor
 \label{sec:source}
 
 \subsection{Prerequisites}
-Install the Java Development Kit (JDK) with a version $\geq v 1.7$.\\
+Install the Java Development Kit (JDK) with a version $\geq 1.7$.\\
 
 \noindent For example, on Ubuntu Linux, Oracle Java 8 can be installed as follows:
 \begin{verbatim} 
