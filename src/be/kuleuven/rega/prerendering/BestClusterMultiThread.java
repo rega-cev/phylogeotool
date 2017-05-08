@@ -103,6 +103,8 @@ public class BestClusterMultiThread {
 			e.printStackTrace();
 		}
 		
+		//TODO: Change this because this was a temporary fix:
+		sgolay = distances;
 		ClusterDistance clusterDistance = new ClusterDistance(tree);
 
 		if(sgolay.size() >= 2) {
