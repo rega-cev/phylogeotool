@@ -207,6 +207,7 @@ A window (see Figure \ref{fig:pplacerwindow}) will pop up that enables you to pl
 \end{itemize}
 Currently, we only support the submission of 1 sequence at a time.
 If you submit more than 1 sequence to be added to the phylogenetic tree, a warning will be shown.
+Before Pplacer starts working, a BLAST is performed on the submitted sequence. If BLAST returns a low score (the sequence is too short, too different from the represented dataset, \ldots), the sequence is rejected and an email is sent to the user to inform him/her of the low quality sequence data.
 Once the Pplacer process has finished you will receive an e-mail with a link to show the placement result.
 You will be taken to the original PhyloGeoTool web-page (such as described in Section \ref{sec:core_func_user_interface}) with the difference that the cluster, which contains the pplaced sequence, is surrounded by a dashed line (see Figure \ref{fig:pplacer-view}). 
 
