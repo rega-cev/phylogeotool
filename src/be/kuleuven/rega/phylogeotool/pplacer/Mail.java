@@ -36,12 +36,18 @@ public class Mail {
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress("phylogeotool@kuleuven.be"));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
-			message.setSubject("Your PPlacing job has finished");
 			if(resultMessage != null && resultMessage.contains("BLAST")) {
+				message.setSubject("PPlacing failed");
 				message.setText("Dear User,"
 						+ "\n\nPPlacing could not be initiated, since the sequence did not meet the inclusion criteria.\n"
 						+ "\nPlease check that the sequence is sufficiently long and matches the characteristics of the represented dataset.");
+			} else if(resultMessage!= null && resultMessage.equals("PPlacer crashed.")) {
+				message.setSubject("PPlacing failed");
+				message.setText("Dear User,"
+						+ "\n\nPPlacer exited with an error.\n"
+						+ "\nPlease contact the Phylogeotool-team for further follow-up on the matter.");
 			} else {
+				message.setSubject("Your PPlacing job has finished");
 				message.setText("Dear User,"
 						+ "\n\nYour PPlacing job has recently finished and can be reviewed here: " + Settings.getInstance().getFull_url() + File.separator + "root/1?pplacer="
 						+ pplacerId);

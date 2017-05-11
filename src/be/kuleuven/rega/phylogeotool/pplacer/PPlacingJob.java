@@ -72,8 +72,14 @@ public class PPlacingJob implements Job {
 			
 			StreamGobbler streamGobbler = StreamGobbler.runProcess(args);
 			System.out.println(streamGobbler.getLastLine());
-			jobExecutionContext.getJobDetail().getJobDataMap().put(RESULT, streamGobbler.getLastLine());
-			return tmpDir + File.separator + "sequences.tog.tre";
+			File file = new File(tmpDir + File.separator + "sequences.tog.tre");
+			if(file.exists() && !file.isDirectory()) {
+				jobExecutionContext.getJobDetail().getJobDataMap().put(RESULT, streamGobbler.getLastLine());
+				return tmpDir + File.separator + "sequences.tog.tre";
+			} else {
+				jobExecutionContext.getJobDetail().getJobDataMap().put(RESULT, "PPlacer crashed.");
+				return "PPlacer crashed.";
+			}
 		} else {
 			jobExecutionContext.getJobDetail().getJobDataMap().put(RESULT, "Uploaded sequence didn't pass the BLAST test.");
 			return "Uploaded sequence didn't pass the BLAST test.";
