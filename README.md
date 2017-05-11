@@ -4,4 +4,6 @@ PhyloGeoTool has been built to be user-friendly in use, only requiring a phyloge
 
 The methodology paper describing PhyloGeoTool has been submitted for peer-review. A reference to the publication as well as a citation to cite PhyloGeoTool will be provided as soon as the paper has become publicly available.
 
+Deployed instances of the PhyloGeoTool can be found [here](http://phylogeotool.gbiomed.kuleuven.be/euresist/) and [here](http://phylogeotool.gbiomed.kuleuven.be/dengue/).
+
 The first release of the source code is [available here](https://github.com/rega-cev/phylogeotool/releases/tag/1.0.0).
