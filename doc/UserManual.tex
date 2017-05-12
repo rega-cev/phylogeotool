@@ -152,6 +152,12 @@ You can select an attribute of interest in the drop-down box on top of the attri
 
 
 \subsection{Exporting the phylogenetic tree}
+
+When the 'View Tree' button (located at the top of the clustered phylogeny panel) is clicked, a pop-up window is shown (Figure \ref{fig:view_tree}) that visualizes the phylogeny as a radial phylogenetic tree. 
+The colors in the radial tree correspond to the colors of the clusters.
+PhyloGeoTool uses a FigTree (\url{https://github.com/rambaut/figtree}) jar (Java ARchive) file to visualize the radial tree with its corresponding colors.
+
+
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.50]{images/view_tree.PNG}
@@ -159,6 +165,15 @@ You can select an attribute of interest in the drop-down box on top of the attri
 \caption{Visualizing the phylogenetic tree, colored according to the clustering scheme.}
 \label{fig:view_tree}
 \end{figure}
+
+
+On the bottom of the pop-up window, there are two buttons: 'Export' and 'Exit'.
+The button with label 'Export' will show a window similar to the one shown in Figure \ref{fig:export_tree}. There are three options available that allows the customization of the export:
+\begin{itemize}
+\item Color Tree: enable/disable the coloring of tree based on the clusters' color.
+\item Show node tips: include/exclude leaf names in the phylogenetic tree.
+\item Output Format: the format in which you want your tree to be downloaded (i.e. PDF, NEXUS, SVG, PNG). \footnote{Exports in the NEXUS file format can be visualized in programs such as FigTree (\url{http://tree.bio.ed.ac.uk/software/figtree/}).} 
+\end{itemize}
 
 
 \begin{figure}[H]
@@ -169,18 +184,6 @@ You can select an attribute of interest in the drop-down box on top of the attri
 \label{fig:export_tree}
 \end{figure}
 
-When the 'View Tree' button (located at the top of the clustered phylogeny panel) is clicked, a pop-up window is shown (Figure \ref{fig:view_tree}) that visualizes the phylogeny as a radial phylogenetic tree. 
-The colors in the radial tree correspond to the colors of the clusters.
-
-\break
-\break
-On the bottom of the pop-up window, there are two buttons: 'Export' and 'Exit'.
-The button with label 'Export' will show a window similar to the one shown in Figure \ref{fig:export_tree}. There are three options available that allows the customization of the export:
-\begin{itemize}
-\item Color Tree: enable/disable the coloring of tree based on the clusters' color.
-\item Show node tips: include/exclude leaf names in the phylogenetic tree.
-\item Output Format: the format in which you want your tree to be downloaded (i.e. PDF, NEXUS, SVG, PNG). \footnote{Exports in the NEXUS file format can be visualized in programs such as FigTree (\url{http://tree.bio.ed.ac.uk/software/figtree/}).} 
-\end{itemize}
   
 
  
@@ -207,6 +210,8 @@ A window (see Figure \ref{fig:pplacerwindow}) will pop up that enables you to pl
 \end{itemize}
 Currently, we only support the submission of 1 sequence at a time.
 If you submit more than 1 sequence to be added to the phylogenetic tree, a warning will be shown.
+Before Pplacer starts working, a BLAST search is performed on the submitted sequence. 
+If BLAST returns a low score (if, for example, the sequence is too short, too different from the represented dataset, \ldots), the sequence is rejected and an e-mail is sent to the user to inform him/her of the low quality sequence data.
 Once the Pplacer process has finished you will receive an e-mail with a link to show the placement result.
 You will be taken to the original PhyloGeoTool web-page (such as described in Section \ref{sec:core_func_user_interface}) with the difference that the cluster, which contains the pplaced sequence, is surrounded by a dashed line (see Figure \ref{fig:pplacer-view}). 
 
@@ -219,11 +224,11 @@ You will be taken to the original PhyloGeoTool web-page (such as described in Se
 \end{figure}
 
 %After submission: make video
-%\section{Example: exploring a large HIV-1 dataset}
+\section{Example: exploring a large HIV-1 dataset}
 
-%As mentioned earlier, we host a publicly available instance of the PhyloGeoTool that uses all HIV-1 data that is currently available in the EuResist Integrated Data Base \cite{Zazzi2012}. 
-%This database contains virus genotypes, clinical responses and epidemiological markers of more than 66.000 patients from 12 different countries.
-%We made a YouTube video available where all features we discussed earlier are demonstrated using the EuResist PhyloGeoTool instance: \footnote{(TODO: add video)}.
+As mentioned earlier, we host a publicly available instance of the PhyloGeoTool that uses all HIV-1 data that is currently available in the EuResist Integrated Data Base \cite{Zazzi2012}. 
+This database contains virus genotypes, clinical responses and epidemiological markers of more than 66.000 patients from 12 different countries.
+We have made a YouTube video available where all features we discussed in this user manual are demonstrated using the EuResist PhyloGeoTool instance: \url{https://www.youtube.com/watch?v=xiYODenyEIQ}.
 
 %TODO (when everything is ready): Video scenario:\\
 % as in this video (that we created earlier, for a presentation I gave in June) -> \url{https://drive.google.com/open?id=0B-0JA80u3ZPTbVVTNThrVXVRam8} \\
