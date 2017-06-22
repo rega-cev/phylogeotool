@@ -25,7 +25,7 @@ public class WDownloadResource extends WFileResource {
 	public void handleRequest(WebRequest request, WebResponse response) {
 		if (graphicFormat == null) {
 			// NEXUS
-			response.setContentType("text/plain");
+			response.setContentType("application/nexus");
 			this.suggestFileName(getFileName() + ".nxs");
 		} else {
 			if (graphicFormat.equals(GraphicFormat.PDF)) {
