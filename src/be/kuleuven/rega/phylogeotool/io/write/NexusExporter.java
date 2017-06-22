@@ -24,7 +24,8 @@ public class NexusExporter {
 	public static Tree export(Cluster cluster, jebl.evolution.trees.Tree jeblTree, Writer writer, int minimumClusterSize, boolean colorLeafs) {
 		// To print nxs file
 		
-		Map<String, Color> taxonNameToColor = new HashMap<String,Color>();
+//		Map<String, Color> taxonNameToColor = new HashMap<String,Color>();
+		Map<String, String> taxonNameToColor = new HashMap<String,String>();
 		if(colorLeafs) {
 			LOGGER.info("Sequences exported to file.");
 			Map<Node,Color> clusterToColor = GraphProperties.getClusterColor(cluster, minimumClusterSize);
@@ -34,12 +35,11 @@ public class NexusExporter {
 			for(Node node:cluster.getBoundaries()) {
 				for(Node leaf:cluster.getTree().getLeaves(node)) {
 //					taxonNameToColor.put(leaf.getLabel(), "#" + String.format("%06x", clusterToColor.get(node).getRGB() & 0x00FFFFFF));
-					taxonNameToColor.put(leaf.getLabel(), clusterToColor.get(node));
+					taxonNameToColor.put(leaf.getLabel(), String.format("#%02X%02X%02X", clusterToColor.get(node).getRed(), clusterToColor.get(node).getGreen(), clusterToColor.get(node).getBlue()));
 				}
 			}
 			
 			for (Taxon taxon : copyTree.getTaxa()) {
-//				System.out.println("Setting color: " + taxon.getName() + " Color: " + taxonNameToColor.get(taxon.getName()));
 				taxon.setAttribute("!color", taxonNameToColor.get(taxon.getName()));
 				copyTree.getNode(taxon).setAttribute("!color", taxonNameToColor.get(taxon.getName()));
 				jebl.evolution.graphs.Node parent = copyTree.getParent(copyTree.getNode(taxon));
