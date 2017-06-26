@@ -74,7 +74,7 @@ public class AddCsvInfo {
 		String baseFolder = null;
 		String csv = null;
 		
-		if(args.length > 3) {
+		if(args.length > 2) {
 			treeLocation = args[0];
 			baseFolder = args[1];
 			csv = args[2];

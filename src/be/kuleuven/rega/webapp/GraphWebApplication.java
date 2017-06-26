@@ -423,7 +423,16 @@ public class GraphWebApplication extends WApplication {
 	    WPushButton cancel = new WPushButton("Exit");
 	    
 	    WPushButton buttonCallTreeDialog = new WPushButton("Export Tree", dialog.getContents());
-	    WPushButton buttonCallSequencesDialog = new WPushButton("Export Sequences", dialog.getContents());
+	    WPushButton buttonCallSequencesDialog = null;
+	    if(Settings.getInstance().getSequenceDetails()) {
+	    	buttonCallSequencesDialog = new WPushButton("Export Sequences");
+	    	buttonCallSequencesDialog.clicked().addListener(dialog, 
+		    		new Signal1.Listener<WMouseEvent>() {
+	            public void trigger(WMouseEvent e1) {
+	            	showExportSequencesDialog(dialog);
+	            }
+	        });
+	    }
 	    
 	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
 	    WTreeViewerForm wTreeDownloader = new WTreeViewerForm(dialog, buttonCallSequencesDialog, buttonCallTreeDialog, cancel);
@@ -436,13 +445,6 @@ public class GraphWebApplication extends WApplication {
 	    		new Signal1.Listener<WMouseEvent>() {
             public void trigger(WMouseEvent e1) {
             	showExportTreeDialog(dialog);
-            }
-        });
-	    
-	    buttonCallSequencesDialog.clicked().addListener(dialog, 
-	    		new Signal1.Listener<WMouseEvent>() {
-            public void trigger(WMouseEvent e1) {
-            	showExportSequencesDialog(dialog);
             }
         });
 	    

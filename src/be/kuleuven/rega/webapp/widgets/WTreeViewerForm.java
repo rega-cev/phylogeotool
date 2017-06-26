@@ -47,15 +47,15 @@ public class WTreeViewerForm {
 //	    table.getElementAt(3, 2).addWidget(exportFormat);
 //	    table.getElementAt(3, 3).addWidget(exportFormat);
 	    
-	    downloadSequences.setWidth(new WLength(140));
+	    if(downloadSequences != null) {
+	    	downloadSequences.setWidth(new WLength(140));
+	    	table.getElementAt(1, 3).addWidget(downloadSequences);
+	    }
 	    downloadTree.setWidth(new WLength(100));
 	    cancel.setWidth(new WLength(60));
 	    
 	    table.getElementAt(1, 3).setContentAlignment(AlignmentFlag.AlignRight);
 	    // Only give the option to download the sequences if it says so in global-conf file
-	    if(Settings.getInstance().getSequenceDetails()) {
-	    	table.getElementAt(1, 3).addWidget(downloadSequences);
-	    }
 	    table.getElementAt(1, 3).addWidget(downloadTree);
 	    table.getElementAt(1, 3).addWidget(cancel);
 	}
