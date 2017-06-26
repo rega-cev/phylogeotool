@@ -80,6 +80,13 @@
   		<zipgroupfileset dir="${lib}" includes="commons-lang3-3.3.2.jar, figtree.jar, slf4j-api-1.7.10.jar" />
   	</jar>
   	
+  	<jar jarfile="${dist}/CreateCsv.jar" basedir="${build}">
+  	  		<manifest>
+  	  			<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.AddCsvInfo"/>
+  	  		</manifest>
+  	  		<zipgroupfileset dir="${lib}" includes="commons-lang3-3.3.2.jar, figtree.jar, slf4j-api-1.7.10.jar" />
+  	  	</jar>
+  	
   	<jar jarfile="${dist}/CsvColorTree.jar" basedir="${build}">
   	  		<manifest>
   	  			<attribute name="Main-Class" value="be.kuleuven.rega.phylogeotool.tools.CsvColorTree"/>

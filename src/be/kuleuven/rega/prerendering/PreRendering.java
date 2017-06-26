@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -180,7 +181,7 @@ public class PreRendering {
 				this.writeClusterToXML(cluster);
 				System.err.println("Cluster " + cluster.getRootId() + " structure written to file");
 				// Include NA, we can later on always decide not to show it. We can at least render it
-				this.prepareCSV(cluster.getRoot().getId(), tree.getLeaves(cluster.getRoot()), csvLocation, true);
+				this.prepareCSV(cluster.getRoot().getId(), tree.getLeaves(cluster.getRoot()), null, csvLocation, true);
 				System.err.println("XML details written to file");
 //				NexusExporter.export(cluster, jeblTree, new FileWriter(new File(this.folderLocationTreeView + File.separator + cluster.getRoot().getId() + ".nexus")), minimumClusterSize, true);
 				ColorClusters.prepareFullTreeView(jeblTree, null, cluster, GraphicFormat.PNG, new FileOutputStream(new File(Settings.getTreeviewPath(basePath) + File.separator + cluster.getRoot().getId() + ".png")), minimumClusterSize, true, false);
@@ -195,7 +196,7 @@ public class PreRendering {
 					// Leaf
 					} else {
 						// Include NA, we can later on always decide not to show it. We can at least render it
-						this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, true);
+						this.prepareCSV(node.getId(), tree.getLeaves(node), null, csvLocation, true);
 						this.writeClusterToXML(new Cluster(tree, node, cluster, new ArrayList<Node>()));
 					}
 				}
@@ -204,11 +205,11 @@ public class PreRendering {
 				Cluster fakeCluster = new Cluster(tree, currentNode, clusterToParent.get(currentNode), tree.getLeaves(currentNode));
 				this.writeClusterToXML(fakeCluster);
 				// Include NA, we can later on always decide not to show it. We can at least render it
-				this.prepareCSV(fakeCluster.getRoot().getId(), tree.getLeaves(fakeCluster.getRoot()), csvLocation, true);
+				this.prepareCSV(fakeCluster.getRoot().getId(), tree.getLeaves(fakeCluster.getRoot()), null, csvLocation, true);
 
 				for(Node node:tree.getLeaves(currentNode)) {
 					// Include NA, we can later on always decide not to show it. We can at least render it
-					this.prepareCSV(node.getId(), tree.getLeaves(node), csvLocation, true);
+					this.prepareCSV(node.getId(), tree.getLeaves(node), null, csvLocation, true);
 					this.writeClusterToXML(new Cluster(tree, node, fakeCluster, new ArrayList<Node>()));
 				}
 			}
@@ -274,27 +275,31 @@ public class PreRendering {
 		}
 	}
 	
-	public void prepareCSV(int clusterId, List<Node> nodes, String csvLocation, boolean showNA) {
+	public void prepareCSV(int clusterId, List<Node> nodes, OutputStreamWriter outputStreamWriter, String csvLocation, boolean showNA) {
 		CSVReader csvReader;
+		
 		List<String> ids = new ArrayList<String>();
 		for(Node node:nodes) {
 			ids.add(node.getLabel());
 		}
 		try {
+			if(outputStreamWriter == null) {
+				outputStreamWriter = new OutputStreamWriter(new FileOutputStream(new File(Settings.getXmlPath(basePath) + File.separator + clusterId + ".xml")));
+			}
 			csvReader = new CSVReader(new FileReader(new File(csvLocation)), ';');
 			String[] header = csvReader.readNext();
-			FileWriter fileWriter = new FileWriter(new File(Settings.getXmlPath(basePath) + File.separator + clusterId + ".xml"));
-			fileWriter.write("<xml>" + "\n");
+//			FileWriter fileWriter = new FileWriter(new File(Settings.getXmlPath(basePath) + File.separator + clusterId + ".xml"));
+			outputStreamWriter.write("<xml>" + "\n");
 			for(String key:header) {
 				if(!key.equalsIgnoreCase("id")) {
 					HashMap<String,Integer> tempHashMap = CsvUtils.csvToHashMapStringInteger(new File(csvLocation), ';', ids, key, showNA);
 					for(String hashMapKey:tempHashMap.keySet()) {
-						fileWriter.write("\t<FIELD name=\"" + key + "\"" + " id=\"" + hashMapKey + "\">" + tempHashMap.get(hashMapKey) + "</FIELD>" + "\n");
+						outputStreamWriter.write("\t<FIELD name=\"" + key + "\"" + " id=\"" + hashMapKey + "\">" + tempHashMap.get(hashMapKey) + "</FIELD>" + "\n");
 					}
 				}
 			}
-			fileWriter.write("</xml>");
-			fileWriter.close();
+			outputStreamWriter.write("</xml>");
+			outputStreamWriter.close();
 		} catch (FileNotFoundException e) {
 			System.err.println(PreRendering.class + ": " + "PrepareCSV, File could not be found.");
 		} catch (IOException e) {
