@@ -100,6 +100,13 @@
     false
   </property>
   
+  <!-- sequenceDetails 
+   Boolean to indicate if the user should be able to download sequences through the tool
+  -->
+  <property name="sequence-details">
+    true
+  </property>
+  
   <!-- visualizeGeography 
    Fill in the field that has to be visualized on the map in the tool.
   -->

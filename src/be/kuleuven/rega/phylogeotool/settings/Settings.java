@@ -130,6 +130,10 @@ public class Settings {
 		return showNAData;
 	}
 	
+	public boolean getSequenceDetails() {
+		return sequenceDetails;
+	}
+	
 	public boolean getPPlacerSupport() {
 		return pplacerSupport;
 	}
@@ -192,6 +196,7 @@ public class Settings {
 	private String rBinary;
 	private String blastPath;
 	private boolean showNAData;
+	private boolean sequenceDetails;
 	private String visualizeGeography;
 	private String datalessRegionColor;
 	private String backgroundcolor;
@@ -250,6 +255,8 @@ public class Settings {
             	visualizeGeography = e.getValue().trim();
             } else if(name.equals("showNAData")) {
             	showNAData = Boolean.parseBoolean(e.getValue().trim());
+            } else if(name.equals("sequence-details")) {
+            	sequenceDetails = Boolean.parseBoolean(e.getValue().trim());
             } else if(name.equals("pplacer_support")) {
             	pplacerSupport = Boolean.parseBoolean(e.getValue().trim());
             } else if(name.equals("statistics_support")) {

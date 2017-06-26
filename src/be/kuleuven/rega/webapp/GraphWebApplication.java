@@ -21,6 +21,7 @@ import be.kuleuven.rega.form.MyComboBox;
 import be.kuleuven.rega.phylogeotool.core.Node;
 import be.kuleuven.rega.phylogeotool.pplacer.PPlacer;
 import be.kuleuven.rega.phylogeotool.settings.Settings;
+import be.kuleuven.rega.phylogeotool.tools.ExportSequence;
 import be.kuleuven.rega.phylogeotool.tree.WCircleNode;
 import be.kuleuven.rega.prerendering.FacadeRequestData;
 import be.kuleuven.rega.prerendering.PreRendering;
@@ -33,10 +34,12 @@ import be.kuleuven.rega.webapp.widgets.WBarChartMine;
 import be.kuleuven.rega.webapp.widgets.WComboBoxRegions;
 import be.kuleuven.rega.webapp.widgets.WConfirmationDialog;
 import be.kuleuven.rega.webapp.widgets.WDownloadResource;
+import be.kuleuven.rega.webapp.widgets.WDownloadSequencesResource;
+import be.kuleuven.rega.webapp.widgets.WExportSequencesForm;
 import be.kuleuven.rega.webapp.widgets.WExportTreeForm;
 import be.kuleuven.rega.webapp.widgets.WHistogramMine;
 import be.kuleuven.rega.webapp.widgets.WImageTreeMine;
-import be.kuleuven.rega.webapp.widgets.WTreeDownloaderForm;
+import be.kuleuven.rega.webapp.widgets.WTreeViewerForm;
 import eu.webtoolkit.jwt.AlignmentFlag;
 import eu.webtoolkit.jwt.AnchorTarget;
 import eu.webtoolkit.jwt.Side;
@@ -62,14 +65,12 @@ import eu.webtoolkit.jwt.WLink;
 import eu.webtoolkit.jwt.WMouseEvent;
 import eu.webtoolkit.jwt.WObject;
 import eu.webtoolkit.jwt.WPushButton;
-import eu.webtoolkit.jwt.WString;
 import eu.webtoolkit.jwt.WTable;
 import eu.webtoolkit.jwt.WTableCell;
 import eu.webtoolkit.jwt.WTemplate;
 import eu.webtoolkit.jwt.WText;
 import eu.webtoolkit.jwt.WVBoxLayout;
 import eu.webtoolkit.jwt.WWidget;
-import eu.webtoolkit.jwt.WXmlLocalizedStrings;
 import eu.webtoolkit.jwt.chart.WCartesianChart;
 import figtree.application.GraphicFormat;
 
@@ -421,19 +422,27 @@ public class GraphWebApplication extends WApplication {
 //	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
 	    WPushButton cancel = new WPushButton("Exit");
 	    
-	    WPushButton buttonCallDialog = new WPushButton("Export", dialog.getContents());
-
+	    WPushButton buttonCallTreeDialog = new WPushButton("Export Tree", dialog.getContents());
+	    WPushButton buttonCallSequencesDialog = new WPushButton("Export Sequences", dialog.getContents());
+	    
 	    dialog.getContents().addWidget(wImageTreeMine.getWidget());
-	    WTreeDownloaderForm wTreeDownloader = new WTreeDownloaderForm(dialog, buttonCallDialog, cancel);
+	    WTreeViewerForm wTreeDownloader = new WTreeViewerForm(dialog, buttonCallSequencesDialog, buttonCallTreeDialog, cancel);
 	    dialog.getContents().addWidget(wTreeDownloader.getWidget());
 	    
 	    dialog.rejectWhenEscapePressed();
 	    dialog.setClosable(true);
 	    
-	    buttonCallDialog.clicked().addListener(dialog, 
+	    buttonCallTreeDialog.clicked().addListener(dialog, 
 	    		new Signal1.Listener<WMouseEvent>() {
             public void trigger(WMouseEvent e1) {
             	showExportTreeDialog(dialog);
+            }
+        });
+	    
+	    buttonCallSequencesDialog.clicked().addListener(dialog, 
+	    		new Signal1.Listener<WMouseEvent>() {
+            public void trigger(WMouseEvent e1) {
+            	showExportSequencesDialog(dialog);
             }
         });
 	    
@@ -493,6 +502,55 @@ public class GraphWebApplication extends WApplication {
 				
 				graphWebApplication.enableUpdates(true);
 				Main.getTreeExportJobScheduler().addExportTreeJob(graphWebApplication, wConfirmationDialog, dialog.getContents(), "cluster_" + UrlManipulator.getId(WApplication.getInstance().getInternalPath()), facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), wExportTreeForm.getwMyComboBoxExportFormat().getGraphicFormat(), byteArrayOutputStream, 2, wExportTreeForm.getwMyButtonGroupColorTree().isTreeColored(), wExportTreeForm.getwMyButtonGroupNodeTips().getShowTips());
+			}
+		});
+	}
+	
+	private void showExportSequencesDialog(final WDialog parent) {
+		final WDialog dialog = new WDialog("Export Sequences", parent);
+		
+		final WPushButton button = new WPushButton("Export");
+		WPushButton cancel = new WPushButton("Cancel");
+		cancel.clicked().addListener(dialog,
+				new Signal1.Listener<WMouseEvent>() {
+			public void trigger(WMouseEvent e1) {
+				dialog.reject();
+			}
+		});
+		final WExportSequencesForm wExportSequencesForm = new WExportSequencesForm(dialog, button, cancel);
+		dialog.rejectWhenEscapePressed();
+		dialog.getContents().addWidget(wExportSequencesForm.getWidget());
+		
+		dialog.show();
+		
+		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		button.clicked().addListener(dialog, new Signal1.Listener<WMouseEvent>() {
+			public void trigger(WMouseEvent e1) {
+				byteArrayOutputStream.reset();
+				ExportSequence.export(facadeRequestData.getCluster(UrlManipulator.getId(WApplication.getInstance().getInternalPath())), byteArrayOutputStream);
+//				button.disable();
+				
+				WDownloadSequencesResource wDownloadSequencesResource = new WDownloadSequencesResource(parent, "cluster_" + UrlManipulator.getId(WApplication.getInstance().getInternalPath()), wExportSequencesForm.getwMyComboBoxSequenceExportFormat().getSequenceExportFormat(), byteArrayOutputStream);
+				WLink wLink = new WLink(wDownloadSequencesResource);
+				WAnchor wAnchor = new WAnchor(wLink, "Download File");
+				wAnchor.setTarget(AnchorTarget.TargetDownload);
+				
+				final WConfirmationDialog wConfirmationDialog = new WConfirmationDialog("Confirmation", "Click the link below to download your file.");
+				wConfirmationDialog.getOkButton().show();
+				wConfirmationDialog.getOkButton().clicked().addListener(parent, new Signal1.Listener<WMouseEvent>() {
+					public void trigger(WMouseEvent e1) {
+//						button.enable();
+						wConfirmationDialog.reject();
+					}
+				});
+				
+				wAnchor.clicked().addListener(wConfirmationDialog, new Signal1.Listener<WMouseEvent>() {
+		            public void trigger(WMouseEvent e1) {
+		            	wConfirmationDialog.reject();
+		            }
+		        });
+				wConfirmationDialog.addWidget(wAnchor);
+				wConfirmationDialog.show();
 			}
 		});
 	}
@@ -871,7 +929,8 @@ public class GraphWebApplication extends WApplication {
 	public void treeExportFinished(final WObject parent, final WConfirmationDialog wConfirmationDialog, ByteArrayOutputStream byteArrayOutputStream, String fileName, GraphicFormat graphicFormat) {
 		UpdateLock updateLock = this.getUpdateLock();
 		WDownloadResource wDownloadResource = new WDownloadResource(parent, fileName, graphicFormat, byteArrayOutputStream);
-		WAnchor wAnchor = new WAnchor(wDownloadResource, "Download File");
+		WLink wLink = new WLink(wDownloadResource);
+		WAnchor wAnchor = new WAnchor(wLink, "Download File");
 		wAnchor.setTarget(AnchorTarget.TargetDownload);
 		
 		wAnchor.clicked().addListener(wConfirmationDialog,
