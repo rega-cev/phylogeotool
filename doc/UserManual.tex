@@ -153,7 +153,10 @@ You can select an attribute of interest in the drop-down box on top of the attri
 
 \subsection{Exporting the phylogenetic tree}
 
-When the 'View Tree' button (located at the top of the clustered phylogeny panel) is clicked, a pop-up window is shown (Figure \ref{fig:view_tree}) that visualizes the phylogeny as a radial phylogenetic tree. 
+\subsubsection{Private database}
+\label{sec:private}
+
+When the 'View Tree' button (located at the top of the clustered phylogeny panel) is clicked for a private database being explored using the PhyloGeoTool, a pop-up window is shown (Figure \ref{fig:view_tree}) that visualizes the phylogeny as a radial phylogenetic tree. 
 The colors in the radial tree correspond to the colors of the clusters.
 PhyloGeoTool uses a FigTree (\url{https://github.com/rambaut/figtree}) jar (Java ARchive) file to visualize the radial tree with its corresponding colors.
 
@@ -162,7 +165,7 @@ PhyloGeoTool uses a FigTree (\url{https://github.com/rambaut/figtree}) jar (Java
 \centering
 \includegraphics[scale=0.50]{images/view_tree.PNG}
 \vspace{-0.25cm}
-\caption{Visualizing the phylogenetic tree, colored according to the clustering scheme.}
+\caption{Visualizing the phylogenetic tree, for a private sequence database, colored according to the clustering scheme.}
 \label{fig:view_tree}
 \end{figure}
 
@@ -184,7 +187,38 @@ The button with label 'Export' will show a window similar to the one shown in Fi
 \label{fig:export_tree}
 \end{figure}
 
-  
+
+\subsubsection{Public database}
+
+When the 'View Tree' button (located at the top of the clustered phylogeny panel) is clicked for a public database being explored using the PhyloGeoTool, a pop-up window is shown (Figure \ref{fig:view_tree_public}) that visualizes the phylogeny as a radial phylogenetic tree.
+In the case of a public database, sequence data can be downloaded from the PhyloGeoTool, which will typically not be allowed for private database deployments.
+The other features remain the same as in section~\ref{sec:private}.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.250]{images/publicdatabase.PNG}
+\vspace{-0.25cm}
+\caption{Visualizing the phylogenetic tree, for a public sequence database, colored according to the clustering scheme.}
+\label{fig:view_tree_public}
+\end{figure}
+
+
+On the bottom of the pop-up window, there is now an extra button: 'Export Sequences'.
+This feature allows to export sequence data for the cluster currently being explored, into a FASTA file that can be downloaded (Figure \ref{fig:export_sequences}).
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.50]{images/exportsequences.PNG}
+\vspace{-0.25cm}
+\caption{Form displaying the preferred settings to export the sequence data of the clusters shown.}
+\label{fig:export_sequences}
+\end{figure}
+
+
+
+
 
  
 \subsection{Automated phylogenetic placement of sequences}
